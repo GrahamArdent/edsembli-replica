@@ -44,23 +44,32 @@ Last updated: 2026-01-11
 ## Evidence & Templates
 
 - [Evidence Patterns](evidence/README.md)
-	- Reusable observation archetypes (e.g., Block Play).
+	- Reusable observation archetypes (15 patterns covering all frames).
 - [Templates library](templates/README.md)
 	- How templates are organized and used.
 - [Comment templates (YAML)](templates/comment_templates.yaml)
-	- Initial canonical template set (non-PII).
+	- Initial canonical template set (36 templates, non-PII).
 
 ## Knowledge Base
 
 - [Reporting Process SOP](knowledge/processes/process.reporting.workflow.md)
 	- Standard workflow for the reporting cycle.
+- [Content Review Process](knowledge/processes/process.content.review.md)
+	- Quality checklist for new content.
+- [Contributor Onboarding](knowledge/processes/process.onboarding.contributor.md)
+	- Setup guide for new contributors.
 - [Entities](knowledge/entities/)
 	- Detailed records of tools, policies, and organizations.
+
+## Datasets
+
+- [Traceability Matrix](datasets/traceability/README.md)
+	- Coverage and audit datasets (planned).
 
 ## Schemas & Validation
 
 - [Schemas](schemas/README.md)
-	- JSON Schema contracts for canonical artifacts.
+	- JSON Schema contracts for canonical artifacts (10 schemas).
 - [Validation scripts](scripts/README.md)
 	- Local validation and linting.
 
@@ -70,13 +79,18 @@ Last updated: 2026-01-11
 	- No-PII rules and review checklist.
 - [Comment style guide](guidance/comment-style.md)
 	- Tone/structure constraints for CoL narratives.
+- [Board customization guide](guidance/board-customization.md)
+	- How boards can adapt templates locally.
 
-## Examples
+## Examples (Illustrative Only)
 
 - [Evidence Pattern Sample](examples/evidence-pattern-sample.md)
-	- Template structure for documenting kindergarten observations.
+	- Original structural template (superseded by `evidence/` folder).
 - [Comment Template Sample](examples/comment-template-sample.md)
-	- Template structure for Communication of Learning comments.
+	- Original structural template (superseded by `templates/` folder).
+
+> **Note:** The `examples/` folder contains the original illustrative samples used during design.
+> Canonical content now lives in `evidence/` and `templates/`.
 
 > Note: `examples/` is illustrative (structure-focused) and contains no PII.
 > Canonical libraries, when created, should live under `evidence/` and `templates/` (or the canonical locations defined in `infrastructure.md`).
@@ -88,7 +102,8 @@ Last updated: 2026-01-11
 
 ## Planned artifacts (not yet created)
 
-- Traceability: `datasets/traceability/matrix.parquet` (or `matrix.csv`)
+- Traceability matrix data: `datasets/traceability/matrix.parquet`
+- Matrix generation script: `scripts/generate_matrix.py`
 
 ## Conventions
 

@@ -38,3 +38,11 @@ repos:
         files: \.(yaml|md)$
         pass_filenames: false
         description: "Ensures all indicators have template coverage"
+
+      - id: check-changelog
+        name: Check CHANGELOG Updated
+        entry: bash -c 'git diff --cached --name-only | grep -q "CHANGELOG.md" || (echo "⚠️  Consider updating CHANGELOG.md" && exit 0)'
+        language: system
+        files: \.(yaml|md)$
+        pass_filenames: false
+        description: "Reminds to update CHANGELOG.md (warning only)"

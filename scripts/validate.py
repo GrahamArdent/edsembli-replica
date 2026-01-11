@@ -113,11 +113,21 @@ def main() -> int:
         WORKSPACE_ROOT / "schemas" / "README.md",
         WORKSPACE_ROOT / "scripts" / "README.md",
         WORKSPACE_ROOT / "guidance" / "comment-style.md",
+        WORKSPACE_ROOT / "guidance" / "board-customization.md",
         WORKSPACE_ROOT / "evidence" / "README.md",
-        WORKSPACE_ROOT / "evidence" / "evidence.pattern.block_play.md",
-        WORKSPACE_ROOT / "knowledge" / "processes" / "process.reporting.workflow.md",
         WORKSPACE_ROOT / "references" / "links.md",
+        WORKSPACE_ROOT / "datasets" / "traceability" / "README.md",
     ]
+
+    # Add all evidence patterns dynamically
+    evidence_dir = WORKSPACE_ROOT / "evidence"
+    for md_path in sorted(evidence_dir.glob("evidence.pattern.*.md")):
+        markdown_docs.append(md_path)
+
+    # Add all processes dynamically
+    processes_dir = WORKSPACE_ROOT / "knowledge" / "processes"
+    for md_path in sorted(processes_dir.glob("*.md")):
+        markdown_docs.append(md_path)
 
     for md_path in markdown_docs:
         fm = read_front_matter(md_path)

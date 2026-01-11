@@ -34,6 +34,7 @@ This folder contains JSON Schema contracts for canonical YAML files and Markdown
 ### Content Schemas
 - `bibliography.schema.json` - Reference citations
 - `comment_templates.schema.json` - Comment template library
+- `evidence_patterns.schema.json` - Evidence pattern definitions
 
 ### Planned (not yet created)
-- `evidence_patterns.schema.json` - Evidence pattern definitions
+- None - all schemas implemented!

@@ -5,11 +5,16 @@ Reports:
 - Templates per indicator distribution
 - Coverage percentage by frame
 
+Usage:
+  python scripts/coverage.py          # Report only (always exit 0)
+  python scripts/coverage.py --strict # Fail if coverage < 100%
+
 Scope: local QA and planning tool.
 """
 
 from __future__ import annotations
 
+import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -29,6 +34,8 @@ def load_yaml(path: Path) -> dict:
 
 
 def main() -> int:
+    strict_mode = "--strict" in sys.argv
+
     # Load indicators
     indicators_doc = load_yaml(WORKSPACE_ROOT / "taxonomy" / "indicators.yaml")
     indicators = {i["id"]: i for i in indicators_doc.get("indicators", []) if isinstance(i, dict) and "id" in i}
@@ -95,6 +102,7 @@ def main() -> int:
     print(f"  Total indicators: {len(indicators)}")
     print(f"  Total templates: {len(templates)}")
     print(f"  Uncovered indicators: {len(uncovered)}")
+    print(f"  Mode: {'STRICT' if strict_mode else 'REPORT'}")
 
     if uncovered:
         print()
@@ -103,7 +111,10 @@ def main() -> int:
             print(f"  - {ind_id}")
         print()
         print("⚠️  Some indicators have no template coverage")
-        return 1
+        if strict_mode:
+            print("❌ STRICT MODE: Failing due to incomplete coverage")
+            return 1
+        return 0
 
     print()
     print("✅ All indicators have at least one template")

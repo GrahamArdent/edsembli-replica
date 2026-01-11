@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "schemas/entity.frontmatter.schema.json",
+  "$version": "1.0.0",
   "title": "Entity Front Matter",
   "type": "object",
   "required": ["id", "type", "entity_type", "title", "version", "status", "tags", "refs", "updated"],

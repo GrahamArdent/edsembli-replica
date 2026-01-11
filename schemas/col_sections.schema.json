@@ -1,6 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "schemas/col_sections.schema.json",
+  "$version": "1.0.0",
   "title": "CoL Sections Taxonomy",
   "type": "object",
   "required": ["col_sections"],
