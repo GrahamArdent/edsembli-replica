@@ -11,7 +11,9 @@ updated: 2026-01-11
 
 # Quick Links
 
-*Auto-generated from `references/bibliography.yaml`.*
+*AUTO-GENERATED FILE — do not edit by hand.*
+
+Edit `references/bibliography.yaml` and re-run `python scripts/generate_links.py` to regenerate.
 
 ## Board Documentation
 

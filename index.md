@@ -15,10 +15,13 @@ Start here for the current, authoritative documents and the saved research input
 
 Last updated: 2026-01-11
 
-## Core (canonical)
+## Explanation (why it exists)
 
 - [Framework](framework.md)
 	- The conceptual framework and decisions (intended to be the narrative “what/why”).
+
+## Reference (contracts and canonical definitions)
+
 - [Infrastructure](infrastructure.md)
 	- How the framework is made functional (file layout, conventions, schemas, tooling, governance).
 - [Glossary](glossary.md)
@@ -26,7 +29,7 @@ Last updated: 2026-01-11
 - [Functional Requirements](requirements.md)
 	- What the tooling/workflow must do (distinct from Python `requirements.txt`).
 
-## Taxonomy & References
+## Taxonomy & Sources of Truth
 
 - [Frames Taxonomy](taxonomy/frames.yaml)
 	- Canonical definitions of the four kindergarten frames with indicators.
@@ -41,7 +44,7 @@ Last updated: 2026-01-11
 - [Bibliography](references/bibliography.yaml)
 	- Source citations with stable reference IDs.
 
-## Evidence & Templates
+## Libraries (evidence + templates)
 
 - [Evidence Patterns](evidence/README.md)
 	- Reusable observation archetypes (15 patterns covering all frames).
@@ -50,7 +53,7 @@ Last updated: 2026-01-11
 - [Comment templates (YAML)](templates/comment_templates.yaml)
 	- Initial canonical template set (36 templates, non-PII).
 
-## Knowledge Base
+## How-to (processes)
 
 - [Reporting Process SOP](knowledge/processes/process.reporting.workflow.md)
 	- Standard workflow for the reporting cycle.
@@ -61,22 +64,26 @@ Last updated: 2026-01-11
 - [Entities](knowledge/entities/)
 	- Detailed records of tools, policies, and organizations.
 
-## Datasets
+## Datasets (planned/derived)
 
 - [Traceability Matrix](datasets/traceability/README.md)
 	- Coverage and audit datasets (planned).
 
-## Schemas & Validation
+## Validation & Automation
 
 - [Schemas](schemas/README.md)
 	- JSON Schema contracts for canonical artifacts (10 schemas).
 - [Validation scripts](scripts/README.md)
 	- Local validation and linting.
+- [Testing and validation](TESTING.md)
+	- What checks exist (local + CI) and what “passing” means.
 
 ## Guidance & Safety
 
 - [Privacy checklist](PRIVACY.md)
 	- No-PII rules and review checklist.
+- [Security policy](SECURITY.md)
+	- How to report issues; reinforces the no-PII boundary.
 - [Comment style guide](guidance/comment-style.md)
 	- Tone/structure constraints for CoL narratives.
 - [Board customization guide](guidance/board-customization.md)
@@ -117,6 +124,7 @@ Last updated: 2026-01-11
 - [Roadmap](ROADMAP.md)
 - [Changelog](CHANGELOG.md)
 - [Contributing Guide](CONTRIBUTING.md)
+- [Release and versioning](RELEASE.md)
 - [Python dependencies](requirements.txt)
 
 ## Architecture Decision Records (ADRs)

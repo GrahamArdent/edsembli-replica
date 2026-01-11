@@ -7,6 +7,7 @@ Produces a human-readable quick links file from the canonical bibliography.
 
 from __future__ import annotations
 
+from datetime import date
 from pathlib import Path
 
 from ruamel.yaml import YAML
@@ -19,6 +20,8 @@ YAML_LOADER = YAML(typ="safe")
 def main() -> int:
     bib_path = WORKSPACE_ROOT / "references" / "bibliography.yaml"
     output_path = WORKSPACE_ROOT / "references" / "links.md"
+
+    today = date.today().isoformat()
 
     with bib_path.open("r", encoding="utf-8") as f:
         bib = YAML_LOADER.load(f)
@@ -43,12 +46,14 @@ def main() -> int:
         "status: draft",
         "tags: [references, links]",
         "refs: []",
-        f"updated: 2026-01-11",
+        f"updated: {today}",
         "---",
         "",
         "# Quick Links",
         "",
-        "*Auto-generated from `references/bibliography.yaml`.*",
+        "*AUTO-GENERATED FILE — do not edit by hand.*",
+        "",
+        "Edit `references/bibliography.yaml` and re-run `python scripts/generate_links.py` to regenerate.",
         "",
     ]
 

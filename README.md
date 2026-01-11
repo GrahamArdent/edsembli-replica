@@ -20,6 +20,12 @@ This repository is a design-first framework for Ontario Kindergarten Communicati
 - Infrastructure/spec: [infrastructure.md](infrastructure.md)
 - Preserved research inputs: [sources/](sources/)
 
+## Governance (quick links)
+
+- Security policy: [SECURITY.md](SECURITY.md)
+- Release and versioning: [RELEASE.md](RELEASE.md)
+- Testing and validation: [TESTING.md](TESTING.md)
+
 ## Safety
 
 - No PII/student-identifying information belongs in this repo.

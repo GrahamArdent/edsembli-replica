@@ -46,5 +46,27 @@ python scripts/generate_matrix.py
 | `ref_ids` | array | Supporting references |
 | `section` | string | `key_learning`, `growth`, or `next_steps` |
 
+## Contract (invariants)
+
+- A row represents a *trace link* from one template to one indicator, optionally supported by an evidence pattern and one or more references.
+- `frame_id`, `indicator_id`, `template_id`, and `section` are required for every row.
+- `evidence_pattern_id` is optional but recommended when the template implies an observation archetype.
+- `ref_ids` may be empty, but when present must contain only `ref.*` IDs.
+
+Recommended uniqueness key:
+
+- (`template_id`, `indicator_id`, `section`, `evidence_pattern_id`)
+
+Recommended denormalized fields (optional):
+
+- `frame_title`, `indicator_title`, `template_title` for human-readable exports.
+
+## Expected joins
+
+- `frame_id` and `indicator_id` must exist in `taxonomy/`.
+- `template_id` must exist in `templates/comment_templates.yaml`.
+- `evidence_pattern_id` (if present) must exist in `evidence/`.
+- Every `ref_id` in `ref_ids` must exist in `references/bibliography.yaml`.
+
 ## Status
 *Matrix generation script not yet implemented. See ROADMAP.md Phase 3.*
