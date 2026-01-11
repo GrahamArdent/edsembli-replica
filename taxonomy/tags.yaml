@@ -93,3 +93,234 @@ tags:
     name: Catholic Education
     description: Ontario Catholic school specific content
     usage: Apply to OCSTA, Fully Alive, and Catholic-specific guidance
+
+  # Evidence pattern tags (activity/domain descriptors)
+  - id: tag.art
+    name: Art
+    description: Visual arts activities
+    usage: Apply to art-related evidence patterns
+
+  - id: tag.creativity
+    name: Creativity
+    description: Creative expression activities
+    usage: Apply to creativity-focused content
+
+  - id: tag.fine_motor
+    name: Fine Motor
+    description: Fine motor skill development
+    usage: Apply to fine motor activities (writing, cutting, manipulatives)
+
+  - id: tag.gross_motor
+    name: Gross Motor
+    description: Gross motor skill development
+    usage: Apply to gross motor activities (running, jumping, climbing)
+
+  - id: tag.expression
+    name: Expression
+    description: Self-expression through various media
+    usage: Apply to expressive activities
+
+  - id: tag.play
+    name: Play
+    description: Play-based learning activities
+    usage: Apply to play-focused evidence patterns
+
+  - id: tag.blocks
+    name: Blocks
+    description: Block play and construction
+    usage: Apply to block play activities
+
+  - id: tag.cooperation
+    name: Cooperation
+    description: Collaborative activities
+    usage: Apply to cooperative play and group work
+
+  - id: tag.routine
+    name: Routine
+    description: Daily routines and transitions
+    usage: Apply to routine-based evidence patterns
+
+  - id: tag.attention
+    name: Attention
+    description: Focus and attention activities
+    usage: Apply to attention-related content
+
+  - id: tag.group
+    name: Group
+    description: Group activities and interactions
+    usage: Apply to group-based learning
+
+  - id: tag.social
+    name: Social
+    description: Social skill development
+    usage: Apply to social interaction activities
+
+  - id: tag.emotions
+    name: Emotions
+    description: Emotional awareness and regulation
+    usage: Apply to emotional learning content
+
+  - id: tag.conflict
+    name: Conflict
+    description: Conflict resolution activities
+    usage: Apply to conflict management content
+
+  - id: tag.problem_solving
+    name: Problem Solving
+    description: Problem-solving activities
+    usage: Apply to problem-solving evidence patterns
+
+  - id: tag.construction
+    name: Construction
+    description: Building and construction activities
+    usage: Apply to construction-based play
+
+  - id: tag.engineering
+    name: Engineering
+    description: Engineering concepts and activities
+    usage: Apply to STEM/engineering content
+
+  - id: tag.spatial
+    name: Spatial
+    description: Spatial reasoning activities
+    usage: Apply to spatial awareness content
+
+  - id: tag.persistence
+    name: Persistence
+    description: Persistence and perseverance
+    usage: Apply to resilience-focused content
+
+  - id: tag.dramatic
+    name: Dramatic
+    description: Dramatic play activities
+    usage: Apply to dramatic play content
+
+  - id: tag.roles
+    name: Roles
+    description: Role-playing and identity
+    usage: Apply to role-play activities
+
+  - id: tag.inquiry
+    name: Inquiry
+    description: Inquiry-based learning
+    usage: Apply to inquiry and investigation content
+
+  - id: tag.science
+    name: Science
+    description: Science exploration
+    usage: Apply to science activities
+
+  - id: tag.investigation
+    name: Investigation
+    description: Investigation activities
+    usage: Apply to exploration and discovery
+
+  - id: tag.curiosity
+    name: Curiosity
+    description: Curiosity and wonder
+    usage: Apply to curiosity-driven learning
+
+  - id: tag.math
+    name: Math
+    description: Mathematics activities
+    usage: Apply to math-focused content
+
+  - id: tag.numeracy
+    name: Numeracy
+    description: Number sense and counting
+    usage: Apply to numeracy activities
+
+  - id: tag.patterns
+    name: Patterns
+    description: Pattern recognition activities
+    usage: Apply to pattern-based learning
+
+  - id: tag.sorting
+    name: Sorting
+    description: Classification and sorting
+    usage: Apply to sorting activities
+
+  - id: tag.music
+    name: Music
+    description: Music activities
+    usage: Apply to music-based learning
+
+  - id: tag.movement
+    name: Movement
+    description: Movement activities
+    usage: Apply to movement-based learning
+
+  - id: tag.outdoor
+    name: Outdoor
+    description: Outdoor activities
+    usage: Apply to outdoor learning
+
+  - id: tag.physical
+    name: Physical
+    description: Physical activity
+    usage: Apply to physical development content
+
+  - id: tag.safety
+    name: Safety
+    description: Safety awareness
+    usage: Apply to safety-related content
+
+  - id: tag.literacy
+    name: Literacy
+    description: Literacy activities
+    usage: Apply to reading and writing content
+
+  - id: tag.reading
+    name: Reading
+    description: Reading activities
+    usage: Apply to reading-focused content
+
+  - id: tag.comprehension
+    name: Comprehension
+    description: Comprehension activities
+    usage: Apply to understanding-focused content
+
+  - id: tag.oral_language
+    name: Oral Language
+    description: Oral language development
+    usage: Apply to speaking and listening content
+
+  - id: tag.sensory
+    name: Sensory
+    description: Sensory activities
+    usage: Apply to sensory exploration
+
+  - id: tag.measurement
+    name: Measurement
+    description: Measurement activities
+    usage: Apply to measurement-based learning
+
+  - id: tag.self_care
+    name: Self-Care
+    description: Self-care skills
+    usage: Apply to independence and self-help content
+
+  - id: tag.independence
+    name: Independence
+    description: Independence development
+    usage: Apply to autonomy-building activities
+
+  - id: tag.transitions
+    name: Transitions
+    description: Transition management
+    usage: Apply to transition-focused content
+
+  - id: tag.self_regulation
+    name: Self-Regulation
+    description: Self-regulation skills
+    usage: Apply to self-regulation development
+
+  - id: tag.writing
+    name: Writing
+    description: Writing activities
+    usage: Apply to writing-focused content
+
+  - id: tag.communication
+    name: Communication
+    description: Communication skills
+    usage: Apply to communication development

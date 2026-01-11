@@ -9,7 +9,7 @@ from __future__ import annotations
 import csv
 import json
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import unquote
@@ -58,6 +58,10 @@ class ValidationContext:
     templates: set[str]
     evidence_patterns: set[str]
     refs: set[str]
+    tags: set[str] = field(default_factory=set)
+    indicator_to_frame: dict[str, str] = field(default_factory=dict)
+    templates_raw: list[dict] = field(default_factory=list)
+    evidence_raw: list[dict] = field(default_factory=list)
 
 
 def read_front_matter(markdown_path: Path) -> dict:
@@ -168,20 +172,21 @@ def build_validation_context() -> ValidationContext:
     }
 
     indicators_doc = load_yaml(WORKSPACE_ROOT / "taxonomy" / "indicators.yaml")
-    indicator_ids = {
-        i.get("id")
-        for i in indicators_doc.get("indicators", [])
-        if isinstance(i, dict) and isinstance(i.get("id"), str)
-    }
+    indicator_ids: set[str] = set()
+    indicator_to_frame: dict[str, str] = {}
+    for i in indicators_doc.get("indicators", []):
+        if isinstance(i, dict) and isinstance(i.get("id"), str):
+            ind_id = i["id"]
+            indicator_ids.add(ind_id)
+            if isinstance(i.get("frame"), str):
+                indicator_to_frame[ind_id] = i["frame"]
 
     templates_doc = load_yaml(WORKSPACE_ROOT / "templates" / "comment_templates.yaml")
-    template_ids = {
-        t.get("id")
-        for t in templates_doc.get("templates", [])
-        if isinstance(t, dict) and isinstance(t.get("id"), str)
-    }
+    templates_raw = templates_doc.get("templates", [])
+    template_ids = {t.get("id") for t in templates_raw if isinstance(t, dict) and isinstance(t.get("id"), str)}
 
     evidence_ids: set[str] = set()
+    evidence_raw: list[dict] = []
     evidence_dir = WORKSPACE_ROOT / "evidence"
     for md_path in sorted(evidence_dir.glob("evidence.pattern.*.md")):
         try:
@@ -191,6 +196,16 @@ def build_validation_context() -> ValidationContext:
         ev_id = fm.get("id")
         if isinstance(ev_id, str):
             evidence_ids.add(ev_id)
+        evidence_raw.append(fm)
+
+    tags_doc = load_yaml(WORKSPACE_ROOT / "taxonomy" / "tags.yaml")
+    tag_ids = {
+        t.get("id")
+        for t in tags_doc.get("tags", [])
+        if isinstance(t, dict) and isinstance(t.get("id"), str)
+    }
+    # Also allow short form (without tag. prefix) for convenience
+    tag_names = {tid.replace("tag.", "") for tid in tag_ids if tid.startswith("tag.")}
 
     return ValidationContext(
         frames=set(filter(None, frame_ids)),
@@ -198,6 +213,10 @@ def build_validation_context() -> ValidationContext:
         templates=set(filter(None, template_ids)),
         evidence_patterns=evidence_ids,
         refs=set(filter(None, ref_ids)),
+        tags=set(filter(None, tag_ids)) | tag_names,
+        indicator_to_frame=indicator_to_frame,
+        templates_raw=templates_raw,
+        evidence_raw=evidence_raw,
     )
 
 
@@ -303,6 +322,286 @@ def check_traceability_matrix(ctx: ValidationContext) -> list[str]:
                 errors.append(
                     f"{csv_path.relative_to(WORKSPACE_ROOT)}:{row_num} unknown ref_ids: {unknown_refs}"
                 )
+
+    return errors
+
+
+_SEMVER_RE = re.compile(r"^\d+\.\d+\.\d+(-[\w.]+)?(\+[\w.]+)?$")
+
+
+def check_version_format(markdown_front_matters: list[tuple[Path, dict]]) -> list[str]:
+    """Ensure version fields follow semantic versioning format."""
+    errors: list[str] = []
+    for path, fm in markdown_front_matters:
+        version = fm.get("version")
+        if not isinstance(version, str):
+            continue
+        if not _SEMVER_RE.match(version):
+            errors.append(
+                f"{path.relative_to(WORKSPACE_ROOT)}: version '{version}' is not valid semver"
+            )
+    return errors
+
+
+def check_future_dates(markdown_front_matters: list[tuple[Path, dict]]) -> list[str]:
+    """Warn if any updated date is in the future (likely a typo)."""
+    errors: list[str] = []
+    today = date.today()
+    for path, fm in markdown_front_matters:
+        updated = fm.get("updated")
+        if not isinstance(updated, str):
+            continue
+        try:
+            updated_date = date.fromisoformat(updated)
+        except ValueError:
+            errors.append(f"{path.relative_to(WORKSPACE_ROOT)}: updated '{updated}' is not a valid ISO date")
+            continue
+        if updated_date > today:
+            errors.append(f"{path.relative_to(WORKSPACE_ROOT)}: updated '{updated}' is in the future")
+    return errors
+
+
+def check_tag_vocabulary(markdown_front_matters: list[tuple[Path, dict]], ctx: ValidationContext) -> list[str]:
+    """Ensure tags in front matter are from controlled vocabulary.
+
+    This check is informational for general documents but enforced for
+    evidence patterns and templates where consistency matters most.
+    """
+    errors: list[str] = []
+
+    # Extract base tag names (strip "tag." prefix if present)
+    known_tags = set()
+    for tag in ctx.tags:
+        known_tags.add(tag)
+        if tag.startswith("tag."):
+            known_tags.add(tag[4:])  # Also accept without prefix
+
+    for path, fm in markdown_front_matters:
+        tags = fm.get("tags")
+        if not isinstance(tags, list):
+            continue
+
+        # Only enforce for evidence patterns (where tag consistency is critical)
+        rel_path = str(path.relative_to(WORKSPACE_ROOT))
+        is_evidence = "evidence.pattern." in path.name
+
+        for tag in tags:
+            if not isinstance(tag, str):
+                continue
+            tag_lower = tag.lower().replace("-", "_")
+            # Check both original and normalized
+            if tag not in known_tags and tag_lower not in known_tags:
+                if is_evidence:
+                    errors.append(f"{rel_path}: unknown tag '{tag}' (evidence patterns require controlled vocabulary)")
+    return errors
+
+
+_PLACEHOLDER_RE = re.compile(r"\{(\w+)\}")
+
+
+def check_template_slot_consistency(ctx: ValidationContext) -> list[str]:
+    """Ensure declared slots match actual {placeholders} in template text."""
+    errors: list[str] = []
+    for tmpl in ctx.templates_raw:
+        if not isinstance(tmpl, dict):
+            continue
+        tid = tmpl.get("id", "<unknown>")
+        declared_slots = set(tmpl.get("slots") or [])
+        text = tmpl.get("text") or ""
+        used_slots = set(_PLACEHOLDER_RE.findall(text))
+
+        missing = used_slots - declared_slots
+        extra = declared_slots - used_slots
+
+        if missing:
+            errors.append(f"Template {tid}: placeholders used but not declared in slots: {sorted(missing)}")
+        if extra:
+            errors.append(f"Template {tid}: slots declared but not used in text: {sorted(extra)}")
+    return errors
+
+
+def check_indicator_frame_integrity(ctx: ValidationContext) -> list[str]:
+    """Ensure indicators reference valid frames."""
+    errors: list[str] = []
+    for ind_id, frame_id in ctx.indicator_to_frame.items():
+        if frame_id not in ctx.frames:
+            errors.append(f"Indicator {ind_id} references unknown frame: {frame_id}")
+    return errors
+
+
+def check_template_integrity(ctx: ValidationContext) -> list[str]:
+    """Ensure templates reference valid frames, indicators, and refs."""
+    errors: list[str] = []
+    for tmpl in ctx.templates_raw:
+        if not isinstance(tmpl, dict):
+            continue
+        tid = tmpl.get("id", "<unknown>")
+
+        frame = tmpl.get("frame")
+        if isinstance(frame, str) and frame not in ctx.frames:
+            errors.append(f"Template {tid} references unknown frame: {frame}")
+
+        indicators = tmpl.get("indicators") or []
+        for ind in indicators:
+            if isinstance(ind, str) and ind not in ctx.indicators:
+                errors.append(f"Template {tid} references unknown indicator: {ind}")
+
+        refs = tmpl.get("refs") or []
+        for ref in refs:
+            if isinstance(ref, str) and ref not in ctx.refs:
+                errors.append(f"Template {tid} references unknown ref: {ref}")
+
+        # Ensure templates have at least one indicator and one ref
+        if not indicators:
+            errors.append(f"Template {tid} has no indicators (traceability gap)")
+        if not refs:
+            errors.append(f"Template {tid} has no refs (citation gap)")
+    return errors
+
+
+def check_evidence_pattern_integrity(ctx: ValidationContext) -> list[str]:
+    """Ensure evidence patterns reference valid frames, indicators, and refs."""
+    errors: list[str] = []
+    for ev in ctx.evidence_raw:
+        if not isinstance(ev, dict):
+            continue
+        ev_id = ev.get("id", "<unknown>")
+
+        frame = ev.get("frame")
+        if isinstance(frame, str) and frame not in ctx.frames:
+            errors.append(f"Evidence pattern {ev_id} references unknown frame: {frame}")
+
+        indicators = ev.get("indicators") or []
+        for ind in indicators:
+            if isinstance(ind, str) and ind not in ctx.indicators:
+                errors.append(f"Evidence pattern {ev_id} references unknown indicator: {ind}")
+
+        refs = ev.get("refs") or []
+        for ref in refs:
+            if isinstance(ref, str) and ref not in ctx.refs:
+                errors.append(f"Evidence pattern {ev_id} references unknown ref: {ref}")
+    return errors
+
+
+_HEADING_RE = re.compile(r"^#+\s+(.+)$", re.MULTILINE)
+
+
+def slugify_heading(heading: str) -> str:
+    """Convert a Markdown heading to its anchor slug (GitHub style)."""
+    slug = heading.lower().strip()
+    slug = re.sub(r"[^\w\s-]", "", slug)
+    slug = re.sub(r"\s+", "-", slug)
+    return slug
+
+
+def check_anchor_fragments(markdown_front_matters: list[tuple[Path, dict]]) -> list[str]:
+    """Validate that #anchor links point to actual headings in target files."""
+    errors: list[str] = []
+
+    # Build heading cache for all markdown files
+    heading_cache: dict[Path, set[str]] = {}
+
+    def get_headings(path: Path) -> set[str]:
+        if path not in heading_cache:
+            try:
+                text = path.read_text(encoding="utf-8")
+            except Exception:
+                heading_cache[path] = set()
+                return heading_cache[path]
+            headings = set()
+            for match in _HEADING_RE.finditer(text):
+                headings.add(slugify_heading(match.group(1)))
+            heading_cache[path] = headings
+        return heading_cache[path]
+
+    for md_path, _fm in markdown_front_matters:
+        try:
+            text = md_path.read_text(encoding="utf-8")
+        except Exception:
+            continue
+
+        for match in _MARKDOWN_LINK_RE.finditer(text):
+            raw = match.group(1).strip()
+            if " " in raw and not raw.startswith("<"):
+                raw = raw.split(" ", 1)[0].strip()
+            raw = raw.strip("<>")
+
+            if not raw:
+                continue
+
+            lowered = raw.lower()
+            if lowered.startswith(("http://", "https://", "mailto:")):
+                continue
+
+            if "#" not in raw:
+                continue
+
+            path_part, anchor = raw.split("#", 1)
+            if not anchor:
+                continue
+
+            # Determine target file
+            if path_part:
+                target_path = (md_path.parent / unquote(path_part)).resolve()
+            else:
+                # Same-file anchor
+                target_path = md_path
+
+            if not target_path.exists() or not target_path.suffix == ".md":
+                continue
+
+            headings = get_headings(target_path)
+            anchor_lower = anchor.lower()
+
+            if anchor_lower not in headings:
+                rel_from_root = md_path.relative_to(WORKSPACE_ROOT)
+                errors.append(f"{rel_from_root}: anchor #{anchor} not found in {target_path.name}")
+
+    return errors
+
+
+_GENERATED_MARKER = "AUTO-GENERATED"
+
+
+def check_generated_file_markers(ctx: ValidationContext) -> list[str]:
+    """Warn if generated files appear to have been hand-edited (missing marker)."""
+    errors: list[str] = []
+
+    generated_files = [
+        WORKSPACE_ROOT / "references" / "links.md",
+    ]
+
+    for path in generated_files:
+        if not path.exists():
+            continue
+        try:
+            text = path.read_text(encoding="utf-8")
+        except Exception:
+            continue
+
+        if _GENERATED_MARKER not in text:
+            errors.append(
+                f"{path.relative_to(WORKSPACE_ROOT)} is missing '{_GENERATED_MARKER}' marker. "
+                "Was it hand-edited? Regenerate with the appropriate script."
+            )
+    return errors
+
+
+def check_orphan_indicators(ctx: ValidationContext) -> list[str]:
+    """Warn about indicators not referenced by any template (coverage gap)."""
+    errors: list[str] = []
+
+    referenced: set[str] = set()
+    for tmpl in ctx.templates_raw:
+        if not isinstance(tmpl, dict):
+            continue
+        for ind in tmpl.get("indicators") or []:
+            if isinstance(ind, str):
+                referenced.add(ind)
+
+    orphans = ctx.indicators - referenced
+    for orphan in sorted(orphans):
+        errors.append(f"Indicator {orphan} is not referenced by any template")
 
     return errors
 
@@ -415,6 +714,66 @@ def main() -> int:
         if matrix_errors:
             failures.append("Traceability matrix integrity checks failed:")
             failures.extend([f"  - {m}" for m in matrix_errors])
+
+        # Version format validation
+        version_errors = check_version_format(markdown_front_matters)
+        if version_errors:
+            failures.append("Invalid version format (expected semver):")
+            failures.extend([f"  - {m}" for m in version_errors])
+
+        # Future date detection
+        date_errors = check_future_dates(markdown_front_matters)
+        if date_errors:
+            failures.append("Date validation errors:")
+            failures.extend([f"  - {m}" for m in date_errors])
+
+        # Tag vocabulary enforcement
+        tag_errors = check_tag_vocabulary(markdown_front_matters, ctx)
+        if tag_errors:
+            failures.append("Unknown tags (not in taxonomy/tags.yaml):")
+            failures.extend([f"  - {m}" for m in tag_errors])
+
+        # Template slot consistency
+        slot_errors = check_template_slot_consistency(ctx)
+        if slot_errors:
+            failures.append("Template slot/placeholder mismatches:")
+            failures.extend([f"  - {m}" for m in slot_errors])
+
+        # Indicator→frame integrity
+        ind_frame_errors = check_indicator_frame_integrity(ctx)
+        if ind_frame_errors:
+            failures.append("Indicator→frame integrity issues:")
+            failures.extend([f"  - {m}" for m in ind_frame_errors])
+
+        # Template integrity (refs, frames, indicators)
+        tmpl_errors = check_template_integrity(ctx)
+        if tmpl_errors:
+            failures.append("Template integrity issues:")
+            failures.extend([f"  - {m}" for m in tmpl_errors])
+
+        # Evidence pattern integrity
+        ev_errors = check_evidence_pattern_integrity(ctx)
+        if ev_errors:
+            failures.append("Evidence pattern integrity issues:")
+            failures.extend([f"  - {m}" for m in ev_errors])
+
+        # Anchor fragment validation
+        anchor_errors = check_anchor_fragments(markdown_front_matters)
+        if anchor_errors:
+            failures.append("Broken anchor links (heading not found):")
+            failures.extend([f"  - {m}" for m in anchor_errors])
+
+        # Generated file marker check
+        gen_errors = check_generated_file_markers(ctx)
+        if gen_errors:
+            failures.append("Generated file issues:")
+            failures.extend([f"  - {m}" for m in gen_errors])
+
+        # Orphan indicator detection
+        orphan_errors = check_orphan_indicators(ctx)
+        if orphan_errors:
+            failures.append("Orphan indicators (not referenced by any template):")
+            failures.extend([f"  - {m}" for m in orphan_errors])
 
     if failures:
         print("VALIDATION FAILED\n")
