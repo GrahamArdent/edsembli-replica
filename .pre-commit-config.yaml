@@ -53,3 +53,12 @@ repos:
         files: \.(yaml|md)$
         pass_filenames: false
         description: "Reminds to update docs/CHANGELOG.md (warning only)"
+
+      - id: discussion-reminder
+        name: Discussion.md Update Reminder
+        entry: python scripts/remind_discussion.py
+        language: python
+        pass_filenames: false
+        always_run: true
+        verbose: true
+        description: "Reminds to document design decisions in discussion.md"
