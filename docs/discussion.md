@@ -313,3 +313,151 @@ All recommendations from Section 8 have been implemented.
 - Pre-commit configured: ✅
 
 ```
+
+---
+
+## 10) Deep Dive and Production Hardening (2026-01-11)
+
+### 10.1 Critical Gaps Identified
+
+**Safety Gap: PII Detection**
+- **Issue**: Strict No-PII policy existed but had no automated enforcement
+- **Risk**: Contributors could accidentally commit OEN numbers, phone numbers, or emails
+- **Solution**: Implemented `check_pii_safety()` in validate.py with regex patterns for:
+  - Ontario Education Numbers (9 digits)
+  - Phone numbers (various formats)
+  - Email addresses
+
+**Localization Gap: English-Only Schema**
+- **Issue**: Ontario requires bilingual (French) support but schemas only supported English
+- **Risk**: Retrofitting localization later would be painful
+- **Solution**: Updated schemas to support `_fr` suffix fields:
+  - `text_fr` in comment templates
+  - `name_fr`, `description_fr` in frames, indicators, tags
+
+**Discovery Gap: No User Interface**
+- **Issue**: Framework only accessible through raw YAML/MD files
+- **Risk**: Teachers cannot easily browse or search templates
+- **Solution**: Implemented MkDocs with Material theme for searchable documentation site
+
+**Test Coverage Gap: Minimal Testing**
+- **Issue**: Only 3 unit tests existed (regex patterns only)
+- **Risk**: No regression protection for refactoring validate.py, lint.py, or coverage.py
+- **Solution**: Expanded to 16 tests covering:
+  - PII detection (5 tests)
+  - Validation behavior (4 tests)
+  - Lint and coverage functionality (4 tests)
+  - Regex patterns (3 tests)
+
+**CI/CD Gap: Incomplete Pipeline**
+- **Issue**: GitHub Actions only ran validation scripts, not code quality checks
+- **Risk**: Code style drift, untested code merging to main
+- **Solution**: Enhanced CI pipeline to run:
+  - Ruff linting and formatting
+  - Pytest test suite
+  - MkDocs documentation build
+  - All validation scripts
+
+**Slot Guidance Gap: No Controlled Vocabulary**
+- **Issue**: Templates use placeholders like `{evidence}`, `{strength}` with no guidance
+- **Risk**: Inconsistent slot usage, unclear expectations for teachers
+- **Solution**: Created `taxonomy/slot_guidance.yaml` with:
+  - 12 slot type definitions
+  - Examples and validation rules
+  - Guidance for evidence quality, goal specificity
+
+### 10.2 Tooling Recommendations Research
+
+**Evaluated Tools:**
+- **Ruff** (adopted): Replaced need for flake8, isort, black - 10x faster
+- **Typer** (installed): Future CLI tool building (planned)
+- **MkDocs Material** (adopted): Professional documentation site
+- **Pytest** (expanded): Test framework with 16 tests now passing
+- **Rich** (installed): Future CLI output enhancement
+
+**Deferred Tools:**
+- **DuckDB** (in requirements, not yet used): Future query interface over YAML/Parquet
+- **SQLAlchemy** (in requirements, not yet used): Future relational layer
+
+### 10.3 Files Created
+
+**Testing Infrastructure:**
+- `tests/test_lint.py` - Lint functionality tests
+- `tests/test_coverage.py` - Coverage reporting tests
+- `tests/test_pii_safety.py` - PII detection tests (5 tests)
+- `tests/test_validation_behavior.py` - Validation logic tests (4 tests)
+
+**Documentation Infrastructure:**
+- `mkdocs.yml` - MkDocs configuration with Material theme
+- `scripts/stage_docs.py` - Documentation staging script
+- `site_docs/` - Temporary staging directory (gitignored)
+
+**Taxonomy Expansion:**
+- `taxonomy/slot_guidance.yaml` - Controlled vocabulary for template placeholders
+
+**Configuration:**
+- `pyproject.toml` - Ruff and Pytest configuration
+- Updated `.github/workflows/ci.yml` - Enhanced CI pipeline
+- Updated `.gitignore` - Added site/, .pytest_cache/, .ruff_cache/
+
+**Audit Reports:**
+- `audits/audit.2026-01-11.post-optimization.md` - Post-implementation audit
+
+### 10.4 Schema Enhancements
+
+Updated 5 schemas for localization support:
+- `comment_templates.schema.json`: Added `text_fr` field
+- `frames.schema.json`: Added `name_fr`, `description_fr` fields
+- `indicators.schema.json`: Added `name_fr`, `description_fr` fields
+- `tags.schema.json`: Added `name_fr`, `description_fr` fields
+- `document.frontmatter.schema.json`: Added `audit` type support
+
+### 10.5 Quality Metrics (Post-Implementation)
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Tests | 3 | 16 |
+| Test Coverage | Regex only | Full behavior |
+| CI Steps | 3 | 8 |
+| Localization | ❌ | ✅ Ready |
+| PII Detection | ❌ Manual only | ✅ Automated |
+| Documentation Site | ❌ | ✅ MkDocs |
+| Code Linting | ❌ Manual | ✅ Automated |
+| Slot Guidance | ❌ | ✅ 12 slots defined |
+
+### 10.6 Remaining Recommendations
+
+**Query Interface (Medium Priority)**
+- Use DuckDB to enable SQL queries over templates
+- Example: "Show all templates for frame.belonging in key_learning section"
+- CLI tool: `edsembli search --frame belonging --section key_learning`
+
+**Evidence→Template Linkage (Medium Priority)**
+- Add `evidence_patterns` field to comment template schema
+- Enable "which templates go with which evidence patterns" queries
+
+**French Content Population (Low Priority)**
+- Begin translating content to populate `*_fr` fields
+- Coordinate with French Immersion educators
+
+### 10.7 Discussion File Automation
+
+**Current Approach:** Manual updates after significant work sessions
+
+**Automation Challenges:**
+- AI conversation transcripts not directly accessible for auto-append
+- Would require external tooling to capture conversation context
+- Risk of noise vs. signal (verbatim chat vs. design decisions)
+
+**Recommended Hybrid Approach:**
+1. **Manual Documentation** (current): After each session, append key decisions/changes
+2. **Git Commit Messages**: Use detailed commit messages as partial log
+3. **ADRs for Major Decisions**: Continue using ADRs in `decisions/` folder
+4. **Audit Reports**: Use `audits/` folder for milestone reviews
+
+**Potential Future Automation:**
+- Pre-commit hook that prompts: "Update discussion.md? (y/n)"
+- Template in `.github/` for session notes
+- Git alias: `git discuss` that opens discussion.md in editor
+
+**Decision:** Keep discussion.md as a curated design journal, not verbatim transcript. Update manually after each session with key outcomes. This session (Section 10) now documented.
