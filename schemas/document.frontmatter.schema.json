@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schemas/document.frontmatter.schema.json",
+  "title": "Document Front Matter",
+  "type": "object",
+  "required": ["id", "type", "title", "version", "status", "tags", "refs", "updated"],
+  "properties": {
+    "id": {"type": "string", "pattern": "^(doc|process|evidence\\.pattern)\\.[a-z0-9_\\.]+$"},
+    "type": {"type": "string", "enum": ["document", "process", "evidence_pattern"]},
+    "title": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "enum": ["draft", "stable", "deprecated"]},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "refs": {"type": "array", "items": {"type": "string", "pattern": "^ref\\.[a-z0-9_\\.]+$"}},
+    "updated": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$"}
+  },
+  "additionalProperties": true
+}

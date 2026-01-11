@@ -1,0 +1,107 @@
+# Roles Taxonomy
+# Canonical definitions of stakeholder roles
+# ID: taxonomy.roles
+# Updated: 2026-01-11
+
+roles:
+  # Classroom roles
+  - id: role.teacher
+    name: Classroom Teacher
+    description: Ontario Certified Teacher responsible for instruction and assessment
+    responsibilities:
+      - Deliver curriculum through play-based inquiry
+      - Document pedagogical observations
+      - Write Communication of Learning narratives
+      - Collaborate with ECE partner
+    refs:
+      - ref.ontario.kindergarten.program.2016
+
+  - id: role.ece
+    name: Early Childhood Educator
+    description: Registered ECE working in kindergarten team
+    responsibilities:
+      - Co-plan and co-teach with classroom teacher
+      - Contribute to pedagogical documentation
+      - Support play-based learning environments
+    refs:
+      - ref.ontario.kindergarten.program.2016
+
+  - id: role.principal
+    name: School Principal
+    description: School administrator responsible for oversight
+    responsibilities:
+      - Review and approve report cards
+      - Ensure compliance with reporting policies
+      - Support professional learning
+    refs:
+      - ref.ontario.growing.success.2010
+
+  - id: role.vice_principal
+    name: Vice-Principal
+    description: School administrator supporting principal duties
+    responsibilities:
+      - Assist with report card review
+      - Support teacher professional development
+
+  # Board roles
+  - id: role.superintendent
+    name: Superintendent
+    description: Board-level administrator overseeing schools
+    responsibilities:
+      - Set board-wide assessment and reporting expectations
+      - Monitor compliance with provincial policy
+
+  - id: role.curriculum_consultant
+    name: Curriculum Consultant
+    description: Board staff supporting curriculum implementation
+    responsibilities:
+      - Provide professional learning on assessment
+      - Support comment bank development
+      - Advise on CoL best practices
+
+  - id: role.sis_admin
+    name: SIS Administrator
+    description: Technical staff managing Student Information System
+    responsibilities:
+      - Configure Edsembli/SIS comment banks
+      - Manage user permissions and access
+      - Support report card generation workflows
+    refs:
+      - ref.edsembli.documentation
+
+  # External roles
+  - id: role.parent
+    name: Parent/Guardian
+    description: Primary audience for Communication of Learning
+    responsibilities:
+      - Review and understand CoL narratives
+      - Support learning at home
+      - Engage in parent-teacher communication
+    refs:
+      - ref.ontario.growing.success.2010
+
+  - id: role.student
+    name: Student
+    description: Kindergarten learner (JK/SK)
+    responsibilities:
+      - Participate in learning through play
+      - Engage in self-reflection (developmentally appropriate)
+    refs:
+      - ref.ontario.kindergarten.program.2016
+
+  # System roles (for tooling)
+  - id: role.reviewer
+    name: Content Reviewer
+    description: Person reviewing templates and content for quality
+    responsibilities:
+      - Verify PII-free content
+      - Check alignment to curriculum
+      - Approve templates for stable status
+
+  - id: role.author
+    name: Content Author
+    description: Person creating templates and documentation
+    responsibilities:
+      - Write comment templates
+      - Document evidence patterns
+      - Follow style guide conventions

@@ -1,0 +1,187 @@
+# Bibliography and References
+# Canonical source citations for the framework
+# ID: ref.bibliography
+# Updated: 2026-01-11
+
+references:
+  # Ontario Ministry Documents
+  - id: ref.ontario.kindergarten.program.2016
+    type: government_document
+    title: "The Kindergarten Program"
+    author: Ontario Ministry of Education
+    year: 2016
+    url: https://www.ontario.ca/document/kindergarten-program-2016
+    notes: >
+      Primary curriculum document defining the four frames of learning,
+      pedagogical documentation, and play-based inquiry approach.
+    tags:
+      - curriculum
+      - kindergarten
+      - four-frames
+
+  - id: ref.ontario.growing.success.2010
+    type: government_document
+    title: "Growing Success: Assessment, Evaluation, and Reporting in Ontario Schools"
+    author: Ontario Ministry of Education
+    year: 2010
+    url: https://www.edu.gov.on.ca/eng/policyfunding/growsuccess.pdf
+    notes: >
+      Provincial policy document governing assessment and reporting standards.
+      Defines requirements for fair, transparent, and equitable reporting.
+    tags:
+      - policy
+      - assessment
+      - reporting
+
+  - id: ref.ontario.bill98.2023
+    type: legislation
+    title: "Better Schools and Student Outcomes Act, 2023 (Bill 98)"
+    author: Legislative Assembly of Ontario
+    year: 2023
+    notes: >
+      Provincial legislation emphasizing student achievement prioritization
+      and strengthening parental voices in education.
+    tags:
+      - legislation
+      - policy
+
+  # Vendor Documentation
+  - id: ref.edsembli.documentation
+    type: vendor_documentation
+    title: "Edsembli SIS Documentation"
+    author: Sparkrock Edsembli Inc.
+    year: 2026
+    notes: >
+      Technical documentation for the Student Information System including
+      Markbook, Communication of Learning modules, and comment banks.
+    tags:
+      - sis
+      - technical
+      - edsembli
+
+  - id: ref.edsembli.sparkrock.merger.2026
+    type: corporate
+    title: "Sparkrock and Assembly Merger Announcement"
+    author: Sparkrock Edsembli Inc.
+    year: 2026
+    notes: >
+      Merger creating unified ERP and SIS ecosystem serving ~2,000 schools
+      across Canada with $14B in annual finances managed.
+    tags:
+      - corporate
+      - merger
+
+  # Catholic Education Resources
+  - id: ref.acbo.fully.alive
+    type: curriculum
+    title: "Fully Alive Program"
+    author: Assembly of Catholic Bishops of Ontario
+    year: null
+    notes: >
+      Health and physical education curriculum component created in
+      consultation with Catholic bishops for use in Catholic schools.
+    tags:
+      - catholic
+      - curriculum
+      - health
+
+  - id: ref.ocsta.kindergarten.guide
+    type: guidance
+    title: "Ontario Catholic School Trustees' Association Kindergarten Guidance"
+    author: OCSTA
+    year: null
+    notes: >
+      Guidance for implementing kindergarten programming in Catholic school
+      contexts with Christ-centered development focus.
+    tags:
+      - catholic
+      - kindergarten
+      - guidance
+
+  # Technical Standards
+  - id: ref.onsis.reporting
+    type: technical_standard
+    title: "Ontario Student Information System (ONSIS) Reporting Standards"
+    author: Ontario Ministry of Education
+    year: null
+    notes: >
+      Provincial database standards for student data collection used for
+      funding and accountability purposes.
+    tags:
+      - technical
+      - data
+      - reporting
+
+  - id: ref.phipa.privacy
+    type: legislation
+    title: "Personal Health Information Protection Act (PHIPA)"
+    author: Legislative Assembly of Ontario
+    year: 2004
+    notes: >
+      Privacy legislation governing handling of personal health information
+      in Ontario, applicable to student records.
+    tags:
+      - privacy
+      - legislation
+
+  - id: ref.mfippa.privacy
+    type: legislation
+    title: "Municipal Freedom of Information and Protection of Privacy Act (MFIPPA)"
+    author: Legislative Assembly of Ontario
+    year: 1990
+    notes: >
+      Privacy legislation governing municipal institutions including school
+      boards regarding collection and use of personal information.
+    tags:
+      - privacy
+      - legislation
+
+  # Board Implementation Examples
+  - id: ref.ncdsb.implementation
+    type: board_documentation
+    title: "Niagara Catholic DSB Edsembli Implementation"
+    author: Niagara Catholic District School Board
+    year: null
+    notes: >
+      Example implementation including Markbook Guide, K Communication of
+      Learning resources, and Catholic Virtual Learning Environment (NCVLE).
+    tags:
+      - implementation
+      - ncdsb
+      - example
+
+  - id: ref.pvnccdsb.implementation
+    type: board_documentation
+    title: "PVNCCDSB Digital Reporting Implementation"
+    author: Peterborough Victoria Northumberland and Clarington CDSB
+    year: null
+    notes: >
+      Example of digital delivery emphasis with Parent Portal configuration
+      and e-Learning report card management.
+    tags:
+      - implementation
+      - pvnccdsb
+      - example
+
+  - id: ref.hscdsb.implementation
+    type: board_documentation
+    title: "Huron-Superior CDSB Assessment Guidelines"
+    author: Huron-Superior Catholic District School Board
+    year: null
+    notes: >
+      Procedural guidelines for instruction, assessment, and evaluation
+      integrated with Fully Alive program.
+    tags:
+      - implementation
+      - hscdsb
+      - example
+
+# Metadata
+_meta:
+  version: 0.1.0
+  status: draft
+  updated: 2026-01-11
+  source_document: sources/Finding Assembly Report Card Software Information.md
+  notes: >
+    Initial bibliography extracted from source research document.
+    Citation numbers in source correspond to original research footnotes.

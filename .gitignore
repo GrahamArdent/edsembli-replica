@@ -1,0 +1,91 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+*.env
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# DuckDB databases (local only)
+*.duckdb
+*.duckdb.wal
+
+# Parquet files (generated locally)
+*.parquet
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Secrets and credentials (NEVER commit)
+secrets/
+credentials/
+*.pem
+*.key
+
+# NOTE: The following are tracked and should NOT be ignored:
+# - taxonomy/*.yaml (canonical content)
+# - references/*.yaml (bibliography)
+# - examples/*.md (sample templates)
+# - decisions/*.md (ADRs)
+# - sources/*.md (research documents)

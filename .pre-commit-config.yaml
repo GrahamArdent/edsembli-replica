@@ -1,0 +1,40 @@
+# Pre-commit configuration
+# Design for automated local enforcement
+# Validates content before it can be committed
+
+repos:
+  # Standard fixers
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  # Local repo hooks (Custom framework validation)
+  - repo: local
+    hooks:
+      - id: validate-canonical
+        name: Validate Canonical Data (Schema)
+        entry: python scripts/validate.py
+        language: system
+        files: \.(yaml|md)$
+        pass_filenames: false
+        description: "Runs JSON Schema validation on all canonical files"
+
+      - id: lint-canonical
+        name: Lint Canonical Data (Refs & Slots)
+        entry: python scripts/lint.py
+        language: system
+        files: \.(yaml|md)$
+        pass_filenames: false
+        description: "Checks reference integrity and placeholder consistency"
+
+      - id: check-coverage
+        name: Check Indicator Coverage
+        entry: python scripts/coverage.py
+        language: system
+        files: \.(yaml|md)$
+        pass_filenames: false
+        description: "Ensures all indicators have template coverage"

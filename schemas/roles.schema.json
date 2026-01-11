@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schemas/roles.schema.json",
+  "title": "Roles Taxonomy",
+  "type": "object",
+  "required": ["roles"],
+  "properties": {
+    "roles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "description"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^role\\.[a-z0-9_]+$"},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "responsibilities": {
+            "type": "array",
+            "items": {"type": "string"}
+          },
+          "refs": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^ref\\.[a-z0-9_\\.]+$"}
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schemas/indicators.schema.json",
+  "title": "Indicators Taxonomy",
+  "type": "object",
+  "required": ["indicators"],
+  "properties": {
+    "indicators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "frame", "description"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^indicator\\.[a-z0-9_\\.]+$"},
+          "frame": {"type": "string", "pattern": "^frame\\.[a-z0-9_\\.]+$"},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "evidence_signals": {"type": "array", "items": {"type": "string"}},
+          "refs": {"type": "array", "items": {"type": "string", "pattern": "^ref\\.[a-z0-9_\\.]+$"}}
+        },
+        "additionalProperties": true
+      }
+    },
+    "_meta": {"type": "object"}
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,95 @@
+# Controlled Vocabulary: Tags
+# Canonical tag definitions for consistent categorization
+# ID: taxonomy.tags
+# Updated: 2026-01-11
+
+tags:
+  # Document types
+  - id: tag.curriculum
+    name: Curriculum
+    description: Related to Ontario curriculum documents
+    usage: Apply to content directly referencing curriculum expectations
+
+  - id: tag.policy
+    name: Policy
+    description: Provincial or board policy documents
+    usage: Apply to governance and compliance content
+
+  - id: tag.assessment
+    name: Assessment
+    description: Related to assessment practices and reporting
+    usage: Apply to evaluation, documentation, and reporting content
+
+  - id: tag.reporting
+    name: Reporting
+    description: Communication of Learning and report cards
+    usage: Apply to CoL templates, comment banks, reporting workflows
+
+  # Frame tags (mirror frame IDs for filtering)
+  - id: tag.belonging
+    name: Belonging and Contributing
+    description: Content related to the Belonging frame
+    usage: Apply to belonging-focused templates and indicators
+
+  - id: tag.self_regulation
+    name: Self-Regulation and Well-Being
+    description: Content related to the Self-Regulation frame
+    usage: Apply to self-regulation-focused templates and indicators
+
+  - id: tag.literacy_math
+    name: Demonstrating Literacy and Mathematics Behaviours
+    description: Content related to the Literacy/Math frame
+    usage: Apply to literacy and math templates and indicators
+
+  - id: tag.problem_solving
+    name: Problem Solving and Innovating
+    description: Content related to the Problem Solving frame
+    usage: Apply to problem-solving templates and indicators
+
+  # Content categories
+  - id: tag.template
+    name: Template
+    description: Comment or evidence template content
+    usage: Apply to reusable template artifacts
+
+  - id: tag.example
+    name: Example
+    description: Illustrative, non-canonical content
+    usage: Apply to sample/example files
+
+  - id: tag.governance
+    name: Governance
+    description: Project governance and process documentation
+    usage: Apply to README, CONTRIBUTING, ADRs, etc.
+
+  - id: tag.technical
+    name: Technical
+    description: Technical specifications and tooling
+    usage: Apply to schemas, scripts, infrastructure docs
+
+  - id: tag.vendor
+    name: Vendor
+    description: Third-party tool or system documentation
+    usage: Apply to Edsembli, ONSIS, and other vendor content
+
+  # Status/workflow tags
+  - id: tag.draft
+    name: Draft
+    description: Content under development
+    usage: Apply to incomplete or review-pending content
+
+  - id: tag.stable
+    name: Stable
+    description: Content approved for use
+    usage: Apply to reviewed and finalized content
+
+  - id: tag.deprecated
+    name: Deprecated
+    description: Content no longer recommended
+    usage: Apply to superseded content (retain for history)
+
+  # Catholic education
+  - id: tag.catholic
+    name: Catholic Education
+    description: Ontario Catholic school specific content
+    usage: Apply to OCSTA, Fully Alive, and Catholic-specific guidance

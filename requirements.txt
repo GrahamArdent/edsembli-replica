@@ -1,0 +1,25 @@
+# Python dependencies for validation/indexing tooling (design repo).
+# Start minimal; add packages when you actually build the tooling.
+
+# --- Core schema + parsing ---
+pydantic>=2.6
+ruamel.yaml>=0.18
+markdown-it-py>=3.0
+
+# --- Data + traceability matrix ---
+pandas>=2.1
+pyarrow>=14.0
+duckdb>=0.10
+
+# --- Validation + testing ---
+jsonschema>=4.21
+pytest>=8.0
+
+# --- Dev workflow (optional but recommended) ---
+pre-commit>=3.6
+
+# --- Optional graph analysis (only if you build explicit relationship graphs) ---
+networkx>=3.2
+
+# --- Optional relational layer (only if you add a SQLite schema beyond DuckDB) ---
+sqlalchemy>=2.0
