@@ -35,21 +35,21 @@ updated: 2026-01-11
 
 Proposed layout (paths are conceptual; keep inside your repo):
 
-- `framework.md`  
+- `docs/framework.md`
   - Narrative reference (what the framework *is*, key concepts, constraints, citations).
-- `infrastructure.md` *(this file)*  
+- `docs/infrastructure.md` *(this file)*
   - How the framework is made functional (schemas, tooling, workflows, governance).
-- `index.md` *(recommended canonical index landing page)*  
+- `index.md` *(recommended canonical index landing page)*
   - Human-friendly directory of all canonical artifacts and their purpose.
-- `discussion.md`
+- `docs/discussion.md`
   - Captures review findings, decisions, and rationale for future refactors.
-- `ROADMAP.md`
+- `docs/ROADMAP.md`
   - Phased plan for moving from design artifacts to validation tooling.
-- `README.md`, `CHANGELOG.md`, `CONTRIBUTING.md`
+- `README.md`, `docs/CHANGELOG.md`, `docs/CONTRIBUTING.md`
   - Project overview, versioned changes, and contribution process.
-- `requirements.md`
+- `docs/requirements.md`
   - Functional requirements for tooling/workflow (distinct from `requirements.txt`).
-- `PRIVACY.md`
+- `docs/PRIVACY.md`
   - Operational checklist to enforce the no-PII boundary.
 - `guidance/`
   - `guidance/comment-style.md` (comment tone/structure guidance)
@@ -70,6 +70,7 @@ Proposed layout (paths are conceptual; keep inside your repo):
   - `scripts/README.md` (how to run local checks)
   - `scripts/validate.py` (schema + front matter validation)
   - `scripts/lint.py` (reference and placeholder linting)
+  - `scripts/generate_matrix.py` (traceability matrix generator)
 - `taxonomy/`
   - `taxonomy/frames.yaml` (Ontario K four frames)
   - `taxonomy/indicators.yaml` (expanded indicator taxonomy)
@@ -278,14 +279,14 @@ Schema should allow arrays and versioning.
 
 You’ll likely want **three complementary representations**:
 
-1) **File system (Git) as source of truth**  
+1) **File system (Git) as source of truth**
    - Markdown + YAML = canonical, reviewable, versioned.
 
-2) **Vector index for semantic retrieval**  
+2) **Vector index for semantic retrieval**
    - Chunk markdown sections + embed + store metadata (ids/tags/refs).
    - Used for “find relevant sections/templates” queries.
 
-3) **Graph or relational layer for explicit links**  
+3) **Graph or relational layer for explicit links**
    - Graph: entity relationships, citations, traceability edges.
    - Relational: matrices, coverage queries, reports.
 
@@ -350,9 +351,9 @@ A common split:
 - Strengths: broad ecosystem, many integrations.
 - Tradeoff: can get complex/implicit; LangGraph helps impose structure.
 
-**Recommendation:**  
-- Use **LangGraph** to define workflows (state + tools).  
-- Use **LlamaIndex** (optional) for indexing/retrieval primitives if it speeds you up.  
+**Recommendation:**
+- Use **LangGraph** to define workflows (state + tools).
+- Use **LlamaIndex** (optional) for indexing/retrieval primitives if it speeds you up.
 - Keep business logic in plain Python modules so you can swap frameworks.
 
 ### 5.5 “Matrix tooling”

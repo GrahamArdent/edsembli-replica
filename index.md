@@ -17,16 +17,16 @@ Last updated: 2026-01-11
 
 ## Explanation (why it exists)
 
-- [Framework](framework.md)
+- [Framework](docs/framework.md)
 	- The conceptual framework and decisions (intended to be the narrative “what/why”).
 
 ## Reference (contracts and canonical definitions)
 
-- [Infrastructure](infrastructure.md)
+- [Infrastructure](docs/infrastructure.md)
 	- How the framework is made functional (file layout, conventions, schemas, tooling, governance).
-- [Glossary](glossary.md)
+- [Glossary](docs/glossary.md)
 	- Canonical definitions and controlled vocabulary (Frame, Indicator, Evidence Pattern, etc.).
-- [Functional Requirements](requirements.md)
+- [Functional Requirements](docs/requirements.md)
 	- What the tooling/workflow must do (distinct from Python `requirements.txt`).
 
 ## Taxonomy & Sources of Truth
@@ -67,7 +67,7 @@ Last updated: 2026-01-11
 ## Datasets (planned/derived)
 
 - [Traceability Matrix](datasets/traceability/README.md)
-	- Coverage and audit datasets (planned).
+	- Coverage and audit datasets (generated + planned extensions).
 
 ## Validation & Automation
 
@@ -75,19 +75,21 @@ Last updated: 2026-01-11
 	- JSON Schema contracts for canonical artifacts (10 schemas).
 - [Validation scripts](scripts/README.md)
 	- Local validation and linting.
-- [Testing and validation](TESTING.md)
+- [Testing and validation](docs/TESTING.md)
 	- What checks exist (local + CI) and what “passing” means.
 
 ## Guidance & Safety
 
-- [Privacy checklist](PRIVACY.md)
+- [Privacy checklist](docs/PRIVACY.md)
 	- No-PII rules and review checklist.
-- [Security policy](SECURITY.md)
+- [Security policy](docs/SECURITY.md)
 	- How to report issues; reinforces the no-PII boundary.
 - [Comment style guide](guidance/comment-style.md)
 	- Tone/structure constraints for CoL narratives.
 - [Board customization guide](guidance/board-customization.md)
 	- How boards can adapt templates locally.
+- [Override and customization policy](guidance/override-policy.md)
+	- Explicit boundaries for local adaptations vs canonical content.
 
 ## Examples (Illustrative Only)
 
@@ -100,7 +102,7 @@ Last updated: 2026-01-11
 > Canonical content now lives in `evidence/` and `templates/`.
 
 > Note: `examples/` is illustrative (structure-focused) and contains no PII.
-> Canonical libraries, when created, should live under `evidence/` and `templates/` (or the canonical locations defined in `infrastructure.md`).
+> Canonical libraries, when created, should live under `evidence/` and `templates/` (or the canonical locations defined in `docs/infrastructure.md`).
 
 ## Sources (reference inputs, not canonical)
 
@@ -109,8 +111,7 @@ Last updated: 2026-01-11
 
 ## Planned artifacts (not yet created)
 
-- Traceability matrix data: `datasets/traceability/matrix.parquet`
-- Matrix generation script: `scripts/generate_matrix.py`
+- Traceability matrix extensions: additional derived views (e.g., per-frame exports)
 
 ## Conventions
 
@@ -120,11 +121,11 @@ Last updated: 2026-01-11
 ## Project files
 
 - [README](README.md)
-- [Discussion notes](discussion.md)
-- [Roadmap](ROADMAP.md)
-- [Changelog](CHANGELOG.md)
-- [Contributing Guide](CONTRIBUTING.md)
-- [Release and versioning](RELEASE.md)
+- [Discussion notes](docs/discussion.md)
+- [Roadmap](docs/ROADMAP.md)
+- [Changelog](docs/CHANGELOG.md)
+- [Contributing Guide](docs/CONTRIBUTING.md)
+- [Release and versioning](docs/RELEASE.md)
 - [Python dependencies](requirements.txt)
 
 ## Architecture Decision Records (ADRs)

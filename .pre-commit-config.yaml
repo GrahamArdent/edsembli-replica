@@ -18,7 +18,10 @@ repos:
       - id: validate-canonical
         name: Validate Canonical Data (Schema)
         entry: python scripts/validate.py
-        language: system
+        language: python
+        additional_dependencies:
+          - ruamel.yaml>=0.18
+          - jsonschema>=4.21
         files: \.(yaml|md)$
         pass_filenames: false
         description: "Runs JSON Schema validation on all canonical files"
@@ -26,7 +29,9 @@ repos:
       - id: lint-canonical
         name: Lint Canonical Data (Refs & Slots)
         entry: python scripts/lint.py
-        language: system
+        language: python
+        additional_dependencies:
+          - ruamel.yaml>=0.18
         files: \.(yaml|md)$
         pass_filenames: false
         description: "Checks reference integrity and placeholder consistency"
@@ -34,15 +39,17 @@ repos:
       - id: check-coverage
         name: Check Indicator Coverage
         entry: python scripts/coverage.py
-        language: system
+        language: python
+        additional_dependencies:
+          - ruamel.yaml>=0.18
         files: \.(yaml|md)$
         pass_filenames: false
         description: "Ensures all indicators have template coverage"
 
       - id: check-changelog
         name: Check CHANGELOG Updated
-        entry: bash -c 'git diff --cached --name-only | grep -q "CHANGELOG.md" || (echo "⚠️  Consider updating CHANGELOG.md" && exit 0)'
-        language: system
+        entry: python scripts/check_changelog.py
+        language: python
         files: \.(yaml|md)$
         pass_filenames: false
-        description: "Reminds to update CHANGELOG.md (warning only)"
+        description: "Reminds to update docs/CHANGELOG.md (warning only)"

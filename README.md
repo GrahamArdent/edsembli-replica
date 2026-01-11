@@ -16,15 +16,15 @@ This repository is a design-first framework for Ontario Kindergarten Communicati
 ## Start here
 
 - Canonical index: [index.md](index.md)
-- Framework narrative: [framework.md](framework.md)
-- Infrastructure/spec: [infrastructure.md](infrastructure.md)
+- Framework narrative: [docs/framework.md](docs/framework.md)
+- Infrastructure/spec: [docs/infrastructure.md](docs/infrastructure.md)
 - Preserved research inputs: [sources/](sources/)
 
 ## Governance (quick links)
 
-- Security policy: [SECURITY.md](SECURITY.md)
-- Release and versioning: [RELEASE.md](RELEASE.md)
-- Testing and validation: [TESTING.md](TESTING.md)
+- Security policy: [docs/SECURITY.md](docs/SECURITY.md)
+- Release and versioning: [docs/RELEASE.md](docs/RELEASE.md)
+- Testing and validation: [docs/TESTING.md](docs/TESTING.md)
 
 ## Safety
 
@@ -32,4 +32,4 @@ This repository is a design-first framework for Ontario Kindergarten Communicati
 
 ## Status
 
-- Design only. Implementation work (if any) should follow the conventions in [infrastructure.md](infrastructure.md).
+- Design only. Implementation work (if any) should follow the conventions in [docs/infrastructure.md](docs/infrastructure.md).

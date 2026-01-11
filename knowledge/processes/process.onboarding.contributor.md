@@ -60,10 +60,10 @@ All three should pass with "OK" status.
 Before contributing, review these documents in order:
 
 1. [README.md](../../README.md) - Project overview
-2. [framework.md](../../framework.md) - Conceptual foundation
-3. [infrastructure.md](../../infrastructure.md) - Technical specification
-4. [CONTRIBUTING.md](../../CONTRIBUTING.md) - Contribution guidelines
-5. [PRIVACY.md](../../PRIVACY.md) - No-PII rules
+2. [docs/framework.md](../../docs/framework.md) - Conceptual foundation
+3. [docs/infrastructure.md](../../docs/infrastructure.md) - Technical specification
+4. [docs/CONTRIBUTING.md](../../docs/CONTRIBUTING.md) - Contribution guidelines
+5. [docs/PRIVACY.md](../../docs/PRIVACY.md) - No-PII rules
 6. [guidance/comment-style.md](../../guidance/comment-style.md) - Style guide
 
 ## 5. First Contribution
@@ -77,6 +77,6 @@ Recommended first task: Add a new evidence pattern.
 
 ## 6. Getting Help
 
-- Check `discussion.md` for design decisions
+- Check `docs/discussion.md` for design decisions
 - Review `decisions/` folder for ADRs
 - Ask in team channel for clarification

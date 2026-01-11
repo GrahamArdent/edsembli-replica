@@ -33,6 +33,12 @@ python scripts/coverage.py
 ```
 Reports indicator-to-template coverage. Identifies indicators with no template references.
 
+### Traceability Matrix Generation
+```bash
+python scripts/generate_matrix.py
+```
+Generates `datasets/traceability/matrix.csv` and `datasets/traceability/matrix.parquet` linking frames, indicators, evidence patterns, templates, and references.
+
 ## Exit Codes
 
 - `0`: All checks pass

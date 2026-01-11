@@ -25,3 +25,7 @@ The format is loosely based on Keep a Changelog, and this project aims to follow
 - Seed knowledge entities for Edsembli, ONSIS, and key policy/curriculum.
 - Add initial templates library (36 comment templates).
 - Add schemas and local validation/lint scripts.
+- Implement traceability matrix generation (`scripts/generate_matrix.py`) and generate `datasets/traceability/matrix.csv` + `matrix.parquet`.
+- Consolidate canonical docs under `docs/` and update all internal links.
+- Add customization boundaries via `guidance/override-policy.md`.
+- Install and document pre-commit hooks (local activation).

@@ -23,25 +23,25 @@ on the previous, ensuring a stable foundation before adding complexity.
 
 ## Phase 0: Scaffolding ✅
 
-**Status:** Complete  
+**Status:** Complete
 **Goal:** Establish repository structure and governance documentation
 
 ### Deliverables
 
 - [x] Repository structure with canonical folders
 - [x] `index.md` - Landing page and navigation
-- [x] `framework.md` - Narrative design document
-- [x] `infrastructure.md` - Technical specification
-- [x] `glossary.md` - Canonical term definitions
-- [x] `requirements.md` - Functional requirements
+- [x] `docs/framework.md` - Narrative design document
+- [x] `docs/infrastructure.md` - Technical specification
+- [x] `docs/glossary.md` - Canonical term definitions
+- [x] `docs/requirements.md` - Functional requirements
 - [x] `README.md` - Project overview
-- [x] `CONTRIBUTING.md` - Contribution guidelines
-- [x] `CHANGELOG.md` - Version history
+- [x] `docs/CONTRIBUTING.md` - Contribution guidelines
+- [x] `docs/CHANGELOG.md` - Version history
 - [x] `decisions/` - ADR structure with initial decisions
 - [x] `sources/` - Research documentation preserved
 - [x] `requirements.txt` - Python dependencies
 - [x] `.gitignore` - Standard exclusions
-- [x] `PRIVACY.md` - No-PII operational checklist
+- [x] `docs/PRIVACY.md` - No-PII operational checklist
 - [x] `guidance/comment-style.md` - Comment style constraints
 
 ### Acceptance Criteria
@@ -55,7 +55,7 @@ on the previous, ensuring a stable foundation before adding complexity.
 
 ## Phase 1: Content Population ✅
 
-**Status:** Complete  
+**Status:** Complete
 **Goal:** Populate canonical content artifacts
 
 ### Deliverables
@@ -78,21 +78,22 @@ on the previous, ensuring a stable foundation before adding complexity.
 
 ---
 
-## Phase 2: Validation Tooling 🔄
+## Phase 2: Validation Tooling ✅
 
-**Status:** In Progress  
+**Status:** Complete
 **Goal:** Implement validation scripts and schema enforcement
 
 ### Deliverables
 
-- [x] `schemas/` - JSON Schema definitions (9 schemas)
+- [x] `schemas/` - JSON Schema definitions (10 schemas)
 - [x] `scripts/validate.py` - Schema/front matter validation runner
 - [x] `scripts/lint.py` - Content linting (refs, indicators, placeholders, slot consistency)
 - [x] `scripts/coverage.py` - Indicator-to-template coverage analysis
+- [x] `scripts/generate_links.py` - Derived links generation
 - [x] ADR 0004 - Placeholder convention documented
 - [x] ADR 0005 - ID naming convention documented
-- [ ] Pre-commit hooks configured
-- [ ] CI pipeline (GitHub Actions or equivalent)
+- [x] Pre-commit hooks configured
+- [x] CI pipeline (GitHub Actions)
 
 ### Acceptance Criteria
 
@@ -100,23 +101,21 @@ on the previous, ensuring a stable foundation before adding complexity.
 - ID naming convention enforced automatically ✅
 - Broken reference detection ✅
 - Slot↔text consistency checking ✅
-- Pre-commit prevents invalid commits ⏳
-- CI runs validation on PRs ⏳
-
-### Remaining Tasks
-
-1. Configure `.pre-commit-config.yaml`
-2. Set up GitHub Actions workflow
-3. Add changelog enforcement check
+- Pre-commit prevents invalid commits ✅
+- CI runs validation on PRs ✅
 
 ---
 
-## Phase 3: Traceability Matrix 🔗
+## Phase 3: Traceability Matrix 🔗 ✅
 
-**Status:** Planned  
+**Status:** Complete
 **Goal:** Build and visualize curriculum coverage
 
 ### Deliverables
+
+- [x] `scripts/generate_matrix.py` - Matrix generation
+- [x] `datasets/traceability/matrix.csv` - Human-readable export
+- [x] `datasets/traceability/matrix.parquet` - Analytics-friendly export
 
 - [ ] `scripts/build_matrix.py` - Matrix generator
 - [ ] `reports/coverage.md` - Auto-generated coverage report
@@ -143,7 +142,7 @@ on the previous, ensuring a stable foundation before adding complexity.
 
 ## Phase 4: Agent Integration 🤖
 
-**Status:** Future  
+**Status:** Future
 **Goal:** Enable AI-assisted template generation and validation
 
 ### Deliverables
@@ -173,7 +172,7 @@ on the previous, ensuring a stable foundation before adding complexity.
 
 ## Phase 5: SIS Integration Patterns 🔌
 
-**Status:** Future  
+**Status:** Future
 **Goal:** Document integration approaches (not implementation)
 
 ### Deliverables

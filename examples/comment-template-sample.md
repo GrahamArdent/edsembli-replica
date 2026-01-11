@@ -34,12 +34,12 @@ template:
   id: "[unique identifier following naming convention]"
   frame: "[frame.belonging | frame.self_regulation | frame.literacy_math | frame.problem_solving]"
   section: "[key_learning | growth | next_steps]"
-  
+
   # The template text with placeholders
   text: |
     {child} demonstrates {skill} by {evidence}.
     {pronoun_subject} {example}.
-  
+
   # Placeholders that must be customized
   placeholders:
     - child: "{child}"
@@ -47,11 +47,11 @@ template:
     - skill: "{skill}"
     - evidence: "{evidence}"
     - example: "{example}"
-  
+
   # Curriculum alignment
   indicators:
     - "[indicator.id]"
-  
+
   # Usage guidance
   notes: |
     [When to use this template, customization tips]
@@ -66,24 +66,24 @@ template:
   id: template.comment.keyl_belonging_relationships_01
   frame: frame.belonging
   section: key_learning
-  
+
   text: |
     {child} is developing a sense of belonging within our
     classroom community. {pronoun_subject} {evidence},
     demonstrating an understanding that {pronoun_subject_lower} {be_verb} a valued
     member of our learning family.
-  
+
   placeholders:
     - child: "{child}"
     - pronoun_subject: "{pronoun_subject}"
     - pronoun_subject_lower: "{pronoun_subject_lower}"
     - be_verb: "{be_verb}"
     - evidence: "{evidence}"
-  
+
   indicators:
     - indicator.belonging.relationships
     - indicator.belonging.community
-  
+
   notes: |
     Use when student shows emerging sense of classroom membership.
     Customize with specific examples from observations.
@@ -96,12 +96,12 @@ template:
   id: template.comment.grow_belonging_relationships_01
   frame: frame.belonging
   section: growth
-  
+
   text: |
     Since the beginning of the year, {child} has shown growth in
     {pronoun_possessive} ability to {skill}. {pronoun_subject} now
     {change}, whereas previously {previous}.
-  
+
   placeholders:
     - child: "{child}"
     - pronoun_subject: "{pronoun_subject}"
@@ -109,10 +109,10 @@ template:
     - skill: "{skill}"
     - change: "{change}"
     - previous: "{previous}"
-  
+
   indicators:
     - indicator.belonging.relationships
-  
+
   notes: |
     Requires comparison to earlier observations.
     Focus on positive trajectory, not deficits.
@@ -125,21 +125,21 @@ template:
   id: template.comment.next_belonging_relationships_01
   frame: frame.belonging
   section: next_steps
-  
+
   text: |
     A next step for {child} is to {goal}. At school,
     we will {school_strategy}. At home, you can support this by
     {home_strategy}.
-  
+
   placeholders:
     - child: "{child}"
     - goal: "{goal}"
     - school_strategy: "{school_strategy}"
     - home_strategy: "{home_strategy}"
-  
+
   indicators:
     - indicator.belonging.relationships
-  
+
   notes: |
     Always include both school and home components.
     Goals should be achievable and observable.
@@ -175,5 +175,5 @@ Templates connect to:
 
 - [taxonomy/frames.yaml](../taxonomy/frames.yaml) - Frame definitions
 - [evidence-pattern-sample.md](evidence-pattern-sample.md) - Evidence pattern example
-- [infrastructure.md](../infrastructure.md) - Schema specifications
-- [glossary.md](../glossary.md) - Term definitions
+- [docs/infrastructure.md](../docs/infrastructure.md) - Schema specifications
+- [docs/glossary.md](../docs/glossary.md) - Term definitions

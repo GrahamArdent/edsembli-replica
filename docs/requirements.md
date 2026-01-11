@@ -37,4 +37,4 @@ updated: 2026-01-11
 
 ## 5. Workflow
 
-- **req.workflow.1**: Changes to `framework.md` (Narrative) MUST be manually reviewed to ensure they align with `infrastructure.md` (Spec).
+- **req.workflow.1**: Changes to `docs/framework.md` (Narrative) MUST be manually reviewed to ensure they align with `docs/infrastructure.md` (Spec).

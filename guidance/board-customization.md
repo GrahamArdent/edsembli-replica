@@ -13,6 +13,8 @@ updated: 2026-01-11
 
 # Board Customization Guide
 
+See also: [Override and Customization Policy](override-policy.md)
+
 ## Purpose
 This guide helps school boards adapt the framework templates to their local context while maintaining compliance with provincial standards.
 
@@ -36,7 +38,7 @@ Catholic boards may add:
 
 **Example extension:**
 ```
-{child} demonstrates care for others, reflecting our Catholic teaching 
+{child} demonstrates care for others, reflecting our Catholic teaching
 of treating everyone as a child of God.
 ```
 

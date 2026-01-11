@@ -72,7 +72,7 @@ def main() -> int:
         else:
             coverage_by_frame[frame]["covered"] += 1
 
-        status = "✅" if ref_count > 0 else "❌"
+        status = "OK" if ref_count > 0 else "MISSING"
         print(f"  {status} {ind_id}: {ref_count} template(s)")
 
     print()
@@ -110,14 +110,14 @@ def main() -> int:
         for ind_id in uncovered:
             print(f"  - {ind_id}")
         print()
-        print("⚠️  Some indicators have no template coverage")
+        print("WARNING: Some indicators have no template coverage")
         if strict_mode:
-            print("❌ STRICT MODE: Failing due to incomplete coverage")
+            print("STRICT MODE: Failing due to incomplete coverage")
             return 1
         return 0
 
     print()
-    print("✅ All indicators have at least one template")
+    print("All indicators have at least one template")
     return 0
 
 

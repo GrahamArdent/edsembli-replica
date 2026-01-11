@@ -13,8 +13,8 @@ If combined, the narrative becomes too long and the spec becomes inconsistent.
 
 ## Decision
 
-- `framework.md` is a short narrative: intent, boundaries, principles, and high-level model.
-- `infrastructure.md` is the structured specification: repository layout, conventions, schemas, traceability, governance, and tooling.
+- `docs/framework.md` is a short narrative: intent, boundaries, principles, and high-level model.
+- `docs/infrastructure.md` is the structured specification: repository layout, conventions, schemas, traceability, governance, and tooling.
 
 ## Consequences
 

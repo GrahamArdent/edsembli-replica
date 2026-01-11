@@ -16,24 +16,24 @@ Thank you for helping define the Edsembli Replica Framework.
 ## 1. Principles
 
 1.  **Privacy First**: No student data. Ever.
-2.  **Canonical vs. Source**: 
-    - Editing "Truth"? Edit the files in root (`framework.md`, `infrastructure.md`) or `schemas/`/`taxonomy/`/`knowledge/`.
+2.  **Canonical vs. Source**:
+    - Editing "Truth"? Edit canonical docs in `docs/` (e.g., `docs/framework.md`, `docs/infrastructure.md`) or `schemas/`/`taxonomy/`/`knowledge/`.
     - Adding Research? Add a Markdown or PDF file to `sources/`.
 3.  **Traceability**: If you make a claim, link it to a reference ID or a Source file.
 
 ## 2. How to make changes
 
 ### Editing the Framework (Narrative)
-- Edit `framework.md`.
+- Edit `docs/framework.md`.
 - Keep it high-level.
 - Update `CHANGELOG.md`.
 
 ### Editing the Specification (Infrastructure)
-- Edit `infrastructure.md`.
+- Edit `docs/infrastructure.md`.
 - If changing an ID scheme or data model, create a new ADR in `decisions/`.
 
 ### Editing Functional Requirements
-- Edit `requirements.md`.
+- Edit `docs/requirements.md`.
 - Use lowercase IDs: `req.category.number` (e.g., `req.privacy.1`).
 - Use MUST/SHOULD/MAY language per RFC 2119.
 
@@ -52,6 +52,15 @@ All canonical files include a `version` field. When editing:
 | Breaking schema change | Major | `0.1.0` → `1.0.0` |
 
 **Always update the `updated` date in front matter when making changes.**
+
+## 3.1 Activate Pre-commit (recommended)
+
+This repo includes a `.pre-commit-config.yaml`. To enable local checks on commit:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
 
 ## 4. Decision Process (ADRs)
 
