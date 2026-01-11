@@ -128,6 +128,11 @@ Last updated: 2026-01-11
 - [Release and versioning](docs/RELEASE.md)
 - [Python dependencies](requirements.txt)
 
+## Audits
+
+- [Audits](audits/README.md)
+	- Periodic repository audits and snapshots.
+
 ## Architecture Decision Records (ADRs)
 
 - [ADR 0000: Template](decisions/0000-adr-template.md)

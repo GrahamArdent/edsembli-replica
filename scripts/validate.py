@@ -133,6 +133,12 @@ def main() -> int:
     for md_path in sorted(processes_dir.glob("*.md")):
         markdown_docs.append(md_path)
 
+    # Add audits dynamically
+    audits_dir = WORKSPACE_ROOT / "audits"
+    if audits_dir.exists():
+        for md_path in sorted(audits_dir.glob("*.md")):
+            markdown_docs.append(md_path)
+
     for md_path in markdown_docs:
         fm = read_front_matter(md_path)
         messages = validate(fm, doc_schema)
