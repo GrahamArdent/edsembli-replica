@@ -1,0 +1,90 @@
+site_name: Edsembli Replica Framework
+site_description: Design-first framework for Ontario Kindergarten CoL comments.
+site_url: https://github.com/GrahamArdent/edsembli-replica
+
+docs_dir: site_docs
+site_dir: site
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+  palette:
+    - scheme: default
+      primary: teal
+      accent: purple
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      accent: lime
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+plugins:
+  - search
+  - macros
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - def_list
+  - footnotes
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - "Core Framework":
+    - "Framework Overview": docs/framework.md
+    - "Infrastructure": docs/infrastructure.md
+    - "Requirements": docs/requirements.md
+    - "Data Privacy": docs/PRIVACY.md
+    - "Glossary": docs/glossary.md
+  - Taxonomy:
+    - "Frames": taxonomy/frames.yaml
+    - "Indicators": taxonomy/indicators.yaml
+    - "Tags": taxonomy/tags.yaml
+    - "Roles": taxonomy/roles.yaml
+  - Evidence Library:
+    - "Overview": evidence/README.md
+    - "Evidence Patterns": evidence/
+  - Templates:
+    - "Overview": templates/README.md
+    - "Library": templates/comment_templates.yaml
+  - Guidance:
+    - "Comment Style": guidance/comment-style.md
+    - "Board Customization": guidance/board-customization.md
+    - "Override Policy": guidance/override-policy.md
+  - Processes:
+    - "Contribution": docs/CONTRIBUTING.md
+    - "Release Process": docs/RELEASE.md
+    - "Security": docs/SECURITY.md
+    - "Workflows": knowledge/processes/
+  - Audits:
+    - "Overview": audits/README.md
+    - "Reports": audits/
+  - Development:
+    - "Roadmap": docs/ROADMAP.md
+    - "Changelog": docs/CHANGELOG.md
+    - "Testing": docs/TESTING.md
+    - "Schemas": schemas/
+    - "Scripts": scripts/

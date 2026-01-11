@@ -89,3 +89,7 @@ credentials/
 # - examples/*.md (sample templates)
 # - decisions/*.md (ADRs)
 # - sources/*.md (research documents)
+
+site/
+.pytest_cache/
+.ruff_cache/

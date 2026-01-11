@@ -9,30 +9,40 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.14'
+        python-version: '3.12'
         cache: 'pip'
-        
+
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        
+
+    - name: Lint with Ruff
+      run: ruff check . --output-format=github
+
+    - name: Format check with Ruff
+      run: ruff format --check .
+
+    - name: Run Tests
+      run: pytest -v
+
     - name: Run Schema Validation
       run: python scripts/validate.py
-      
+
     - name: Run Linting
       run: python scripts/lint.py
-      
+
     - name: Run Coverage Analysis
       run: python scripts/coverage.py
-      
-    # Future: Fail if coverage drops below threshold?
-    # For now, coverage.py exits 0 even if uncovered, 
-    # unless we change it to strict mode.
+
+    - name: Build Documentation
+      run: |
+        python scripts/stage_docs.py
+        mkdocs build --strict

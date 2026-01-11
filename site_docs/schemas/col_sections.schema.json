@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "schemas/col_sections.schema.json",
+  "$version": "1.0.0",
+  "title": "CoL Sections Taxonomy",
+  "type": "object",
+  "required": ["col_sections"],
+  "properties": {
+    "col_sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "key", "name", "description"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^col_section\\.[a-z0-9_\\.]+$"},
+          "key": {"type": "string", "enum": ["key_learning", "growth", "next_steps"]},
+          "name": {"type": "string"},
+          "description": {"type": "string"},
+          "guidance_ref": {"type": "string"}
+        },
+        "additionalProperties": true
+      }
+    },
+    "_meta": {"type": "object"}
+  },
+  "additionalProperties": true
+}
