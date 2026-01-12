@@ -1,0 +1,109 @@
+﻿id,frame,section,tone,text,text_fr,indicators,version,status,char_count,readability_flesch
+template.comment.belonging.key_learning.01,frame.belonging,key_learning,parent_friendly,"{child} is developing a strong sense of belonging in our classroom community.
+{pronoun_subject} shows this by {evidence}.
+",TODO,indicator.belonging.relationships|indicator.belonging.community,0.1.0,draft,88,
+template.comment.belonging.key_learning.02,frame.belonging,key_learning,parent_friendly,"{child} demonstrates {strength} when learning and playing with others.
+{pronoun_subject} makes this visible by {evidence}.
+",TODO,indicator.belonging.relationships,0.1.0,draft,79,
+template.comment.belonging.key_learning.03,frame.belonging,key_learning,parent_friendly,"{child} contributes to our learning community in meaningful ways.
+{pronoun_subject} does this by {evidence}.
+",TODO,indicator.belonging.community|indicator.belonging.identity,0.1.0,draft,75,
+template.comment.belonging.growth.01,frame.belonging,growth,parent_friendly,"Since earlier in the year, {child} has shown growth in building relationships.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.belonging.relationships,0.1.0,draft,100,
+template.comment.belonging.growth.02,frame.belonging,growth,parent_friendly,"{child} is showing growing confidence as a member of our classroom community.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.belonging.identity,0.1.0,draft,99,
+template.comment.belonging.growth.03,frame.belonging,growth,parent_friendly,"Over time, {child} has become more consistent in contributing to group routines and play.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.belonging.community,0.1.0,draft,111,
+template.comment.belonging.next_steps.01,frame.belonging,next_steps,parent_friendly,"A next step for {child} is to {goal}.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.belonging.relationships,0.1.0,draft,81,
+template.comment.belonging.next_steps.02,frame.belonging,next_steps,parent_friendly,"A next step for {child} is to {goal} as part of our classroom community.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.belonging.community,0.1.0,draft,116,
+template.comment.belonging.next_steps.03,frame.belonging,next_steps,parent_friendly,"A next step for {child} is to {goal} while continuing to build confidence and belonging.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.belonging.identity,0.1.0,draft,132,
+template.comment.self_regulation.key_learning.01,frame.self_regulation,key_learning,parent_friendly,"{child} is developing self-regulation skills that support learning throughout the day.
+{pronoun_subject} demonstrates this by {evidence}.
+",TODO,indicator.self_regulation.emotions|indicator.self_regulation.attention,0.1.0,draft,104,
+template.comment.self_regulation.key_learning.02,frame.self_regulation,key_learning,parent_friendly,"{child} shows {strength} when navigating routines and learning activities.
+{pronoun_subject} makes this visible by {evidence}.
+",TODO,indicator.self_regulation.attention,0.1.0,draft,83,
+template.comment.self_regulation.key_learning.03,frame.self_regulation,key_learning,parent_friendly,"{child} is learning strategies to recognize and manage emotions during the day.
+{pronoun_subject} shows this by {evidence}.
+",TODO,indicator.self_regulation.emotions,0.1.0,draft,90,
+template.comment.self_regulation.growth.01,frame.self_regulation,growth,parent_friendly,"{child} has shown growth in staying focused and persisting with tasks.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.self_regulation.attention,0.1.0,draft,92,
+template.comment.self_regulation.growth.02,frame.self_regulation,growth,parent_friendly,"Over time, {child} has become more consistent in using strategies to manage emotions.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.self_regulation.emotions,0.1.0,draft,107,
+template.comment.self_regulation.growth.03,frame.self_regulation,growth,parent_friendly,"{child} is showing growing awareness of personal well-being and safe choices during play.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.self_regulation.health,0.1.0,draft,111,
+template.comment.self_regulation.next_steps.01,frame.self_regulation,next_steps,parent_friendly,"A next step for {child} is to {goal} during learning routines and transitions.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.self_regulation.attention,0.1.0,draft,122,
+template.comment.self_regulation.next_steps.02,frame.self_regulation,next_steps,parent_friendly,"A next step for {child} is to {goal} when feelings become big.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.self_regulation.emotions,0.1.0,draft,106,
+template.comment.self_regulation.next_steps.03,frame.self_regulation,next_steps,parent_friendly,"A next step for {child} is to {goal} while continuing to build healthy routines.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.self_regulation.health,0.1.0,draft,124,
+template.comment.literacy_math.key_learning.01,frame.literacy_math,key_learning,parent_friendly,"{child} is developing literacy and mathematics behaviours through play and inquiry.
+{pronoun_subject} shows this by {evidence}.
+",TODO,indicator.literacy_math.oral_language|indicator.literacy_math.numeracy,0.1.0,draft,94,
+template.comment.literacy_math.key_learning.02,frame.literacy_math,key_learning,parent_friendly,"{child} demonstrates {strength} when communicating ideas and making meaning.
+{pronoun_subject} makes this visible by {evidence}.
+",TODO,indicator.literacy_math.oral_language|indicator.literacy_math.reading,0.1.0,draft,85,
+template.comment.literacy_math.key_learning.03,frame.literacy_math,key_learning,parent_friendly,"{child} is developing early writing and representation skills.
+{pronoun_subject} shows this by {evidence}.
+",TODO,indicator.literacy_math.writing,0.1.0,draft,73,
+template.comment.literacy_math.growth.01,frame.literacy_math,growth,parent_friendly,"{child} has shown growth in oral language and communicating ideas with others.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.literacy_math.oral_language,0.1.0,draft,100,
+template.comment.literacy_math.growth.02,frame.literacy_math,growth,parent_friendly,"Over time, {child} has become more confident in using early reading behaviours.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.literacy_math.reading,0.1.0,draft,101,
+template.comment.literacy_math.growth.03,frame.literacy_math,growth,parent_friendly,"{child} has shown growth in using number sense and math thinking during play.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.literacy_math.numeracy,0.1.0,draft,99,
+template.comment.literacy_math.next_steps.01,frame.literacy_math,next_steps,parent_friendly,"A next step for {child} is to {goal} when sharing ideas and explaining thinking.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.literacy_math.oral_language,0.1.0,draft,124,
+template.comment.literacy_math.next_steps.02,frame.literacy_math,next_steps,parent_friendly,"A next step for {child} is to {goal} while continuing to develop early reading behaviours.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.literacy_math.reading,0.1.0,draft,134,
+template.comment.literacy_math.next_steps.03,frame.literacy_math,next_steps,parent_friendly,"A next step for {child} is to {goal} while continuing to use math thinking in play.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.literacy_math.numeracy,0.1.0,draft,127,
+template.comment.problem_solving.key_learning.01,frame.problem_solving,key_learning,parent_friendly,"{child} is developing problem-solving and inquiry skills through exploration.
+{pronoun_subject} shows this by {evidence}.
+",TODO,indicator.problem_solving.inquiry,0.1.0,draft,88,
+template.comment.problem_solving.key_learning.02,frame.problem_solving,key_learning,parent_friendly,"{child} demonstrates {strength} when experimenting with ideas and materials.
+{pronoun_subject} makes this visible by {evidence}.
+",TODO,indicator.problem_solving.innovation|indicator.problem_solving.creativity,0.1.0,draft,85,
+template.comment.problem_solving.key_learning.03,frame.problem_solving,key_learning,parent_friendly,"{child} is developing creative thinking skills when approaching challenges.
+{pronoun_subject} shows this by {evidence}.
+",TODO,indicator.problem_solving.creativity,0.1.0,draft,86,
+template.comment.problem_solving.growth.01,frame.problem_solving,growth,parent_friendly,"Over time, {child} has shown growth in asking questions and testing ideas.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.problem_solving.inquiry,0.1.0,draft,96,
+template.comment.problem_solving.growth.02,frame.problem_solving,growth,parent_friendly,"{child} has become more consistent in trying different strategies when solving problems.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.problem_solving.innovation,0.1.0,draft,110,
+template.comment.problem_solving.growth.03,frame.problem_solving,growth,parent_friendly,"Over time, {child} has shown growth in using creativity to approach challenges.
+{pronoun_subject} now {change}, whereas previously {previous}.
+",TODO,indicator.problem_solving.creativity,0.1.0,draft,101,
+template.comment.problem_solving.next_steps.01,frame.problem_solving,next_steps,parent_friendly,"A next step for {child} is to {goal} by asking questions and testing ideas.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.problem_solving.inquiry,0.1.0,draft,119,
+template.comment.problem_solving.next_steps.02,frame.problem_solving,next_steps,parent_friendly,"A next step for {child} is to {goal} while continuing to experiment with strategies.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.problem_solving.innovation,0.1.0,draft,128,
+template.comment.problem_solving.next_steps.03,frame.problem_solving,next_steps,parent_friendly,"A next step for {child} is to {goal} while continuing to use creative thinking.
+At school, we will {school_strategy}. At home, you can support this by {home_strategy}.
+",TODO,indicator.problem_solving.creativity,0.1.0,draft,123,

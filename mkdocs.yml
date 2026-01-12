@@ -75,6 +75,8 @@ nav:
     - "Comment Assembly": guidance/comment-assembly.md
     - "Board Customization": guidance/board-customization.md
     - "Override Policy": guidance/override-policy.md
+  - Integration:
+    - "SIS Formats": docs/integration/sis-formats.md
   - "ADRs":
     - "ADR-0001: Canonical vs Sources": decisions/0001-canonical-vs-sources.md
     - "ADR-0002: Framework Split": decisions/0002-framework-vs-infrastructure-split.md

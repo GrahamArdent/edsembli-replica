@@ -1,0 +1,17 @@
+{
+  "student_id": "STU-12345",
+  "student_name": "Emma",
+  "comment_sections": {},
+  "full_comment": "Emma is developing a strong sense of belonging in our classroom community.\nShe shows this by building with blocks during learning centres.\n\n\nEmma has shown growth in staying focused and persisting with tasks.\nShe now using increasingly complex construction techniques, whereas previously simple stacking patterns.\n\n\nA next step for Emma is to create three-dimensional structures independently.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
+  "template_ids_used": [
+    "template.comment.belonging.key_learning.01",
+    "template.comment.self_regulation.growth.01",
+    "template.comment.belonging.next_steps.01"
+  ],
+  "metadata": {
+    "total_length": 482,
+    "indicator_count": 3,
+    "flesch_reading_ease": 0.0,
+    "assembled_at": "2026-01-12T01:50:08.803482+00:00"
+  }
+}

@@ -38,6 +38,9 @@ Last updated: 2026-01-11
 - [Infrastructure](docs/infrastructure.md)
 	- How the framework is made functional (file layout, conventions, schemas, tooling, governance).
 - [Glossary](docs/glossary.md)
+	- Standard vocabulary for the project.
+- [SIS Integration Formats](docs/integration/sis-formats.md)
+	- Export formats for integrating templates and comments with Student Information Systems.
 	- Canonical definitions and controlled vocabulary (Frame, Indicator, Evidence Pattern, etc.).
 - [Functional Requirements](docs/requirements.md)
 	- What the tooling/workflow must do (distinct from Python `requirements.txt`).
@@ -209,6 +212,9 @@ Last updated: 2026-01-11
 	- `edsembli matrix-sql <sql>` — DuckDB queries over traceability matrix
 	- `edsembli evidence-matrix [--template ID]` — show heuristic evidence-template matches
 	- `edsembli templates [--show-deprecated]` — list templates with deprecation status
+	- `edsembli review <template_file>` — validate template draft with quality checks
+	- `edsembli export [--format csv|json]` — export template bank for SIS import
+	- `edsembli export-comment --child-file <json>` — export assembled student comment
 - **Index Checker** (`scripts/check_index.py`)
 	- Verifies all canonical files are linked in `index.md`
 

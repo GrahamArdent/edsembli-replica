@@ -1,0 +1,7 @@
+template_ids:
+  key_learning:
+    - template.comment.belonging.key_learning.01
+  growth:
+    - template.comment.self_regulation.growth.01
+  next_steps:
+    - template.comment.belonging.next_steps.01

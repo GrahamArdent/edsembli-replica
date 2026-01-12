@@ -1,8 +1,11 @@
 from __future__ import annotations
 
+import csv
 import json
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Annotated
 
 import duckdb
 import typer
@@ -15,6 +18,14 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from lib.agents.validation import ValidationAgent
+from lib.pipeline.assemble import AssemblyRequest, CommentAssembler
+
+try:
+    import textstat  # type: ignore[import-untyped]
+
+    HAS_TEXTSTAT = True
+except ImportError:
+    HAS_TEXTSTAT = False
 
 app = typer.Typer(add_completion=False, help="Lightweight query tools for this design repo")
 console = Console()
@@ -353,6 +364,287 @@ def review_template(
     else:
         console.print("[green]✅ Template passed validation![/green]")
         raise typer.Exit(0)
+
+
+@app.command("export")
+def export_templates(
+    format: Annotated[str, typer.Option("--format", help="Export format: csv or json")] = "csv",
+    output: Annotated[Path | None, typer.Option("--output", help="Output file path")] = None,
+    status: Annotated[str | None, typer.Option("--status", help="Filter by status (draft, stable, deprecated)")] = None,
+    frame: Annotated[str | None, typer.Option("--frame", help="Filter by frame ID")] = None,
+    section: Annotated[
+        str | None, typer.Option("--section", help="Filter by section (key_learning, growth, next_steps)")
+    ] = None,
+) -> None:
+    """Export template bank to CSV or JSON for SIS import."""
+    templates = _load_templates()
+
+    # Apply filters
+    filtered: list[dict] = []
+    for t in templates:
+        if status and t.get("status") != status:
+            continue
+        if frame and t.get("frame") != frame:
+            continue
+        if section and t.get("section") != section:
+            continue
+        filtered.append(t)
+
+    if not filtered:
+        console.print("[yellow]No templates match the specified filters.[/yellow]")
+        raise typer.Exit(1)
+
+    # Determine output path
+    if output is None:
+        output = ROOT / f"template_bank.{format}"
+    else:
+        output = Path(output).resolve()
+
+    # Export
+    if format == "csv":
+        _export_csv(filtered, output)
+    elif format == "json":
+        _export_json(filtered, output, status, frame, section)
+    else:
+        console.print(f"[red]Unsupported format: {format}. Use 'csv' or 'json'.[/red]")
+        raise typer.Exit(1)
+
+    console.print(f"[green]✓[/green] Exported {len(filtered)} templates to {output}")
+
+
+def _export_csv(templates: list[dict], output: Path) -> None:
+    """Export templates to CSV format."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    with output.open("w", encoding="utf-8-sig", newline="") as f:
+        fieldnames = [
+            "id",
+            "frame",
+            "section",
+            "tone",
+            "text",
+            "text_fr",
+            "indicators",
+            "version",
+            "status",
+            "char_count",
+            "readability_flesch",
+        ]
+        writer = csv.DictWriter(f, fieldnames=fieldnames, quoting=csv.QUOTE_MINIMAL)
+        writer.writeheader()
+
+        for t in templates:
+            # Calculate character count (excluding slots)
+            text = t.get("text", "")
+            char_count = len(text)
+            for slot in t.get("slots", []):
+                slot_pattern = f"{{{slot}}}"
+                char_count -= text.count(slot_pattern) * len(slot_pattern)
+
+            # Calculate readability
+            readability_flesch = None
+            try:
+                if HAS_TEXTSTAT:
+                    readability_flesch = textstat.flesch_reading_ease(text)
+            except Exception:
+                pass  # Optional metric
+
+            writer.writerow(
+                {
+                    "id": t.get("id", ""),
+                    "frame": t.get("frame", ""),
+                    "section": t.get("section", ""),
+                    "tone": t.get("tone", ""),
+                    "text": t.get("text", ""),
+                    "text_fr": t.get("text_fr", "TODO"),
+                    "indicators": "|".join(t.get("indicators", [])),
+                    "version": t.get("version", "0.1.0"),
+                    "status": t.get("status", "draft"),
+                    "char_count": char_count,
+                    "readability_flesch": f"{readability_flesch:.1f}" if readability_flesch else "",
+                }
+            )
+
+
+def _export_json(
+    templates: list[dict], output: Path, status: str | None, frame: str | None, section: str | None
+) -> None:
+    """Export templates to JSON format."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    export_data = {
+        "export_metadata": {
+            "export_date": datetime.now(UTC).isoformat(),
+            "framework_version": "0.1.0",
+            "total_templates": len(templates),
+            "filters_applied": {"status": [status] if status else None, "frame": frame, "section": section},
+        },
+        "templates": [],
+    }
+
+    for t in templates:
+        # Calculate metadata
+        text = t.get("text", "")
+        char_count = len(text)
+        for slot in t.get("slots", []):
+            slot_pattern = f"{{{slot}}}"
+            char_count -= text.count(slot_pattern) * len(slot_pattern)
+
+        readability_flesch = None
+        readability_grade = None
+        try:
+            if HAS_TEXTSTAT:
+                readability_flesch = textstat.flesch_reading_ease(text)
+                readability_grade = textstat.flesch_kincaid_grade(text)
+        except Exception:
+            pass
+
+        template_export = {
+            "id": t.get("id"),
+            "type": t.get("type", "comment_template"),
+            "frame": t.get("frame"),
+            "section": t.get("section"),
+            "tone": t.get("tone"),
+            "slots": t.get("slots", []),
+            "text": t.get("text"),
+            "text_fr": t.get("text_fr", "TODO"),
+            "indicators": t.get("indicators", []),
+            "refs": t.get("refs", []),
+            "status": t.get("status", "draft"),
+            "version": t.get("version", "0.1.0"),
+            "metadata": {
+                "char_count": char_count,
+                "readability_flesch": round(readability_flesch, 1) if readability_flesch else None,
+                "readability_grade": round(readability_grade, 1) if readability_grade else None,
+            },
+        }
+        export_data["templates"].append(template_export)
+
+    with output.open("w", encoding="utf-8") as f:
+        json.dump(export_data, f, indent=2, ensure_ascii=False)
+
+
+@app.command("export-comment")
+def export_comment(
+    child_file: Annotated[Path, typer.Option("--child-file", help="JSON file with student slot data")],
+    templates_file: Annotated[
+        Path | None, typer.Option("--templates", help="YAML file with selected template IDs")
+    ] = None,
+    output: Annotated[Path | None, typer.Option("--output", help="Output file path (.txt)")] = None,
+    format: Annotated[str, typer.Option("--format", help="Export format: txt or json")] = "txt",
+) -> None:
+    """Export assembled comment for a student."""
+    # Load student data
+    child_file = Path(child_file).resolve()
+    if not child_file.exists():
+        console.print(f"[red]Child file not found: {child_file}[/red]")
+        raise typer.Exit(1)
+
+    with child_file.open("r", encoding="utf-8") as f:
+        child_data = json.load(f)
+
+    # Load template selections
+    template_ids: dict[str, list[str]] = {}
+    if templates_file:
+        templates_file = Path(templates_file).resolve()
+        if not templates_file.exists():
+            console.print(f"[red]Templates file not found: {templates_file}[/red]")
+            raise typer.Exit(1)
+
+        with templates_file.open("r", encoding="utf-8") as f:
+            template_data = YAML_LOADER.load(f) or {}
+            template_ids = template_data.get("template_ids", {})
+    else:
+        # Default: use first template for each section (for demo purposes)
+        templates = _load_templates()
+        for section in ["key_learning", "growth", "next_steps"]:
+            section_templates = [t for t in templates if t.get("section") == section]
+            if section_templates:
+                template_ids[section] = [section_templates[0]["id"]]
+
+    # Assemble comment
+    assembler = CommentAssembler()
+    request = AssemblyRequest(template_ids=template_ids, child_data=child_data)
+
+    result = assembler.assemble(request)
+
+    if result.errors:
+        console.print("[red]Assembly errors:[/red]")
+        for error in result.errors:
+            console.print(f"  • {error}")
+        raise typer.Exit(1)
+
+    # Determine output path
+    if output is None:
+        student_id = child_data.get("student_id", "student")
+        output = ROOT / f"{student_id}_comment.{format}"
+    else:
+        output = Path(output).resolve()
+
+    # Export
+    if format == "txt":
+        _export_comment_txt(result.comment, output)
+    elif format == "json":
+        _export_comment_json(result, child_data, template_ids, output)
+    else:
+        console.print(f"[red]Unsupported format: {format}. Use 'txt' or 'json'.[/red]")
+        raise typer.Exit(1)
+
+    console.print(f"[green]✓[/green] Exported comment to {output}")
+
+
+def _export_comment_txt(comment: str | None, output: Path) -> None:
+    """Export assembled comment to plain text format."""
+    if not comment:
+        raise ValueError("No comment to export")
+
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with output.open("w", encoding="utf-8") as f:
+        f.write(comment)
+
+
+def _export_comment_json(result, child_data: dict, template_ids: dict[str, list[str]], output: Path) -> None:
+    """Export assembled comment to JSON format."""
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    # Extract section texts from full comment
+    comment_sections: dict[str, str] = {}
+    if result.comment:
+        sections = result.comment.split("\n\n")
+        for section_text in sections:
+            if section_text.startswith("[Key Learning]"):
+                comment_sections["key_learning"] = section_text.replace("[Key Learning]\n", "").strip()
+            elif section_text.startswith("[Growth]"):
+                comment_sections["growth"] = section_text.replace("[Growth]\n", "").strip()
+            elif section_text.startswith("[Next Steps]"):
+                comment_sections["next_steps"] = section_text.replace("[Next Steps]\n", "").strip()
+
+    # Flatten template IDs
+    all_template_ids = []
+    for section_list in template_ids.values():
+        all_template_ids.extend(section_list)
+
+    # Extract stats
+    flesch_reading_ease = None
+    if result.stats:
+        flesch_reading_ease = result.stats.get("flesch_reading_ease")
+
+    export_data = {
+        "student_id": child_data.get("student_id", "unknown"),
+        "student_name": child_data.get("child", "Unknown"),
+        "comment_sections": comment_sections,
+        "full_comment": result.comment,
+        "template_ids_used": all_template_ids,
+        "metadata": {
+            "total_length": len(result.comment) if result.comment else 0,
+            "indicator_count": len(set(result.stats.get("indicators", []))) if result.stats else 0,
+            "flesch_reading_ease": flesch_reading_ease,
+            "assembled_at": datetime.now(UTC).isoformat(),
+        },
+    }
+
+    with output.open("w", encoding="utf-8") as f:
+        json.dump(export_data, f, indent=2, ensure_ascii=False)
 
 
 def main() -> None:
