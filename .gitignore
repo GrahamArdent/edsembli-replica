@@ -60,6 +60,9 @@ site_docs/
 *.log
 logs/
 
+# Local debugging artifacts
+sidecar_stderr.txt
+
 # OS files
 .DS_Store
 Thumbs.db
@@ -94,3 +97,5 @@ credentials/
 site/
 .pytest_cache/
 .ruff_cache/
+
+.early.coverage

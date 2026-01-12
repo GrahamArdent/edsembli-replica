@@ -1,4 +1,6 @@
 {
+  "venvPath": ".",
+  "venv": ".venv",
   "include": ["scripts", "tests"],
   "exclude": [".venv", "site", "site_docs", ".pytest_cache", ".ruff_cache"],
   "pythonVersion": "3.12",

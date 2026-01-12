@@ -1,0 +1,19 @@
+# VGReport Engine - Minimal Dependencies for Sidecar Build
+# This file contains ONLY the packages required for the desktop sidecar.
+# Heavy analytics dependencies (pandas, pyarrow, duckdb) are EXCLUDED
+# to keep the PyInstaller bundle under 50MB.
+
+# Core engine dependencies
+ruamel.yaml>=0.18.0          # YAML parsing for templates
+pydantic>=2.6                # Data validation (used for JSON Schema generation)
+
+# Text processing
+textstat>=0.7.3              # Readability metrics
+
+# CLI (optional - only if sidecar exposes CLI interface)
+# typer>=0.9.0
+# rich>=13.0.0
+
+# Note: The full requirements.in includes pandas, pyarrow, and duckdb
+# for data analysis features. These are NOT needed for report generation
+# and should be excluded from the sidecar build to minimize size.
