@@ -2,13 +2,17 @@ import { useAppStore } from '../store/useAppStore';
 import { FRAMES, SECTIONS } from '../constants';
 import { cn } from '../lib/utils';
 import { SectionEditor } from './SectionEditor';
+import { Button } from './ui/button';
 
 export function Workspace() {
   const {
     selectedStudentId,
     students,
     selectedFrameId,
-    setSelectedFrameId
+    setSelectedFrameId,
+    saveStatus,
+    lastSavedAt,
+    lastSaveError
   } = useAppStore();
 
   const student = students.find(s => s.id === selectedStudentId);
@@ -16,33 +20,52 @@ export function Workspace() {
 
   if (!student) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50 text-gray-400">
+      <div className="flex-1 flex items-center justify-center bg-muted text-muted-foreground">
         Select a student to begin writing
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-white">
+    <div className="flex-1 flex flex-col h-screen overflow-hidden bg-background">
       {/* Header */}
-      <div className="h-16 border-b border-gray-200 flex items-center px-6 justify-between flex-shrink-0">
+      <div className="h-16 border-b border-border flex items-center px-6 justify-between flex-shrink-0">
         <div>
-          <h2 className="text-lg font-bold text-gray-900">
+          <h2 className="text-lg font-bold text-foreground">
             {student.firstName} {student.lastName}
           </h2>
-          <div className="flex gap-2 text-xs text-gray-500">
-            <span className="bg-gray-100 px-2 py-0.5 rounded">
+          <div className="flex gap-2 text-xs text-muted-foreground">
+            <span className="bg-muted px-2 py-0.5 rounded">
               Needs: {student.needs.length > 0 ? student.needs.join(', ') : 'None'}
             </span>
-            <span className="bg-gray-100 px-2 py-0.5 rounded">
+            <span className="bg-muted px-2 py-0.5 rounded">
               Pronouns: {student.pronouns.subject}/{student.pronouns.object}
             </span>
           </div>
         </div>
+
+        <div className="text-xs text-gray-500 flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => window.dispatchEvent(new Event('open-settings'))}
+          >
+            Settings
+          </Button>
+          {saveStatus === 'saving' && <span className="text-blue-700">Saving…</span>}
+          {saveStatus === 'saved' && <span className="text-green-700">Saved</span>}
+          {saveStatus === 'error' && <span className="text-red-700">Save failed</span>}
+          {lastSavedAt && saveStatus !== 'saving' && (
+            <span className="text-gray-400">{new Date(lastSavedAt).toLocaleTimeString()}</span>
+          )}
+          {saveStatus === 'error' && lastSaveError && (
+            <span className="text-red-500 max-w-[260px] truncate" title={lastSaveError}>{lastSaveError}</span>
+          )}
+        </div>
       </div>
 
       {/* Frame Tabs */}
-      <div className="flex border-b border-gray-200 bg-gray-50 overflow-x-auto flex-shrink-0">
+      <div className="flex border-b border-border bg-muted overflow-x-auto flex-shrink-0">
         {FRAMES.map((frame) => (
           <button
             key={frame.id}
@@ -50,8 +73,8 @@ export function Workspace() {
             className={cn(
               "px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
               selectedFrameId === frame.id
-                ? "border-blue-600 text-blue-700 bg-white"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+                ? "border-blue-600 text-blue-700 bg-background"
+                : "border-transparent text-muted-foreground hover:text-foreground hover:bg-background/60"
             )}
           >
             {frame.label}
@@ -65,6 +88,7 @@ export function Workspace() {
           <SectionEditor
             key={section.id}
             section={section}
+            frameId={selectedFrameId}
             frameCanonicalId={currentFrame.canonicalId}
             student={student}
           />

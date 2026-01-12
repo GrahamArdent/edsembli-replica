@@ -26,6 +26,9 @@ This guide covers both **content contributions** (docs, templates, taxonomy) and
 
 ## 2. Setup (First Time)
 
+> If you are using an AI assistant to help with setup, use the repo’s setup gate prompt:
+> - `prompts/system_installation.yaml`
+
 ### 2.1 Clone and Install
 
 ```bash

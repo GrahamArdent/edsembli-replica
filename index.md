@@ -103,6 +103,8 @@ Last updated: 2026-01-11
 	- Template validation system prompt for quality assurance.
 - [System Prompt: Simplification](prompts/system_simplification.yaml)
 	- Template simplification prompt for readability improvement.
+- [System Prompt: Installation](prompts/system_installation.yaml)
+	- Setup assistant with checks, balances, and standards gates.
 
 ## How-to (processes)
 
@@ -183,6 +185,8 @@ Last updated: 2026-01-11
 - [Roadmap](docs/ROADMAP.md)
 - [Implementation Gameplan](docs/GAMEPLAN.md)
 	- Phased development plan with tasks, deliverables, and success metrics.
+- [Frontend Gameplan](docs/frontend.md)
+	- Tauri/React UI plan (phases, deliverables, and UX layout).
 - [Changelog](docs/CHANGELOG.md)
 - [Contributing Guide](docs/CONTRIBUTING.md)
 - [Release and versioning](docs/RELEASE.md)

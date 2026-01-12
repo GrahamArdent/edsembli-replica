@@ -1,6 +1,8 @@
 # AUTO-GENERATED: Embedded templates to avoid PyInstaller bundling issues
 # Source: templates/comment_templates.yaml
 
+# ruff: noqa: E501
+
 EMBEDDED_TEMPLATES = [
     {
         "id": "template.comment.belonging.key_learning.01",
@@ -12,7 +14,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} is developing a strong sense of belonging in our classroom community.\n{pronoun_subject} shows this by {evidence}.\n",
         "indicators": ["indicator.belonging.relationships", "indicator.belonging.community"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.belonging.key_learning.02",
@@ -24,7 +26,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} demonstrates {strength} when learning and playing with others.\n{pronoun_subject} makes this visible by {evidence}.\n",
         "indicators": ["indicator.belonging.relationships"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.belonging.key_learning.03",
@@ -36,7 +38,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} contributes to our learning community in meaningful ways.\n{pronoun_subject} does this by {evidence}.\n",
         "indicators": ["indicator.belonging.community", "indicator.belonging.identity"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.belonging.growth.01",
@@ -48,7 +50,7 @@ EMBEDDED_TEMPLATES = [
         "text": "Since earlier in the year, {child} has shown growth in building relationships.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.belonging.relationships"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.belonging.growth.02",
@@ -60,7 +62,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} is showing growing confidence as a member of our classroom community.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.belonging.identity"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.belonging.growth.03",
@@ -72,7 +74,7 @@ EMBEDDED_TEMPLATES = [
         "text": "Over time, {child} has become more consistent in contributing to group routines and play.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.belonging.community"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.belonging.next_steps.01",
@@ -84,7 +86,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal}.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.belonging.relationships"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.belonging.next_steps.02",
@@ -96,7 +98,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} as part of our classroom community.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.belonging.community"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.belonging.next_steps.03",
@@ -108,7 +110,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} while continuing to build confidence and belonging.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.belonging.identity"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     # Self-Regulation
     {
@@ -121,7 +123,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} is developing self-regulation skills that support learning throughout the day.\n{pronoun_subject} demonstrates this by {evidence}.\n",
         "indicators": ["indicator.self_regulation.emotions", "indicator.self_regulation.attention"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.self_regulation.key_learning.02",
@@ -133,7 +135,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} shows {strength} when navigating routines and learning activities.\n{pronoun_subject} makes this visible by {evidence}.\n",
         "indicators": ["indicator.self_regulation.attention"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.self_regulation.key_learning.03",
@@ -145,7 +147,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} is learning strategies to recognize and manage emotions during the day.\n{pronoun_subject} shows this by {evidence}.\n",
         "indicators": ["indicator.self_regulation.emotions"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.self_regulation.growth.01",
@@ -157,7 +159,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} has shown growth in staying focused and persisting with tasks.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.self_regulation.attention"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.self_regulation.growth.02",
@@ -169,7 +171,7 @@ EMBEDDED_TEMPLATES = [
         "text": "Over time, {child} has become more consistent in using strategies to manage emotions.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.self_regulation.emotions"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.self_regulation.growth.03",
@@ -181,7 +183,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} is showing growing awareness of personal well-being and safe choices during play.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.self_regulation.health"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.self_regulation.next_steps.01",
@@ -193,7 +195,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} during learning routines and transitions.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.self_regulation.attention"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.self_regulation.next_steps.02",
@@ -205,7 +207,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} when feelings become big.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.self_regulation.emotions"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.self_regulation.next_steps.03",
@@ -217,7 +219,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} while continuing to build healthy routines.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.self_regulation.health"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     # Literacy & Math
     {
@@ -228,9 +230,13 @@ EMBEDDED_TEMPLATES = [
         "tone": "parent_friendly",
         "slots": ["child", "pronoun_subject", "evidence"],
         "text": "{child} is developing literacy and mathematics behaviours through play and inquiry.\n{pronoun_subject} shows this by {evidence}.\n",
-        "indicators": ["indicator.literacy_math.oral_language", "indicator.literacy_math.numeracy", "indicator.literacy_math.writing"],
+        "indicators": [
+            "indicator.literacy_math.oral_language",
+            "indicator.literacy_math.numeracy",
+            "indicator.literacy_math.writing",
+        ],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.literacy_math.key_learning.02",
@@ -242,7 +248,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} demonstrates {strength} when communicating ideas and making meaning.\n{pronoun_subject} makes this visible by {evidence}.\n",
         "indicators": ["indicator.literacy_math.oral_language", "indicator.literacy_math.reading"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.literacy_math.key_learning.03",
@@ -254,7 +260,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} is developing early writing and representation skills.\n{pronoun_subject} shows this by {evidence}.\n",
         "indicators": ["indicator.literacy_math.writing"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.literacy_math.growth.01",
@@ -266,7 +272,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} has shown growth in oral language and communicating ideas with others.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.literacy_math.oral_language"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.literacy_math.growth.02",
@@ -278,7 +284,7 @@ EMBEDDED_TEMPLATES = [
         "text": "Over time, {child} has become more confident in using early reading behaviours.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.literacy_math.reading"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.literacy_math.growth.03",
@@ -290,7 +296,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} has shown growth in using number sense and math thinking during play.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.literacy_math.numeracy"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.literacy_math.next_steps.01",
@@ -302,7 +308,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} when sharing ideas and explaining thinking.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.literacy_math.oral_language"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.literacy_math.next_steps.02",
@@ -314,7 +320,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} while continuing to develop early reading behaviours.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.literacy_math.reading"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.literacy_math.next_steps.03",
@@ -326,7 +332,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} while continuing to use math thinking in play.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.literacy_math.numeracy"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     # Problem Solving
     {
@@ -339,7 +345,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} is developing problem-solving and inquiry skills through exploration.\n{pronoun_subject} shows this by {evidence}.\n",
         "indicators": ["indicator.problem_solving.inquiry"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.problem_solving.key_learning.02",
@@ -351,7 +357,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} demonstrates {strength} when experimenting with ideas and materials.\n{pronoun_subject} makes this visible by {evidence}.\n",
         "indicators": ["indicator.problem_solving.innovation", "indicator.problem_solving.creativity"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.problem_solving.key_learning.03",
@@ -363,7 +369,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} is developing creative thinking skills when approaching challenges.\n{pronoun_subject} shows this by {evidence}.\n",
         "indicators": ["indicator.problem_solving.creativity"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.problem_solving.growth.01",
@@ -375,7 +381,7 @@ EMBEDDED_TEMPLATES = [
         "text": "Over time, {child} has shown growth in asking questions and testing ideas.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.problem_solving.inquiry"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.problem_solving.growth.02",
@@ -387,7 +393,7 @@ EMBEDDED_TEMPLATES = [
         "text": "{child} has become more consistent in trying different strategies when solving problems.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.problem_solving.innovation"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.problem_solving.growth.03",
@@ -399,7 +405,7 @@ EMBEDDED_TEMPLATES = [
         "text": "Over time, {child} has shown growth in using creativity to approach challenges.\n{pronoun_subject} now {change}, whereas previously {previous}.\n",
         "indicators": ["indicator.problem_solving.creativity"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.problem_solving.next_steps.01",
@@ -411,7 +417,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} by asking questions and testing ideas.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.problem_solving.inquiry"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.problem_solving.next_steps.02",
@@ -423,7 +429,7 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} while continuing to experiment with strategies.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.problem_solving.innovation"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
     {
         "id": "template.comment.problem_solving.next_steps.03",
@@ -435,6 +441,6 @@ EMBEDDED_TEMPLATES = [
         "text": "A next step for {child} is to {goal} while continuing to use creative thinking.\nAt school, we will {school_strategy}. At home, you can support this by {home_strategy}.\n",
         "indicators": ["indicator.problem_solving.creativity"],
         "status": "draft",
-        "version": "0.1.0"
+        "version": "0.1.0",
     },
 ]

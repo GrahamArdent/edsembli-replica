@@ -31,6 +31,11 @@ export interface CommentDraft {
   templateId?: string;
   slots: Record<string, string>; // { "evidence": "...", "change": "..." }
   rendered?: string;
+  validation?: {
+    valid: boolean;
+    errors?: string[];
+    warnings?: string[];
+  };
 }
 
 export interface ReportDraft {

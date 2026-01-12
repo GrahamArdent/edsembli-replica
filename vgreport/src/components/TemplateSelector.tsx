@@ -23,15 +23,19 @@ interface TemplateSelectorProps {
   frameCanonicalId: string;
   sectionId: string;
   onSelect: (template: Template) => void;
+  selectedTemplateId?: string;
+  onClear?: () => void;
 }
 
-export function TemplateSelector({ frameCanonicalId, sectionId, onSelect }: TemplateSelectorProps) {
+export function TemplateSelector({ frameCanonicalId, sectionId, onSelect, selectedTemplateId, onClear }: TemplateSelectorProps) {
   const [open, setOpen] = React.useState(false)
   const templates = useAppStore(state => state.templates)
 
   const filteredTemplates = templates.filter(t =>
     t.frame === frameCanonicalId && t.section === sectionId
   )
+
+  const selected = selectedTemplateId ? filteredTemplates.find(t => t.id === selectedTemplateId) : undefined;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -44,7 +48,9 @@ export function TemplateSelector({ frameCanonicalId, sectionId, onSelect }: Temp
         >
           <div className="flex items-center gap-2 truncate">
             <BookOpen className="h-3.5 w-3.5 text-blue-600" />
-            <span>Browse Templates ({filteredTemplates.length})</span>
+            <span className="truncate">
+              {selected ? `Template: ${selected.id.split('.').pop()}` : `Browse Templates (${filteredTemplates.length})`}
+            </span>
           </div>
           <ChevronsUpDown className="ml-2 h-3 w-3 shrink-0 opacity-50" />
         </Button>
@@ -55,6 +61,19 @@ export function TemplateSelector({ frameCanonicalId, sectionId, onSelect }: Temp
           <CommandList>
             <CommandEmpty>No templates found for this section.</CommandEmpty>
             <CommandGroup heading="Available Templates">
+              {selected && onClear && (
+                <CommandItem
+                  key="__clear"
+                  value="(clear)"
+                  onSelect={() => {
+                    onClear();
+                    setOpen(false);
+                  }}
+                  className="p-2 cursor-pointer text-red-700"
+                >
+                  Clear selection
+                </CommandItem>
+              )}
               {filteredTemplates.map((template) => (
                 <CommandItem
                   key={template.id}
@@ -78,7 +97,7 @@ export function TemplateSelector({ frameCanonicalId, sectionId, onSelect }: Temp
                   <Check
                     className={cn(
                       "ml-auto h-4 w-4",
-                      "opacity-0"
+                      selectedTemplateId === template.id ? "opacity-100" : "opacity-0"
                     )}
                   />
                 </CommandItem>

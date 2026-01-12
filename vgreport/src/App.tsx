@@ -4,13 +4,20 @@ import { Preview } from "./components/Preview";
 import { useEffect, useRef, useState } from "react";
 import { sidecar } from "./services/sidecar";
 import { useAppStore } from "./store/useAppStore";
+import { SettingsModal } from "./components/SettingsModal";
+import { OnboardingWizard } from "./components/OnboardingWizard";
 
 const UI_BUILD_STAMP = "ui-build-2026-01-12T09:05:00Z";
 
 function App() {
   console.log("App Component Rendering...");
   const setTemplates = useAppStore(state => state.setTemplates);
+  const hydrateFromDb = useAppStore(state => state.hydrateFromDb);
+  const isHydrated = useAppStore(state => state.isHydrated);
+  const theme = useAppStore(state => state.theme);
+  const flushPendingSaves = useAppStore(state => state.flushPendingSaves);
   const [logs, setLogs] = useState<string[]>([]);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const didInit = useRef(false);
 
   const addLog = (msg: string) => setLogs(prev => [...prev, msg]);
@@ -26,6 +33,10 @@ function App() {
     addLog("App mounted, initializing sidecar...");
     (async () => {
       try {
+        addLog("Hydrating local SQLite state...");
+        await hydrateFromDb();
+        addLog("SQLite hydrated.");
+
         await sidecar.init();
         addLog("Sidecar initialized.");
 
@@ -57,10 +68,47 @@ function App() {
     return () => {
       offLog?.();
     };
-  }, [setTemplates]);
+  }, [setTemplates, hydrateFromDb]);
+
+  useEffect(() => {
+    if (!isHydrated) return;
+
+    const root = document.documentElement;
+    const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const apply = () => {
+      const shouldDark = theme === "dark" || (theme === "system" && !!media?.matches);
+      root.classList.toggle("dark", shouldDark);
+    };
+
+    apply();
+    media?.addEventListener?.("change", apply);
+    return () => media?.removeEventListener?.("change", apply);
+  }, [isHydrated, theme]);
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
+        e.preventDefault();
+        void flushPendingSaves();
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === ",") {
+        e.preventDefault();
+        setSettingsOpen(true);
+      }
+    };
+    const onOpenSettings = () => setSettingsOpen(true);
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("open-settings", onOpenSettings);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("open-settings", onOpenSettings);
+    };
+  }, [flushPendingSaves]);
 
   return (
-    <div className="flex w-full h-screen bg-white text-gray-900 overflow-hidden font-sans relative">
+    <div className="flex w-full h-screen bg-background text-foreground overflow-hidden font-sans relative">
+      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <OnboardingWizard />
       <div className="absolute bottom-0 right-0 p-4 bg-black/90 text-white text-xs max-w-2xl max-h-96 overflow-auto z-50 border-t-2 border-l-2 border-red-500 font-mono shadow-2xl">
         <div className="font-bold mb-2 border-b border-gray-600 pb-1">DEBUG LOGS (Scrollable) — {UI_BUILD_STAMP}</div>
         {logs.map((L, i) => <div key={i} className="whitespace-pre-wrap mb-1 border-b border-gray-800 pb-1">{L}</div>)}
