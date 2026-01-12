@@ -1,0 +1,203 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/GrahamArdent/edsembli-replica/schemas/board_config.schema.json",
+  "$version": "0.1.0",
+  "title": "Board Configuration Schema",
+  "description": "Configuration schema for school board-specific customization of the CoL framework",
+  "type": "object",
+  "required": ["id", "type", "board_name", "sis_platform", "char_limits"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^config\\.board\\.[a-z_]+$",
+      "description": "Unique board configuration ID (e.g., config.board.ncdsb)"
+    },
+    "type": {
+      "type": "string",
+      "const": "board_config",
+      "description": "Type identifier for board configuration"
+    },
+    "board_name": {
+      "type": "string",
+      "description": "Full name of the school board"
+    },
+    "board_abbrev": {
+      "type": "string",
+      "description": "Board abbreviation (e.g., NCDSB, TCDSB)"
+    },
+    "sis_platform": {
+      "type": "string",
+      "enum": ["edsembli", "powerschool", "aspen", "maplewood", "other"],
+      "description": "Student Information System platform in use"
+    },
+    "sis_version": {
+      "type": "string",
+      "description": "SIS version number (optional)"
+    },
+    "locale": {
+      "type": "string",
+      "enum": ["en", "fr", "en-fr"],
+      "default": "en",
+      "description": "Language locale for templates"
+    },
+    "char_limits": {
+      "type": "object",
+      "required": ["per_section_min", "per_section_max", "total_min", "total_max"],
+      "properties": {
+        "per_section_min": {
+          "type": "integer",
+          "minimum": 50,
+          "description": "Minimum characters per section (key_learning, growth, next_steps)"
+        },
+        "per_section_max": {
+          "type": "integer",
+          "minimum": 100,
+          "description": "Maximum characters per section"
+        },
+        "total_min": {
+          "type": "integer",
+          "minimum": 200,
+          "description": "Minimum total characters for assembled comment"
+        },
+        "total_max": {
+          "type": "integer",
+          "minimum": 400,
+          "description": "Maximum total characters for assembled comment"
+        }
+      },
+      "description": "Character limits for comments (SIS-specific)"
+    },
+    "required_sections": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["key_learning", "growth", "next_steps"]
+      },
+      "minItems": 1,
+      "uniqueItems": true,
+      "default": ["key_learning", "growth", "next_steps"],
+      "description": "Required comment sections for this board"
+    },
+    "optional_sections": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true,
+      "description": "Additional optional sections (e.g., faith_connections for Catholic boards)"
+    },
+    "custom_slots": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["type", "description"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["text", "boolean", "date"],
+            "description": "Data type for custom slot"
+          },
+          "description": {
+            "type": "string",
+            "description": "Human-readable description of slot purpose"
+          },
+          "required": {
+            "type": "boolean",
+            "default": false,
+            "description": "Whether this slot must be filled"
+          },
+          "default": {
+            "type": "string",
+            "description": "Default value if not provided"
+          }
+        }
+      },
+      "description": "Board-specific custom slots (e.g., faith_reference for Catholic boards)"
+    },
+    "export_settings": {
+      "type": "object",
+      "properties": {
+        "csv_delimiter": {
+          "type": "string",
+          "default": ",",
+          "description": "CSV delimiter character"
+        },
+        "csv_encoding": {
+          "type": "string",
+          "default": "utf-8-sig",
+          "description": "CSV encoding (utf-8-sig for Excel compatibility)"
+        },
+        "include_metadata": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include metadata columns in exports"
+        },
+        "include_french": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include French translations in exports"
+        }
+      },
+      "description": "Export format preferences for this board"
+    },
+    "readability_targets": {
+      "type": "object",
+      "properties": {
+        "flesch_reading_ease_min": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 60,
+          "description": "Minimum Flesch Reading Ease score"
+        },
+        "flesch_reading_ease_max": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "default": 80,
+          "description": "Maximum Flesch Reading Ease score"
+        },
+        "flesch_kincaid_grade_min": {
+          "type": "number",
+          "minimum": 0,
+          "default": 6,
+          "description": "Minimum Flesch-Kincaid grade level"
+        },
+        "flesch_kincaid_grade_max": {
+          "type": "number",
+          "minimum": 0,
+          "default": 8,
+          "description": "Maximum Flesch-Kincaid grade level"
+        }
+      },
+      "description": "Readability score targets for this board"
+    },
+    "terminology": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Board-specific terminology overrides (e.g., 'kindergarten': 'Full-Day Kindergarten')"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Configuration version (semver)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "stable", "deprecated"],
+      "default": "draft",
+      "description": "Configuration status"
+    },
+    "updated": {
+      "type": "string",
+      "format": "date",
+      "description": "Last update date (YYYY-MM-DD)"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes or documentation for this board config"
+    }
+  }
+}

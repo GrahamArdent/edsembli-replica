@@ -1,0 +1,61 @@
+---
+id: config.board.tcdsb
+type: board_config
+board_name: Toronto Catholic District School Board
+board_abbrev: TCDSB
+sis_platform: edsembli
+sis_version: "2024.1"
+locale: en
+version: 0.1.0
+status: draft
+updated: 2026-01-11
+description: |
+  TCDSB Board Configuration - English Catholic board serving Toronto.
+  Character limits are more restrictive to accommodate larger class sizes.
+  Faith-based language is encouraged but optional.
+  Supports various programs (FI, EFI, arts, etc.).
+---
+
+char_limits:
+  per_section_min: 80
+  per_section_max: 500
+  total_min: 350
+  total_max: 1200
+
+required_sections:
+  - key_learning
+  - growth
+  - next_steps
+
+optional_sections:
+  - faith_connections
+
+custom_slots:
+  faith_reference:
+    type: text
+    description: "Reference to Catholic Graduate Expectations or Fully Alive curriculum"
+    required: false
+    default: ""
+  
+  program_name:
+    type: text
+    description: "Specific program or initiative (e.g., 'Learning Through Play')"
+    required: false
+    default: ""
+
+export_settings:
+  csv_delimiter: ","
+  csv_encoding: utf-8-sig
+  include_metadata: true
+  include_french: false
+
+readability_targets:
+  flesch_reading_ease_min: 60
+  flesch_reading_ease_max: 80
+  flesch_kincaid_grade_min: 6
+  flesch_kincaid_grade_max: 8
+
+terminology:
+  kindergarten: "Kindergarten"
+  col: "Progress Report Comment"
+  teacher: "Teacher"

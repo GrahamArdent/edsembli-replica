@@ -77,6 +77,11 @@ nav:
     - "Override Policy": guidance/override-policy.md
   - Integration:
     - "SIS Formats": docs/integration/sis-formats.md
+  - "Board Configuration":
+    - "Customization Guide": guidance/board-customization.md
+    - "NCDSB Preset": config/boards/ncdsb.yaml
+    - "TCDSB Preset": config/boards/tcdsb.yaml
+    - "Config Schema": schemas/board_config.schema.json
   - "ADRs":
     - "ADR-0001: Canonical vs Sources": decisions/0001-canonical-vs-sources.md
     - "ADR-0002: Framework Split": decisions/0002-framework-vs-infrastructure-split.md

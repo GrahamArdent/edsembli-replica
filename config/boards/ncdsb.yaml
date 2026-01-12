@@ -1,0 +1,61 @@
+---
+id: config.board.ncdsb
+type: board_config
+board_name: Northeast Catholic District School Board
+board_abbrev: NCDSB
+sis_platform: edsembli
+sis_version: "2024.1"
+locale: en-fr
+version: 0.1.0
+status: draft
+updated: 2026-01-11
+description: |
+  NCDSB Board Configuration - Bilingual Catholic board serving Northern Ontario.
+  Character limits align with Edsembli 2024.1 field constraints.
+  Faith-based language is encouraged but optional.
+  Templates should reflect Catholic social teachings where appropriate.
+---
+
+char_limits:
+  per_section_min: 100
+  per_section_max: 600
+  total_min: 400
+  total_max: 1500
+
+required_sections:
+  - key_learning
+  - growth
+  - next_steps
+
+optional_sections:
+  - faith_connections
+
+custom_slots:
+  faith_reference:
+    type: text
+    description: "Reference to Catholic Graduate Expectations or faith teachings"
+    required: false
+    default: ""
+  
+  cge_expectation:
+    type: text
+    description: "Specific Catholic Graduate Expectation being developed"
+    required: false
+    default: ""
+
+export_settings:
+  csv_delimiter: ","
+  csv_encoding: utf-8-sig
+  include_metadata: true
+  include_french: true
+
+readability_targets:
+  flesch_reading_ease_min: 60
+  flesch_reading_ease_max: 80
+  flesch_kincaid_grade_min: 6
+  flesch_kincaid_grade_max: 9
+
+terminology:
+  kindergarten: "Full-Day Kindergarten"
+  col: "Communication of Learning"
+  teacher: "Educator"

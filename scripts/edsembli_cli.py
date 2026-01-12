@@ -42,6 +42,34 @@ def _load_templates() -> list[dict]:
     return [t for t in templates if isinstance(t, dict)]
 
 
+def _load_board_config(board_id: str) -> dict | None:
+    """Load board configuration from config/boards/{board_id}.yaml.
+
+    Board config files have YAML frontmatter followed by YAML configuration data.
+    """
+    config_path = ROOT / "config" / "boards" / f"{board_id}.yaml"
+    if not config_path.exists():
+        console.print(f"[yellow]Board config not found: {config_path}[/yellow]")
+        return None
+
+    try:
+        with config_path.open("r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Remove frontmatter (everything between first two --- markers)
+        parts = content.split("---", 2)
+        if len(parts) >= 3:
+            yaml_content = parts[2].strip()
+        else:
+            yaml_content = content.strip()
+
+        config = YAML_LOADER.load(yaml_content) or {}
+        return config
+    except Exception as e:
+        console.print(f"[red]Error loading board config {board_id}: {e}[/red]")
+        return None
+
+
 @app.command("template-search")
 def template_search(
     query: str = typer.Argument(..., help="Substring to match against id/text"),
@@ -375,9 +403,17 @@ def export_templates(
     section: Annotated[
         str | None, typer.Option("--section", help="Filter by section (key_learning, growth, next_steps)")
     ] = None,
+    board: Annotated[str | None, typer.Option("--board", help="Board ID (e.g., ncdsb, tcdsb)")] = None,
 ) -> None:
     """Export template bank to CSV or JSON for SIS import."""
     templates = _load_templates()
+
+    # Load board config if specified
+    board_config = None
+    if board:
+        board_config = _load_board_config(board)
+        if board_config:
+            console.print(f"[blue]Using board config: {board_config.get('board_name', board)}[/blue]")
 
     # Apply filters
     filtered: list[dict] = []
@@ -393,6 +429,30 @@ def export_templates(
     if not filtered:
         console.print("[yellow]No templates match the specified filters.[/yellow]")
         raise typer.Exit(1)
+
+    # Validate against board limits if config provided
+    if board_config and "char_limits" in board_config:
+        limits = board_config["char_limits"]
+        warnings = []
+        for t in filtered:
+            text = t.get("text", "")
+            # Calculate char count excluding slots
+            char_count = len(text)
+            for slot in t.get("slots", []):
+                slot_pattern = f"{{{slot}}}"
+                char_count -= text.count(slot_pattern) * len(slot_pattern)
+
+            if char_count > limits.get("per_section_max", float("inf")):
+                warnings.append(
+                    f"Template {t.get('id')} exceeds board limit: {char_count} > {limits['per_section_max']}"
+                )
+
+        if warnings:
+            console.print("[yellow]⚠ Board limit warnings:[/yellow]")
+            for w in warnings[:5]:  # Show first 5
+                console.print(f"  {w}")
+            if len(warnings) > 5:
+                console.print(f"  ... and {len(warnings) - 5} more warnings")
 
     # Determine output path
     if output is None:
@@ -532,8 +592,16 @@ def export_comment(
     ] = None,
     output: Annotated[Path | None, typer.Option("--output", help="Output file path (.txt)")] = None,
     format: Annotated[str, typer.Option("--format", help="Export format: txt or json")] = "txt",
+    board: Annotated[str | None, typer.Option("--board", help="Board ID (e.g., ncdsb, tcdsb)")] = None,
 ) -> None:
     """Export assembled comment for a student."""
+    # Load board config if specified
+    board_config = None
+    if board:
+        board_config = _load_board_config(board)
+        if board_config:
+            console.print(f"[blue]Using board config: {board_config.get('board_name', board)}[/blue]")
+
     # Load student data
     child_file = Path(child_file).resolve()
     if not child_file.exists():
@@ -573,6 +641,28 @@ def export_comment(
         for error in result.errors:
             console.print(f"  • {error}")
         raise typer.Exit(1)
+
+    # Validate against board limits if config provided
+    if board_config and "char_limits" in board_config and result.comment:
+        limits = board_config["char_limits"]
+        total_length = len(result.comment)
+
+        # Check total length
+        if total_length > limits.get("total_max", float("inf")):
+            console.print(
+                f"[yellow]⚠ Comment exceeds board maximum: {total_length} > {limits['total_max']} chars[/yellow]"
+            )
+        elif total_length < limits.get("total_min", 0):
+            console.print(
+                f"[yellow]⚠ Comment below board minimum: {total_length} < {limits['total_min']} chars[/yellow]"
+            )
+
+        # Check section lengths
+        if result.stats and "section_lengths" in result.stats:
+            for section, length in result.stats["section_lengths"].items():
+                if length > limits.get("per_section_max", float("inf")):
+                    max_len = limits["per_section_max"]
+                    console.print(f"[yellow]⚠ Section '{section}' exceeds maximum: {length} > {max_len} chars[/yellow]")
 
     # Determine output path
     if output is None:
