@@ -185,6 +185,8 @@ Last updated: 2026-01-11
 - **Edsembli CLI** (`scripts/edsembli_cli.py`)
 	- `edsembli search <query>` — fuzzy template search
 	- `edsembli matrix-sql <sql>` — DuckDB queries over traceability matrix
+	- `edsembli evidence-matrix [--template ID]` — show heuristic evidence-template matches
+	- `edsembli templates [--show-deprecated]` — list templates with deprecation status
 - **Index Checker** (`scripts/check_index.py`)
 	- Verifies all canonical files are linked in `index.md`
 

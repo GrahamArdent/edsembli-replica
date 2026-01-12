@@ -90,6 +90,9 @@ nav:
     - "Workflows": knowledge/processes/index.md
   - Audits:
     - "Overview": audits/README.md
+  - Reports:
+    - "Coverage Report": reports/coverage.md
+    - "Gaps Analysis": reports/gaps.md
   - Development:
     - "Roadmap": docs/ROADMAP.md
     - "Changelog": docs/CHANGELOG.md

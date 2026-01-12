@@ -158,9 +158,9 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 #### Deliverables
 
-- [ ] `edsembli evidence-matrix` command
-- [ ] `edsembli templates --show-deprecated` command
-- [ ] MkDocs nav updated with reports section
+- [x] `edsembli evidence-matrix` command
+- [x] `edsembli templates --show-deprecated` command
+- [x] MkDocs nav updated with reports section
 
 ---
 

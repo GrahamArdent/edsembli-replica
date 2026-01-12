@@ -81,6 +81,8 @@ Analyze template distribution and identify coverage deficiencies.
 python scripts/edsembli_cli.py --help
 python scripts/edsembli_cli.py template-search "belonging"
 python scripts/edsembli_cli.py matrix-sql "select frame_id, count(*) as n from matrix group by 1 order by n desc"
+python scripts/edsembli_cli.py evidence-matrix --template template.comment.belonging.key_learning.01
+python scripts/edsembli_cli.py templates --show-deprecated
 ```
 Provides lightweight, local exploration tools (no network calls, no PII).
 

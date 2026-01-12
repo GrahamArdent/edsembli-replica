@@ -17,6 +17,13 @@ The format is loosely based on Keep a Changelog, and this project aims to follow
 
 ## [Unreleased]
 
+### Added (Phase 3B Sprint 3B.2 - 2026-01-11)
+
+- Evidence-template matrix CLI command (`edsembli evidence-matrix`) showing heuristic matches using ADR-001 algorithm
+- Template deprecation CLI command (`edsembli templates --show-deprecated`) listing deprecated templates
+- Reports section added to MkDocs navigation (coverage.md and gaps.md)
+- Heuristic matching algorithm with frame match (+3), indicator match (+5), preferred evidence (+10)
+
 ### Added (Phase 3B Sprint 3B.1 - 2026-01-11)
 
 - Coverage report generator (`scripts/generate_coverage_report.py`) showing template distribution across frames, indicators, and sections
