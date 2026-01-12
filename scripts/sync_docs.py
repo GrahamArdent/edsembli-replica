@@ -8,6 +8,7 @@ files to the MkDocs source directory before builds.
 from __future__ import annotations
 
 import shutil
+import sys
 from pathlib import Path
 
 WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
@@ -38,8 +39,21 @@ SYNC_FILES = [
 ]
 
 
+def _configure_output_encoding() -> None:
+    """Ensure stdout/stderr can safely emit unicode on Windows."""
+
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
+
+
 def main() -> int:
     """Sync canonical files to docs_site/."""
+    _configure_output_encoding()
     print(f"Syncing canonical files to {DOCS_SITE}...")
 
     # Clean docs_site (but preserve .gitignore if it exists)

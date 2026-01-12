@@ -10,6 +10,19 @@ import re
 import sys
 from pathlib import Path
 
+
+def _configure_output_encoding() -> None:
+    """Ensure stdout/stderr can safely emit unicode on Windows."""
+
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                pass
+
+
 WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
 
 # Folders containing canonical files that SHOULD be in index.md
@@ -64,6 +77,7 @@ def should_ignore(file_path: Path) -> bool:
 
 
 def main() -> int:
+    _configure_output_encoding()
     index_path = WORKSPACE_ROOT / "index.md"
     if not index_path.exists():
         print("ERROR: index.md not found!")

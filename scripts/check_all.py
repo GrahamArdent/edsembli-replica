@@ -14,6 +14,23 @@ from pathlib import Path
 WORKSPACE_ROOT = Path(__file__).resolve().parents[1]
 
 
+def _configure_output_encoding() -> None:
+    """Ensure stdout/stderr can safely emit unicode on Windows.
+
+    When output is redirected (e.g., piped to a file), Windows may use a legacy
+    code page that can't encode characters like ✓/✗, causing UnicodeEncodeError.
+    """
+
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(encoding="utf-8", errors="replace")
+            except Exception:
+                # Best-effort: never fail the check runner due to console encoding.
+                pass
+
+
 def run(cmd: list[str], name: str) -> bool:
     """Run a command and return True if successful."""
     print(f"\n{'=' * 60}")
@@ -29,6 +46,7 @@ def run(cmd: list[str], name: str) -> bool:
 
 
 def main() -> int:
+    _configure_output_encoding()
     quick = "--quick" in sys.argv
     results: list[tuple[str, bool]] = []
 

@@ -27,6 +27,12 @@ python scripts/check_all.py --quick
 
 ## Individual Scripts
 
+### VGReport dev launcher (Windows)
+```bash
+pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/tauri_dev.ps1
+```
+Stops any process holding port 1420 and launches `vgreport` via `tauri dev`.
+
 ### Validation (schema + front matter)
 ```bash
 python scripts/validate.py
