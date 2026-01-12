@@ -47,9 +47,15 @@ Validates `datasets/traceability/matrix.csv` (and `matrix.parquet` if present) a
 
 ### Documentation Staging
 ```bash
-python scripts/stage_docs.py
+python scripts/sync_docs.py
 ```
-Copies canonical content into `site_docs/` for MkDocs consumption.
+Copies canonical content into `docs_site/` for MkDocs consumption.
+
+### Index Link Verification
+```bash
+python scripts/check_index.py
+```
+Verifies that all canonical files (docs, taxonomy, schemas, etc.) are linked in `index.md`.
 
 ### Quick Queries (CLI)
 ```bash

@@ -287,6 +287,7 @@ Before submitting changes:
 - [ ] `pytest` passes
 - [ ] `scripts/validate.py` passes
 - [ ] `scripts/lint.py` passes
+- [ ] `scripts/check_index.py` passes (verifies index links)
 - [ ] If docs changed: `mkdocs build` succeeds
 - [ ] If new file added: `index.md` updated
 - [ ] If schema changed: version bumped
