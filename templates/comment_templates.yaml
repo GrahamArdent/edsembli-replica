@@ -1,12 +1,19 @@
-# Comment Templates (CoL)
-# Canonical template library (non-PII)
-# ID: templates.comment_templates
-# Updated: 2026-01-11
+# Comment Templates (CoL)
+
+# Canonical template library (non-PII)
+
+# ID: templates.comment_templates
+
+# Updated: 2026-01-11
+
 
 templates:
-  # -------------------------
-  # Belonging (3 per section)
-  # -------------------------
+  # -------------------------
+
+  # Belonging (3 per section)
+
+  # -------------------------
+
 - id: template.comment.belonging.key_learning.01
   type: comment_template
   frame: frame.belonging
@@ -23,7 +30,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} développe un fort sentiment d'appartenance au sein de notre communauté de classe. {pronoun_subject} le montre en {evidence}."
 - id: template.comment.belonging.key_learning.02
   type: comment_template
   frame: frame.belonging
@@ -39,7 +46,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} fait preuve de {strength} lorsqu'il ou elle apprend et joue avec les autres. {pronoun_subject} le rend visible en {evidence}."
 - id: template.comment.belonging.key_learning.03
   type: comment_template
   frame: frame.belonging
@@ -56,7 +63,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} contribue à notre communauté d'apprentissage de façon significative. {pronoun_subject} le fait en {evidence}."
 - id: template.comment.belonging.growth.01
   type: comment_template
   frame: frame.belonging
@@ -72,7 +79,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Depuis le début de l'année, {child} a fait des progrès dans la création de relations. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.belonging.growth.02
   type: comment_template
   frame: frame.belonging
@@ -88,7 +95,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} démontre une confiance grandissante en tant que membre de notre communauté de classe. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.belonging.growth.03
   type: comment_template
   frame: frame.belonging
@@ -104,7 +111,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Avec le temps, {child} est devenu plus constant dans sa participation aux routines de groupe et aux jeux. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.belonging.next_steps.01
   type: comment_template
   frame: frame.belonging
@@ -120,7 +127,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Une prochaine étape pour {child} est de {goal}. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.belonging.next_steps.02
   type: comment_template
   frame: frame.belonging
@@ -136,7 +143,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Une prochaine étape pour {child} est de {goal} au sein de notre communauté de classe. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.belonging.next_steps.03
   type: comment_template
   frame: frame.belonging
@@ -152,10 +159,13 @@ templates:
   status: draft
   version: 0.1.0
 
-  # ----------------------------------------
-  # Self-Regulation (3 per section)
-  # ----------------------------------------
-  text_fr: TODO
+  # ----------------------------------------
+
+  # Self-Regulation (3 per section)
+
+  # ----------------------------------------
+
+  text_fr: "Une prochaine étape pour {child} est de {goal} tout en continuant à développer sa confiance et son sentiment d'appartenance. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.self_regulation.key_learning.01
   type: comment_template
   frame: frame.self_regulation
@@ -172,7 +182,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} développe des habiletés d'autorégulation qui soutiennent l'apprentissage tout au long de la journée. {pronoun_subject} le démontre en {evidence}."
 - id: template.comment.self_regulation.key_learning.02
   type: comment_template
   frame: frame.self_regulation
@@ -188,7 +198,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} fait preuve de {strength} lorsqu'il ou elle vit les routines et les activités d'apprentissage. {pronoun_subject} le rend visible en {evidence}."
 - id: template.comment.self_regulation.key_learning.03
   type: comment_template
   frame: frame.self_regulation
@@ -204,7 +214,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} apprend des stratégies pour reconnaître et gérer ses émotions durant la journée. {pronoun_subject} le montre en {evidence}."
 - id: template.comment.self_regulation.growth.01
   type: comment_template
   frame: frame.self_regulation
@@ -220,7 +230,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} a fait des progrès dans sa capacité à rester concentré et à persévérer dans les tâches. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.self_regulation.growth.02
   type: comment_template
   frame: frame.self_regulation
@@ -236,7 +246,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Avec le temps, {child} est devenu plus constant dans l'utilisation de stratégies pour gérer ses émotions. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.self_regulation.growth.03
   type: comment_template
   frame: frame.self_regulation
@@ -252,7 +262,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} développe une conscience grandissante de son bien-être et des choix sécuritaires pendant le jeu. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.self_regulation.next_steps.01
   type: comment_template
   frame: frame.self_regulation
@@ -268,7 +278,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Une prochaine étape pour {child} est de {goal} pendant les routines d'apprentissage et les transitions. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.self_regulation.next_steps.02
   type: comment_template
   frame: frame.self_regulation
@@ -284,7 +294,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Une prochaine étape pour {child} est de {goal} lorsque les émotions deviennent intenses. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.self_regulation.next_steps.03
   type: comment_template
   frame: frame.self_regulation
@@ -300,10 +310,13 @@ templates:
   status: draft
   version: 0.1.0
 
-  # ----------------------------------------
-  # Literacy & Math (3 per section)
-  # ----------------------------------------
-  text_fr: TODO
+  # ----------------------------------------
+
+  # Literacy & Math (3 per section)
+
+  # ----------------------------------------
+
+  text_fr: "Une prochaine étape pour {child} est de {goal} tout en continuant à développer des routines saines. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.literacy_math.key_learning.01
   type: comment_template
   frame: frame.literacy_math
@@ -320,7 +333,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} développe des habiletés en littératie et en mathématiques grâce au jeu et à l'exploration. {pronoun_subject} le montre en {evidence}."
 - id: template.comment.literacy_math.key_learning.02
   type: comment_template
   frame: frame.literacy_math
@@ -337,7 +350,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} fait preuve de {strength} lorsqu'il ou elle communique ses idées et construit du sens. {pronoun_subject} le rend visible en {evidence}."
 - id: template.comment.literacy_math.key_learning.03
   type: comment_template
   frame: frame.literacy_math
@@ -353,7 +366,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} développe des habiletés d'écriture émergente et de représentation. {pronoun_subject} le montre en {evidence}."
 - id: template.comment.literacy_math.growth.01
   type: comment_template
   frame: frame.literacy_math
@@ -369,7 +382,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} a fait des progrès en langage oral et dans sa façon de communiquer ses idées avec les autres. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.literacy_math.growth.02
   type: comment_template
   frame: frame.literacy_math
@@ -385,7 +398,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Avec le temps, {child} est devenu plus confiant dans l'utilisation de comportements de lecture émergents. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.literacy_math.growth.03
   type: comment_template
   frame: frame.literacy_math
@@ -401,7 +414,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} a fait des progrès dans l'utilisation du sens du nombre et du raisonnement mathématique pendant le jeu. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.literacy_math.next_steps.01
   type: comment_template
   frame: frame.literacy_math
@@ -417,7 +430,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Une prochaine étape pour {child} est de {goal} lorsqu'il ou elle partage ses idées et explique sa pensée. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.literacy_math.next_steps.02
   type: comment_template
   frame: frame.literacy_math
@@ -433,7 +446,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Une prochaine étape pour {child} est de {goal} tout en continuant à développer des comportements de lecture émergents. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.literacy_math.next_steps.03
   type: comment_template
   frame: frame.literacy_math
@@ -449,10 +462,13 @@ templates:
   status: draft
   version: 0.1.0
 
-  # ----------------------------------------
-  # Problem Solving (3 per section)
-  # ----------------------------------------
-  text_fr: TODO
+  # ----------------------------------------
+
+  # Problem Solving (3 per section)
+
+  # ----------------------------------------
+
+  text_fr: "Une prochaine étape pour {child} est de {goal} tout en continuant à utiliser sa pensée mathématique dans le jeu. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.problem_solving.key_learning.01
   type: comment_template
   frame: frame.problem_solving
@@ -468,7 +484,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} développe des habiletés de résolution de problèmes et de démarche d'enquête grâce à l'exploration. {pronoun_subject} le montre en {evidence}."
 - id: template.comment.problem_solving.key_learning.02
   type: comment_template
   frame: frame.problem_solving
@@ -485,7 +501,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} fait preuve de {strength} lorsqu'il ou elle expérimente des idées et des matériaux. {pronoun_subject} le rend visible en {evidence}."
 - id: template.comment.problem_solving.key_learning.03
   type: comment_template
   frame: frame.problem_solving
@@ -501,7 +517,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} développe sa pensée créative lorsqu'il ou elle relève des défis. {pronoun_subject} le montre en {evidence}."
 - id: template.comment.problem_solving.growth.01
   type: comment_template
   frame: frame.problem_solving
@@ -517,7 +533,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Avec le temps, {child} a fait des progrès en posant des questions et en mettant ses idées à l'essai. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.problem_solving.growth.02
   type: comment_template
   frame: frame.problem_solving
@@ -533,7 +549,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "{child} est devenu plus constant dans l'essai de différentes stratégies pour résoudre des problèmes. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.problem_solving.growth.03
   type: comment_template
   frame: frame.problem_solving
@@ -549,7 +565,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Avec le temps, {child} a fait des progrès en utilisant sa créativité pour relever des défis. {pronoun_subject} {change}, alors qu'auparavant {previous}."
 - id: template.comment.problem_solving.next_steps.01
   type: comment_template
   frame: frame.problem_solving
@@ -565,7 +581,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Une prochaine étape pour {child} est de {goal} en posant des questions et en mettant des idées à l'essai. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.problem_solving.next_steps.02
   type: comment_template
   frame: frame.problem_solving
@@ -581,7 +597,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Une prochaine étape pour {child} est de {goal} tout en continuant à expérimenter des stratégies. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 - id: template.comment.problem_solving.next_steps.03
   type: comment_template
   frame: frame.problem_solving
@@ -597,7 +613,7 @@ templates:
   status: draft
   version: 0.1.0
 
-  text_fr: TODO
+  text_fr: "Une prochaine étape pour {child} est de {goal} tout en continuant à utiliser sa pensée créative. À l'école, nous allons {school_strategy}. À la maison, vous pouvez soutenir cela en {home_strategy}."
 _meta:
   version: 0.1.0
   status: draft
