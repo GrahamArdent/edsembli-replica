@@ -140,3 +140,96 @@ slots:
       - "over the past month"
       - "during our recent unit on community helpers"
     validation: "Must be general (no specific dates that could identify events)"
+
+  - id: slot.school_strategy
+    name: School Strategy
+    description: What educators will do to support the learning goal
+    required: false
+    examples:
+      - "provide visual supports during transitions"
+      - "offer choices during free play to encourage decision-making"
+      - "model problem-solving strategies during group activities"
+    validation: "Must describe educator actions, not child actions"
+
+  - id: slot.home_strategy
+    name: Home Strategy
+    description: How families can support the learning goal at home
+    required: false
+    examples:
+      - "ask open-ended questions about their day"
+      - "read together for 10-15 minutes before bed"
+      - "play counting games during daily routines"
+    validation: "Must be realistic for home context without requiring special materials"
+
+# Slot type classifications
+slot_types:
+  identity:
+    description: Personal identifiers - filled from secure context only
+    pii_risk: high
+    storage: never_in_repo
+    slots: [slot.child]
+
+  pronoun:
+    description: Grammatical pronouns with localization support
+    pii_risk: low
+    requires_locale: true
+    slots: [slot.pronoun_subject, slot.pronoun_object, slot.pronoun_possessive]
+
+  observation:
+    description: Teacher-provided evidence of learning
+    pii_risk: medium
+    validation_required: true
+    slots: [slot.evidence, slot.activity]
+
+  attribute:
+    description: Observable qualities or skills
+    pii_risk: low
+    slots: [slot.strength]
+
+  growth:
+    description: Descriptions of change over time
+    pii_risk: low
+    slots: [slot.change, slot.previous]
+
+  next_step:
+    description: Goals and strategies
+    pii_risk: low
+    slots: [slot.goal, slot.strategy, slot.school_strategy, slot.home_strategy]
+
+# French pronoun mappings for bilingual templates
+pronoun_localization:
+  en:
+    subject: [he, she, they]
+    object: [him, her, them]
+    possessive: [his, her, their]
+  fr:
+    subject: [il, elle, iel]
+    object: [lui, elle, eux]
+    possessive: [son, sa, leur]
+
+# Validation rules for slot filling at runtime
+validation_rules:
+  - rule: no_other_children
+    description: Slot content must not name or identify other children
+    applies_to: [slot.evidence, slot.change, slot.previous, slot.activity]
+    pattern: "(?i)\\b(friend named|classmate named|[A-Z][a-z]+ (said|did|helped))\\b"
+
+  - rule: observable_only
+    description: Content must describe observable behaviors, not interpretations
+    applies_to: [slot.evidence, slot.strength, slot.change]
+    banned_phrases: ["is smart", "is good", "is bad", "is lazy", "understands"]
+
+  - rule: positive_framing
+    description: Growth descriptions should frame previous as starting point, not deficit
+    applies_to: [slot.previous]
+    banned_phrases: ["couldn't", "failed to", "was unable", "struggled to", "was bad at"]
+
+  - rule: achievable_goals
+    description: Next steps should be developmentally appropriate
+    applies_to: [slot.goal]
+    max_length: 150
+
+_meta:
+  version: 0.2.0
+  status: draft
+  updated: 2026-01-11

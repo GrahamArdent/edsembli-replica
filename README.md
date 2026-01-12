@@ -33,3 +33,22 @@ This repository is a design-first framework for Ontario Kindergarten Communicati
 ## Status
 
 - Design only. Implementation work (if any) should follow the conventions in [docs/infrastructure.md](docs/infrastructure.md).
+
+## Tooling quickstart
+
+- Locked installs (recommended): `pip install -r requirements.lock.txt`
+- Update the lockfile: `pip-compile --no-header requirements.in --output-file requirements.lock.txt`
+- Build documentation site: `python scripts/sync_docs.py && mkdocs build`
+- Serve docs locally: `mkdocs serve`
+- Run the full local pipeline:
+	- `ruff check .`
+	- `ruff format --check .`
+	- `pytest -v`
+	- `python scripts/validate.py`
+	- `python scripts/lint.py`
+	- `python scripts/coverage.py`
+	- `python scripts/generate_matrix.py`
+	- `python scripts/validate_datasets.py`
+	- `pyright`
+	- `python scripts/stage_docs.py`
+	- `mkdocs build --strict`

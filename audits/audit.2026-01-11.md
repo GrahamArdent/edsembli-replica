@@ -19,22 +19,21 @@ updated: 2026-01-11
 
 ## Canonical entry points
 
-- Navigation: [index.md](../index.md)
-- Overview: [README.md](../README.md)
-- Canonical docs: [docs/](../docs/)
+- Canonical Index: [index.md](../index.md)
+- Canonical docs: [docs/framework.md](../docs/framework.md)
 
 ## Structure audit
 
 **Separation of concerns looks healthy**:
 
-- Canonical narrative/spec: [docs/](../docs/)
-- Schemas + tooling: [schemas/](../schemas/), [scripts/](../scripts/)
-- Controlled vocabularies: [taxonomy/](../taxonomy/)
-- Reusable libraries: [templates/](../templates/), [evidence/](../evidence/)
-- References: [references/](../references/)
-- Process knowledge: [knowledge/processes/](../knowledge/processes/)
-- Derived datasets (no PII): [datasets/traceability/](../datasets/traceability/)
-- Research inputs (non-canonical): [sources/](../sources/)
+- Canonical narrative/spec: [index.md](../index.md)
+- Schemas + tooling: [schemas/README.md](../schemas/README.md), [scripts/README.md](../scripts/README.md)
+- Controlled vocabularies: [taxonomy/README.md](../taxonomy/README.md)
+- Reusable libraries: [templates/library.md](../templates/library.md), [evidence/README.md](../evidence/README.md)
+- References: [references/links.md](../references/links.md)
+- Process knowledge: [knowledge/processes/index.md](../knowledge/processes/index.md)
+- Derived datasets (no PII): [datasets/traceability/README.md](../datasets/traceability/README.md)
+- Research inputs (non-canonical): [sources/Finding Assembly Report Card Software Information.md](../sources/Finding%20Assembly%20Report%20Card%20Software%20Information.md)
 
 ## Content inventory (high level)
 
@@ -50,12 +49,23 @@ updated: 2026-01-11
 - Pre-commit: installed and running (hooks include formatting fixers + canonical validation/lint/coverage)
 - CI: GitHub Actions workflow present in `.github/workflows/ci.yml`
 
+Additional hardening added:
+
+- Secrets scanning: `detect-secrets` (pre-commit baseline) and `gitleaks` (CI)
+- Dependency locking: `requirements.in` + `requirements.lock.txt` verified in CI
+- Derived dataset contract: `datasets/traceability/matrix.schema.json` validated by `scripts/validate_datasets.py`
+- Type checking: `pyright` in CI and pre-commit
+- Query ergonomics: `scripts/edsembli_cli.py` (DuckDB + template search)
+
 ## Validation results (latest run)
 
 - `python scripts/validate.py`: PASS
 - `python scripts/lint.py`: PASS
 - `python scripts/coverage.py`: PASS (13/13 indicators covered)
 - `python scripts/generate_matrix.py`: PASS (generates `datasets/traceability/matrix.csv` and `matrix.parquet`)
+- `python scripts/validate_datasets.py`: PASS (traceability dataset contract)
+- `pyright`: PASS
+- `detect-secrets`: baseline present (`.secrets.baseline`)
 
 ## Traceability matrix audit
 
@@ -87,7 +97,7 @@ Notes:
 None blocking for the current design scope.
 
 Optional future enhancements:
-- Add a schema for the matrix outputs (CSV/Parquet) if you want stricter contract enforcement.
+- Extend dataset contract checks to validate *semantic* constraints (e.g., ID regex patterns, allowed ref namespaces).
 - Extend linting to validate internal Markdown links (path existence) if link drift becomes an issue.
 
 ## How to reproduce this audit

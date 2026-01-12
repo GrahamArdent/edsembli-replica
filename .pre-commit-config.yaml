@@ -12,9 +12,26 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
 
+  # Secrets scanning
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.5.0
+    hooks:
+      - id: detect-secrets
+        args: ["--baseline", ".secrets.baseline"]
+        exclude: "(?x)^(\\.venv/|\\.git/|site_docs/|site/|\\.ruff_cache/|\\.pytest_cache/|datasets/traceability/matrix\\.parquet$)"
+
   # Local repo hooks (Custom framework validation)
   - repo: local
     hooks:
+      - id: typecheck-pyright
+        name: Typecheck (Pyright)
+        entry: pyright
+        language: python
+        additional_dependencies:
+          - pyright>=1.1
+        pass_filenames: false
+        description: "Runs static type checking on scripts/tests"
+
       - id: validate-canonical
         name: Validate Canonical Data (Schema)
         entry: python scripts/validate.py
@@ -45,6 +62,17 @@ repos:
         files: \.(yaml|md)$
         pass_filenames: false
         description: "Ensures all indicators have template coverage"
+
+      - id: validate-datasets
+        name: Validate Derived Datasets
+        entry: python scripts/validate_datasets.py
+        language: python
+        additional_dependencies:
+          - pandas>=2.1
+          - pyarrow>=14.0
+          - frictionless>=5.18
+        pass_filenames: false
+        description: "Validates datasets/traceability outputs against a contract"
 
       - id: check-changelog
         name: Check CHANGELOG Updated

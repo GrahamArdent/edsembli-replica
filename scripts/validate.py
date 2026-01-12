@@ -12,6 +12,7 @@ import re
 from dataclasses import dataclass, field
 from datetime import date, datetime
 from pathlib import Path
+from typing import Any
 from urllib.parse import unquote
 
 from jsonschema import Draft202012Validator
@@ -23,7 +24,7 @@ SCHEMAS_DIR = WORKSPACE_ROOT / "schemas"
 YAML_LOADER = YAML(typ="safe")
 
 
-def normalize_yaml_scalars(value):
+def normalize_yaml_scalars(value: Any) -> Any:
     if isinstance(value, (date, datetime)):
         return value.date().isoformat() if isinstance(value, datetime) else value.isoformat()
     if isinstance(value, dict):
@@ -37,14 +38,17 @@ def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def load_yaml(path: Path) -> dict:
+def load_yaml(path: Path) -> dict[str, Any]:
     with path.open("r", encoding="utf-8") as handle:
         data = YAML_LOADER.load(handle)
     if data is None:
         raise ValueError(f"Empty YAML file: {path}")
     if not isinstance(data, dict):
         raise TypeError(f"Expected YAML mapping at root: {path}")
-    return normalize_yaml_scalars(data)
+    normalized = normalize_yaml_scalars(data)
+    if not isinstance(normalized, dict):
+        raise TypeError(f"Expected YAML mapping after normalization: {path}")
+    return normalized
 
 
 _FRONT_MATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.DOTALL)
@@ -63,7 +67,7 @@ class ValidationContext:
     evidence_raw: list[dict] = field(default_factory=list)
 
 
-def read_front_matter(markdown_path: Path) -> dict:
+def read_front_matter(markdown_path: Path) -> dict[str, Any]:
     text = markdown_path.read_text(encoding="utf-8")
     match = _FRONT_MATTER_RE.match(text)
     if not match:
@@ -72,7 +76,10 @@ def read_front_matter(markdown_path: Path) -> dict:
     data = YAML_LOADER.load(yaml_text)
     if not isinstance(data, dict):
         raise TypeError(f"Front matter must be a mapping: {markdown_path}")
-    return normalize_yaml_scalars(data)
+    normalized = normalize_yaml_scalars(data)
+    if not isinstance(normalized, dict):
+        raise TypeError(f"Front matter must be a mapping: {markdown_path}")
+    return normalized
 
 
 def validate(instance: dict, schema_path: Path) -> list[str]:
@@ -194,7 +201,12 @@ def build_validation_context() -> ValidationContext:
         evidence_raw.append(fm)
 
     tags_doc = load_yaml(WORKSPACE_ROOT / "taxonomy" / "tags.yaml")
-    tag_ids = {t.get("id") for t in tags_doc.get("tags", []) if isinstance(t, dict) and isinstance(t.get("id"), str)}
+    tag_ids: set[str] = set()
+    for t in tags_doc.get("tags", []):
+        if isinstance(t, dict):
+            tid = t.get("id")
+            if isinstance(tid, str):
+                tag_ids.add(tid)
     # Also allow short form (without tag. prefix) for convenience
     tag_names = {tid.replace("tag.", "") for tid in tag_ids if tid.startswith("tag.")}
 

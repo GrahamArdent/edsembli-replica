@@ -13,16 +13,33 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Secret scan (gitleaks)
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        config-path: .gitleaks.toml
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.12'
         cache: 'pip'
 
-    - name: Install dependencies
+    - name: Verify dependency lockfile
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt
+        pip install pip-tools
+        pip-compile --no-header requirements.in --output-file requirements.lock.txt
+        git diff --exit-code requirements.lock.txt
+
+    - name: Install dependencies (locked)
+      run: |
+        pip install -r requirements.lock.txt
+
+    - name: Secret scan (detect-secrets)
+      run: |
+        python -m detect_secrets audit --baseline .secrets.baseline
 
     - name: Lint with Ruff
       run: ruff check . --output-format=github
@@ -33,6 +50,9 @@ jobs:
     - name: Run Tests
       run: pytest -v
 
+    - name: Typecheck (pyright)
+      run: pyright
+
     - name: Run Schema Validation
       run: python scripts/validate.py
 
@@ -41,6 +61,9 @@ jobs:
 
     - name: Run Coverage Analysis
       run: python scripts/coverage.py
+
+    - name: Validate derived datasets
+      run: python scripts/validate_datasets.py
 
     - name: Build Documentation
       run: |

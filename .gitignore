@@ -54,6 +54,7 @@ htmlcov/
 # Documentation builds
 docs/_build/
 site/
+site_docs/
 
 # Logs
 *.log

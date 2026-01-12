@@ -2,7 +2,7 @@ site_name: Edsembli Replica Framework
 site_description: Design-first framework for Ontario Kindergarten CoL comments.
 site_url: https://github.com/GrahamArdent/edsembli-replica
 
-docs_dir: site_docs
+docs_dir: docs_site
 site_dir: site
 
 theme:
@@ -57,34 +57,42 @@ nav:
     - "Framework Overview": docs/framework.md
     - "Infrastructure": docs/infrastructure.md
     - "Requirements": docs/requirements.md
+    - "Gameplan": docs/GAMEPLAN.md
     - "Data Privacy": docs/PRIVACY.md
     - "Glossary": docs/glossary.md
   - Taxonomy:
     - "Frames": taxonomy/frames.yaml
     - "Indicators": taxonomy/indicators.yaml
+    - "Slot Guidance": taxonomy/slot_guidance.yaml
     - "Tags": taxonomy/tags.yaml
     - "Roles": taxonomy/roles.yaml
   - Evidence Library:
     - "Overview": evidence/README.md
-    - "Evidence Patterns": evidence/
   - Templates:
-    - "Overview": templates/README.md
-    - "Library": templates/comment_templates.yaml
+    - "Template Library Overview": templates/README.md
   - Guidance:
     - "Comment Style": guidance/comment-style.md
+    - "Comment Assembly": guidance/comment-assembly.md
     - "Board Customization": guidance/board-customization.md
     - "Override Policy": guidance/override-policy.md
+  - "ADRs":
+    - "ADR-0001: Canonical vs Sources": decisions/0001-canonical-vs-sources.md
+    - "ADR-0002: Framework Split": decisions/0002-framework-vs-infrastructure-split.md
+    - "ADR-0003: Template Format": decisions/0003-template-library-format.md
+    - "ADR-0004: Placeholders": decisions/0004-placeholder-convention.md
+    - "ADR-0005: ID Naming": decisions/0005-id-naming-convention.md
+    - "ADR-001: Evidence Linking": docs/adr/ADR-001-evidence-template-linking.md
+    - "ADR-002: Deprecation": docs/adr/ADR-002-template-deprecation.md
   - Processes:
     - "Contribution": docs/CONTRIBUTING.md
     - "Release Process": docs/RELEASE.md
     - "Security": docs/SECURITY.md
-    - "Workflows": knowledge/processes/
+    - "Workflows": knowledge/processes/index.md
   - Audits:
     - "Overview": audits/README.md
-    - "Reports": audits/
   - Development:
     - "Roadmap": docs/ROADMAP.md
     - "Changelog": docs/CHANGELOG.md
     - "Testing": docs/TESTING.md
-    - "Schemas": schemas/
-    - "Scripts": scripts/
+    - "Schemas": schemas/README.md
+    - "Scripts": scripts/README.md

@@ -107,6 +107,8 @@ def main() -> int:
         template_id = t.get("id")
         frame_id = t.get("frame")
         section = t.get("section")
+        if not isinstance(template_id, str) or not isinstance(frame_id, str) or not isinstance(section, str):
+            continue
         template_refs = ensure_list(t.get("refs"))
         template_indicators = ensure_list(t.get("indicators"))
 

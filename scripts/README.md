@@ -39,6 +39,26 @@ python scripts/generate_matrix.py
 ```
 Generates `datasets/traceability/matrix.csv` and `datasets/traceability/matrix.parquet` linking frames, indicators, evidence patterns, templates, and references.
 
+### Derived Dataset Validation
+```bash
+python scripts/validate_datasets.py
+```
+Validates `datasets/traceability/matrix.csv` (and `matrix.parquet` if present) against `datasets/traceability/matrix.schema.json`.
+
+### Documentation Staging
+```bash
+python scripts/stage_docs.py
+```
+Copies canonical content into `site_docs/` for MkDocs consumption.
+
+### Quick Queries (CLI)
+```bash
+python scripts/edsembli_cli.py --help
+python scripts/edsembli_cli.py template-search "belonging"
+python scripts/edsembli_cli.py matrix-sql "select frame_id, count(*) as n from matrix group by 1 order by n desc"
+```
+Provides lightweight, local exploration tools (no network calls, no PII).
+
 ## Exit Codes
 
 - `0`: All checks pass

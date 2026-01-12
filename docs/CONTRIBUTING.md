@@ -23,6 +23,11 @@ Thank you for helping define the Edsembli Replica Framework.
 
 ## 2. How to make changes
 
+### Updating the Canonical Index (REQUIRED)
+- **When adding any new canonical file**, update `index.md` (root) with a link.
+- The root `index.md` is the **single source of truth** for navigating the codebase.
+- Group your link under the appropriate section (Taxonomy, Guidance, ADRs, etc.).
+
 ### Editing the Framework (Narrative)
 - Edit `docs/framework.md`.
 - Keep it high-level.
@@ -74,3 +79,5 @@ Key decisions already documented:
 - ADR 0003: Template library format (single YAML)
 - ADR 0004: Curly-brace placeholder convention
 - ADR 0005: ID naming convention (type.domain.name)
+- ADR-001: Evidence-template linking (heuristic matching)
+- ADR-002: Template deprecation workflow

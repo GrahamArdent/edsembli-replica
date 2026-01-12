@@ -1,0 +1,10 @@
+{
+  "include": ["scripts", "tests"],
+  "exclude": [".venv", "site", "site_docs", ".pytest_cache", ".ruff_cache"],
+  "pythonVersion": "3.12",
+  "typeCheckingMode": "basic",
+  "reportMissingTypeStubs": false,
+  "reportUnknownMemberType": false,
+  "reportUnknownVariableType": false,
+  "reportUnknownArgumentType": false
+}

@@ -2,9 +2,9 @@
 id: doc.index
 type: document
 title: Canonical Index
-version: 0.1.0
-status: draft
-tags: [index, canonical]
+version: 0.2.0
+status: stable
+tags: [index, canonical, source-of-truth]
 refs: []
 updated: 2026-01-11
 ---
@@ -41,6 +41,8 @@ Last updated: 2026-01-11
 	- Controlled vocabulary for categorization.
 - [Roles Taxonomy](taxonomy/roles.yaml)
 	- Stakeholder role definitions (teacher, ECE, parent, etc.).
+- [Slot Guidance](taxonomy/slot_guidance.yaml)
+	- Slot types, validation rules, and pronoun localization (en/fr).
 - [Bibliography](references/bibliography.yaml)
 	- Source citations with stable reference IDs.
 
@@ -61,8 +63,6 @@ Last updated: 2026-01-11
 	- Quality checklist for new content.
 - [Contributor Onboarding](knowledge/processes/process.onboarding.contributor.md)
 	- Setup guide for new contributors.
-- [Entities](knowledge/entities/)
-	- Detailed records of tools, policies, and organizations.
 
 ## Datasets (planned/derived)
 
@@ -86,6 +86,8 @@ Last updated: 2026-01-11
 	- How to report issues; reinforces the no-PII boundary.
 - [Comment style guide](guidance/comment-style.md)
 	- Tone/structure constraints for CoL narratives.
+- [Comment assembly rules](guidance/comment-assembly.md)
+	- Character limits, section requirements, readability targets.
 - [Board customization guide](guidance/board-customization.md)
 	- How boards can adapt templates locally.
 - [Override and customization policy](guidance/override-policy.md)
@@ -123,10 +125,11 @@ Last updated: 2026-01-11
 - [README](README.md)
 - [Discussion notes](docs/discussion.md)
 - [Roadmap](docs/ROADMAP.md)
+- [Implementation Gameplan](docs/GAMEPLAN.md)
+	- Phased development plan with tasks, deliverables, and success metrics.
 - [Changelog](docs/CHANGELOG.md)
 - [Contributing Guide](docs/CONTRIBUTING.md)
 - [Release and versioning](docs/RELEASE.md)
-- [Python dependencies](requirements.txt)
 
 ## Audits
 
@@ -135,9 +138,32 @@ Last updated: 2026-01-11
 
 ## Architecture Decision Records (ADRs)
 
+### Legacy ADRs (decisions/ folder)
+
 - [ADR 0000: Template](decisions/0000-adr-template.md)
 - [ADR 0001: Canonical vs Sources](decisions/0001-canonical-vs-sources.md)
 - [ADR 0002: Framework vs Infrastructure Split](decisions/0002-framework-vs-infrastructure-split.md)
 - [ADR 0003: Template Library Format](decisions/0003-template-library-format.md)
 - [ADR 0004: Placeholder Convention](decisions/0004-placeholder-convention.md)
 - [ADR 0005: ID Naming Convention](decisions/0005-id-naming-convention.md)
+
+### New ADRs (docs/adr/ folder)
+
+- [ADR-001: Evidence-Template Linking](docs/adr/ADR-001-evidence-template-linking.md)
+	- Decision to use heuristic matching over explicit linking.
+- [ADR-002: Template Deprecation Workflow](docs/adr/ADR-002-template-deprecation.md)
+	- Lifecycle states and replaces/deprecated_by fields.
+
+## CLI Tools
+
+- **Edsembli CLI** (`scripts/edsembli_cli.py`)
+	- `edsembli search <query>` — fuzzy template search
+	- `edsembli matrix-sql <sql>` — DuckDB queries over traceability matrix
+
+## Configuration Files
+
+- `mkdocs.yml` — Documentation site configuration
+- `pyrightconfig.json` — Type checking settings
+- `.pre-commit-config.yaml` — Git hooks (ruff, pytest, secrets)
+- `pyproject.toml` — Linter and test settings
+- `requirements.in` — Source dependency list (compile with pip-tools)

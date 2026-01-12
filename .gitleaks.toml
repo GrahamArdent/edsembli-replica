@@ -1,0 +1,21 @@
+title = "Edsembli Replica"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Allowlisted generated artifacts and known-safe patterns"
+paths = [
+  "datasets/traceability/matrix.csv",
+  "datasets/traceability/matrix.parquet",
+  "site_docs/",
+  "site/",
+  ".secrets.baseline"
+]
+regexes = [
+  # IDs and references are non-secret canonical identifiers
+  "ref\\.[a-z0-9_.-]+",
+  "template\\.[a-z0-9_.-]+",
+  "indicator\\.[a-z0-9_.-]+",
+  "frame\\.[a-z0-9_.-]+"
+]

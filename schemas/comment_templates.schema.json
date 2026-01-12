@@ -1,8 +1,9 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "schemas/comment_templates.schema.json",
-  "$version": "1.0.0",
+  "$version": "1.1.0",
   "title": "Comment Templates Library",
+  "description": "Schema for CoL narrative comment templates with bilingual support and deprecation workflow",
   "type": "object",
   "required": ["templates"],
   "properties": {
@@ -18,15 +19,51 @@
           "section": {"type": "string", "enum": ["key_learning", "growth", "next_steps"]},
           "tone": {"type": "string"},
           "slots": {"type": "array", "items": {"type": "string"}},
-          "text": {"type": "string"},
-          "text_fr": {"type": "string", "description": "French localization of the commentary text"},
+          "text": {"type": "string", "description": "English template text with {slot} placeholders"},
+          "text_fr": {"type": "string", "description": "French localization of the template text"},
           "indicators": {"type": "array", "items": {"type": "string", "pattern": "^indicator\\.[a-z0-9_\\.]+$"}},
           "notes": {"type": "string"},
           "refs": {"type": "array", "items": {"type": "string", "pattern": "^ref\\.[a-z0-9_\\.]+$"}},
-          "status": {"type": "string", "enum": ["draft", "stable", "deprecated"]},
-          "version": {"type": "string"}
+          "status": {"type": "string", "enum": ["draft", "stable", "deprecated", "archived"]},
+          "version": {"type": "string"},
+          "replaces": {
+            "type": "string",
+            "pattern": "^template\\.comment\\.[a-z0-9_\\.]+$",
+            "description": "ID of the template this one supersedes"
+          },
+          "deprecated_by": {
+            "type": "string",
+            "pattern": "^template\\.comment\\.[a-z0-9_\\.]+$",
+            "description": "ID of the template that supersedes this one"
+          },
+          "preferred_evidence": {
+            "type": "array",
+            "items": {"type": "string", "pattern": "^ep\\.[0-9]+$"},
+            "description": "Optional list of preferred evidence pattern IDs for heuristic matching"
+          },
+          "lifecycle": {
+            "type": "object",
+            "properties": {
+              "created": {"type": "string", "format": "date"},
+              "deprecated": {"type": "string", "format": "date"},
+              "archived": {"type": "string", "format": "date"}
+            },
+            "description": "Lifecycle timestamps for audit trail"
+          }
         },
-        "additionalProperties": true
+        "additionalProperties": true,
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"const": "stable"}}},
+            "then": {"required": ["text_fr"]},
+            "description": "Stable templates must have French translation"
+          },
+          {
+            "if": {"properties": {"status": {"const": "deprecated"}}},
+            "then": {"required": ["deprecated_by"]},
+            "description": "Deprecated templates must specify their replacement"
+          }
+        ]
       }
     },
     "_meta": {"type": "object"}
