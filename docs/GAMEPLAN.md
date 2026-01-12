@@ -323,8 +323,8 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 ### Deliverables
 
-- [ ] `edsembli export --format translation-csv`
-- [ ] `edsembli import-translations`
+- [x] `edsembli export --format translation-csv` ✅ (d7e45ef)
+- [x] `edsembli import-translations` ✅ (d7e45ef)
 - [ ] All 36 templates with verified `text_fr`
 
 ---
