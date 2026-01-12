@@ -201,12 +201,16 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 ### Sprint 4.2 (Week 3-4): Agent Pipeline
 
+### Sprint 4.2 (Week 3-4): Agent Pipeline ✅
+
+**Status:** Complete (2026-01-11, commit e12a762)
+
 #### Tasks
 
 1. **[TASK-4-2-1] Template generation agent**
    - Input: frame, indicator, section, evidence pattern ID
    - Output: draft template matching schema
-   - Flow: retrieve examples → generate → validate → return
+   - Flow: retrieve examples → generate (mock mode) → validate → return
 
 2. **[TASK-4-2-2] Validation feedback agent**
    - Input: draft template YAML
@@ -220,16 +224,16 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 4. **[TASK-4-2-4] Human review CLI**
    - `edsembli review <draft.yaml>`
-   - Shows diff against similar existing templates
-   - Prompts for approve/reject/edit
+   - Shows validation results with pass/fail/needs_revision status
+   - Displays errors, warnings, and suggestions
 
 #### Deliverables
 
-- [ ] `lib/agents/generation.py`
-- [ ] `lib/agents/validation.py`
-- [ ] `lib/pipeline/assemble.py`
-- [ ] `edsembli review` command
-- [ ] Integration tests with mock LLM responses
+- [x] `lib/agents/generation.py` (with mock LLM mode)
+- [x] `lib/agents/validation.py` (automated checks)
+- [x] `lib/pipeline/assemble.py` (complete workflow)
+- [x] `edsembli review` command (rich CLI output)
+- [x] Integration tests with mock LLM responses (20 new tests, 44 total)
 
 ---
 
