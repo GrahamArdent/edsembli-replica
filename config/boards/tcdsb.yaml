@@ -36,7 +36,7 @@ custom_slots:
     description: "Reference to Catholic Graduate Expectations or Fully Alive curriculum"
     required: false
     default: ""
-  
+
   program_name:
     type: text
     description: "Specific program or initiative (e.g., 'Learning Through Play')"

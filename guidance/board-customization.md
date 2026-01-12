@@ -125,18 +125,18 @@ To create a configuration for your board:
    board_abbrev: MSB
    sis_platform: edsembli  # or powerschool, aspen, etc.
    locale: en
-   
+
    char_limits:
      per_section_min: 100
      per_section_max: 600
      total_min: 400
      total_max: 1500
-   
+
    required_sections:
      - key_learning
      - growth
      - next_steps
-   
+
    export_settings:
      csv_encoding: utf-8-sig
      include_french: false
@@ -177,7 +177,7 @@ custom_slots:
     description: "Reference to Catholic Graduate Expectations"
     required: false
     default: ""
-  
+
   cge_expectation:
     type: text
     description: "Specific CGE being developed (e.g., 'a reflective and creative thinker')"
@@ -187,7 +187,7 @@ custom_slots:
 These slots can be used in templates:
 
 ```
-{child} demonstrates care for others, {faith_reference}. This reflects 
+{child} demonstrates care for others, {faith_reference}. This reflects
 the Catholic Graduate Expectation of being a caring family member.
 ```
 

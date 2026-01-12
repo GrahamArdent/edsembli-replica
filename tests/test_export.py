@@ -265,3 +265,168 @@ def test_export_comment_invalid_template_ids(tmp_path: Path) -> None:
 
     assert result.exit_code == 1
     assert "Assembly errors" in result.stdout
+
+
+def test_export_translation_csv(tmp_path: Path) -> None:
+    """Test translation-csv export format."""
+    output = tmp_path / "translations.csv"
+    result = runner.invoke(app, ["export", "--format", "translation-csv", "--output", str(output)])
+
+    assert result.exit_code == 0
+    assert output.exists()
+    assert "Exported" in result.stdout
+
+    # Check CSV structure
+    content = output.read_text(encoding="utf-8-sig")
+    lines = content.strip().split("\n")
+    assert len(lines) > 1  # Header + data rows
+
+    # Verify header has translator-friendly columns
+    assert "id,frame,section,slots,text,text_fr" in lines[0]
+
+    # Verify text_fr column is empty for translator to fill
+    import csv
+
+    with output.open("r", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        assert len(rows) > 0
+        # All text_fr should be empty
+        for row in rows:
+            assert row["text_fr"] == ""
+            assert row["text"]  # English text should exist
+            assert row["id"].startswith("template.")
+
+
+def test_export_translation_csv_filtered(tmp_path: Path) -> None:
+    """Test translation-csv export with filters."""
+    output = tmp_path / "translations_belonging.csv"
+    result = runner.invoke(
+        app,
+        [
+            "export",
+            "--format",
+            "translation-csv",
+            "--frame",
+            "frame.belonging",
+            "--output",
+            str(output),
+        ],
+    )
+
+    assert result.exit_code == 0
+    assert output.exists()
+
+    # All rows should be from belonging frame
+    import csv
+
+    with output.open("r", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        for row in rows:
+            assert row["frame"] == "frame.belonging"
+
+
+def test_import_translations_dry_run(tmp_path: Path) -> None:
+    """Test import translations in dry-run mode."""
+    # Create a CSV with translations
+    translations_csv = tmp_path / "translations.csv"
+    with translations_csv.open("w", encoding="utf-8-sig", newline="") as f:
+        import csv
+
+        writer = csv.DictWriter(f, fieldnames=["id", "text_fr"])
+        writer.writeheader()
+        writer.writerow(
+            {
+                "id": "template.comment.belonging.key_learning.01",
+                "text_fr": (
+                    "{child} développe un fort sentiment d'appartenance dans notre classe. "
+                    "{pronoun_subject} le montre par {evidence}."
+                ),
+            }
+        )
+
+    result = runner.invoke(app, ["import-translations", str(translations_csv), "--dry-run"])
+
+    assert result.exit_code == 0
+    assert "validated successfully" in result.stdout
+    assert "Preview of changes" in result.stdout
+    assert "Run without --dry-run" in result.stdout
+
+
+def test_import_translations_missing_slots(tmp_path: Path) -> None:
+    """Test import translations with missing slots (validation error)."""
+    translations_csv = tmp_path / "translations.csv"
+    with translations_csv.open("w", encoding="utf-8-sig", newline="") as f:
+        import csv
+
+        writer = csv.DictWriter(f, fieldnames=["id", "text_fr"])
+        writer.writeheader()
+        # Missing {evidence} slot
+        writer.writerow(
+            {
+                "id": "template.comment.belonging.key_learning.01",
+                "text_fr": "{child} développe un fort sentiment d'appartenance.",
+            }
+        )
+
+    result = runner.invoke(app, ["import-translations", str(translations_csv), "--dry-run"])
+
+    assert result.exit_code == 1
+    assert "Validation Errors" in result.stdout
+    assert "missing slots" in result.stdout
+
+
+def test_import_translations_extra_slots(tmp_path: Path) -> None:
+    """Test import translations with extra slots (validation error)."""
+    translations_csv = tmp_path / "translations.csv"
+    with translations_csv.open("w", encoding="utf-8-sig", newline="") as f:
+        import csv
+
+        writer = csv.DictWriter(f, fieldnames=["id", "text_fr"])
+        writer.writeheader()
+        # Extra {extra_slot} not in English
+        writer.writerow(
+            {
+                "id": "template.comment.belonging.key_learning.01",
+                "text_fr": "{child} développe {extra_slot} par {evidence}. {pronoun_subject} le montre.",
+            }
+        )
+
+    result = runner.invoke(app, ["import-translations", str(translations_csv), "--dry-run"])
+
+    assert result.exit_code == 1
+    assert "Validation Errors" in result.stdout
+    assert "extra slots" in result.stdout
+
+
+def test_import_translations_invalid_template_id(tmp_path: Path) -> None:
+    """Test import translations with non-existent template ID."""
+    translations_csv = tmp_path / "translations.csv"
+    with translations_csv.open("w", encoding="utf-8-sig", newline="") as f:
+        import csv
+
+        writer = csv.DictWriter(f, fieldnames=["id", "text_fr"])
+        writer.writeheader()
+        writer.writerow({"id": "template.comment.invalid.template", "text_fr": "Translation text"})
+
+    result = runner.invoke(app, ["import-translations", str(translations_csv), "--dry-run"])
+
+    assert result.exit_code == 1
+    assert "Validation Errors" in result.stdout
+    assert "Template not found" in result.stdout
+
+
+def test_import_translations_empty_csv(tmp_path: Path) -> None:
+    """Test import translations with empty CSV."""
+    translations_csv = tmp_path / "translations.csv"
+    with translations_csv.open("w", encoding="utf-8-sig", newline="") as f:
+        import csv
+
+        writer = csv.DictWriter(f, fieldnames=["id", "text_fr"])
+        writer.writeheader()
+
+    result = runner.invoke(app, ["import-translations", str(translations_csv)])
+
+    assert result.exit_code == 1
+    assert "No translations found" in result.stdout

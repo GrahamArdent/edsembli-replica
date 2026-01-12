@@ -396,7 +396,7 @@ def review_template(
 
 @app.command("export")
 def export_templates(
-    format: Annotated[str, typer.Option("--format", help="Export format: csv or json")] = "csv",
+    format: Annotated[str, typer.Option("--format", help="Export format: csv, json, or translation-csv")] = "csv",
     output: Annotated[Path | None, typer.Option("--output", help="Output file path")] = None,
     status: Annotated[str | None, typer.Option("--status", help="Filter by status (draft, stable, deprecated)")] = None,
     frame: Annotated[str | None, typer.Option("--frame", help="Filter by frame ID")] = None,
@@ -405,7 +405,7 @@ def export_templates(
     ] = None,
     board: Annotated[str | None, typer.Option("--board", help="Board ID (e.g., ncdsb, tcdsb)")] = None,
 ) -> None:
-    """Export template bank to CSV or JSON for SIS import."""
+    """Export template bank to CSV, JSON, or translation-ready CSV for SIS import."""
     templates = _load_templates()
 
     # Load board config if specified
@@ -456,7 +456,10 @@ def export_templates(
 
     # Determine output path
     if output is None:
-        output = ROOT / f"template_bank.{format}"
+        if format == "translation-csv":
+            output = ROOT / "translations.csv"
+        else:
+            output = ROOT / f"template_bank.{format}"
     else:
         output = Path(output).resolve()
 
@@ -465,8 +468,10 @@ def export_templates(
         _export_csv(filtered, output)
     elif format == "json":
         _export_json(filtered, output, status, frame, section)
+    elif format == "translation-csv":
+        _export_translation_csv(filtered, output)
     else:
-        console.print(f"[red]Unsupported format: {format}. Use 'csv' or 'json'.[/red]")
+        console.print(f"[red]Unsupported format: {format}. Use 'csv', 'json', or 'translation-csv'.[/red]")
         raise typer.Exit(1)
 
     console.print(f"[green]✓[/green] Exported {len(filtered)} templates to {output}")
@@ -582,6 +587,160 @@ def _export_json(
 
     with output.open("w", encoding="utf-8") as f:
         json.dump(export_data, f, indent=2, ensure_ascii=False)
+
+
+def _export_translation_csv(templates: list[dict], output: Path) -> None:
+    """Export templates to translation-ready CSV format.
+
+    This format is designed for translators to fill in the text_fr column.
+    Columns: id, frame, section, slots, text (English), text_fr (empty for translator to fill).
+    """
+    output.parent.mkdir(parents=True, exist_ok=True)
+
+    with output.open("w", encoding="utf-8-sig", newline="") as f:
+        fieldnames = ["id", "frame", "section", "slots", "text", "text_fr"]
+        writer = csv.DictWriter(f, fieldnames=fieldnames, quoting=csv.QUOTE_MINIMAL)
+        writer.writeheader()
+
+        for t in templates:
+            writer.writerow(
+                {
+                    "id": t.get("id", ""),
+                    "frame": t.get("frame", ""),
+                    "section": t.get("section", ""),
+                    "slots": "|".join(t.get("slots", [])),
+                    "text": t.get("text", "").strip(),
+                    "text_fr": "",  # Empty for translator to fill
+                }
+            )
+
+
+@app.command("import-translations")
+def import_translations(
+    file: Annotated[Path, typer.Argument(help="CSV file with completed translations")],
+    dry_run: Annotated[bool, typer.Option("--dry-run", help="Preview changes without modifying files")] = False,
+) -> None:
+    """Import French translations from CSV and update template library.
+
+    CSV must have columns: id, text_fr
+    Validates that slot placeholders match between English and French text.
+    """
+    if not file.exists():
+        console.print(f"[red]File not found: {file}[/red]")
+        raise typer.Exit(1)
+
+    # Load translations from CSV
+    translations: dict[str, str] = {}
+    try:
+        with file.open("r", encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                template_id = row.get("id", "").strip()
+                text_fr = row.get("text_fr", "").strip()
+                if template_id and text_fr:
+                    translations[template_id] = text_fr
+    except Exception as e:
+        console.print(f"[red]Error reading CSV: {e}[/red]")
+        raise typer.Exit(1) from None
+
+    if not translations:
+        console.print("[yellow]No translations found in CSV.[/yellow]")
+        raise typer.Exit(1)
+
+    console.print(f"[blue]Found {len(translations)} translations in CSV[/blue]")
+
+    # Load current templates
+    templates = _load_templates()
+    templates_by_id = {t.get("id"): t for t in templates}
+
+    # Validate and prepare updates
+    updates: list[tuple[str, str, str]] = []  # (template_id, old_text_fr, new_text_fr)
+    errors: list[str] = []
+
+    for template_id, text_fr in translations.items():
+        if template_id not in templates_by_id:
+            errors.append(f"Template not found: {template_id}")
+            continue
+
+        template = templates_by_id[template_id]
+        slots_en = template.get("slots", [])
+
+        # Validate slot consistency
+        missing_slots = []
+        extra_slots = []
+        for slot in slots_en:
+            if f"{{{slot}}}" not in text_fr:
+                missing_slots.append(slot)
+
+        # Check for slots in French that aren't in English
+        import re
+
+        slots_fr = re.findall(r"\{([^}]+)\}", text_fr)
+        for slot in slots_fr:
+            if slot not in slots_en:
+                extra_slots.append(slot)
+
+        if missing_slots or extra_slots:
+            error_parts = []
+            if missing_slots:
+                error_parts.append(f"missing slots: {', '.join(missing_slots)}")
+            if extra_slots:
+                error_parts.append(f"extra slots: {', '.join(extra_slots)}")
+            errors.append(f"{template_id}: {' | '.join(error_parts)}")
+            continue
+
+        # Record update
+        old_text_fr = template.get("text_fr", "TODO")
+        updates.append((template_id, old_text_fr, text_fr))
+
+    # Show results
+    if errors:
+        console.print("[bold red]Validation Errors:[/bold red]")
+        for error in errors:
+            console.print(f"  • {error}", style="red")
+
+    if not updates:
+        console.print("[yellow]No valid translations to import.[/yellow]")
+        raise typer.Exit(1)
+
+    console.print(f"[green]✓[/green] {len(updates)} translations validated successfully")
+
+    if dry_run:
+        console.print("\n[bold cyan]Preview of changes (--dry-run):[/bold cyan]")
+        for template_id, old, new in updates[:5]:  # Show first 5
+            console.print(f"\n[blue]{template_id}[/blue]")
+            console.print(f"  Old: {old[:80]}...")
+            console.print(f"  New: {new[:80]}...")
+        if len(updates) > 5:
+            console.print(f"\n... and {len(updates) - 5} more translations")
+        console.print("\n[yellow]Run without --dry-run to apply changes.[/yellow]")
+        return
+
+    # Apply updates to YAML file
+    template_file = ROOT / "templates" / "comment_templates.yaml"
+
+    try:
+        with template_file.open("r", encoding="utf-8") as f:
+            content = f.read()
+
+        # Update each template's text_fr field
+        for template_id, _old_text_fr, new_text_fr in updates:
+            # Find the template block and update text_fr
+            # This is a simple regex replacement - assumes text_fr is on its own line
+            # Pattern: find "id: template_id" block, then replace "text_fr: ..." line
+            pattern = rf"(- id: {re.escape(template_id)}.*?text_fr:)([^\n]*)"
+            replacement = rf'\1 "{new_text_fr}"'
+            content = re.sub(pattern, replacement, content, flags=re.DOTALL)
+
+        # Write back
+        with template_file.open("w", encoding="utf-8") as f:
+            f.write(content)
+
+        console.print(f"[green]✓[/green] Updated {len(updates)} templates in {template_file}")
+
+    except Exception as e:
+        console.print(f"[red]Error updating template file: {e}[/red]")
+        raise typer.Exit(1) from None
 
 
 @app.command("export-comment")

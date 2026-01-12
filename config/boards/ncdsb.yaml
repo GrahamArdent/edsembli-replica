@@ -36,7 +36,7 @@ custom_slots:
     description: "Reference to Catholic Graduate Expectations or faith teachings"
     required: false
     default: ""
-  
+
   cge_expectation:
     type: text
     description: "Specific Catholic Graduate Expectation being developed"
