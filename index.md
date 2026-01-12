@@ -67,6 +67,19 @@ Last updated: 2026-01-11
 	- How templates are organized and used.
 - [Comment templates (YAML)](templates/comment_templates.yaml)
 	- Initial canonical template set (36 templates, non-PII).
+- [Assembly Library](lib/assembly.py)
+	- Slot filling functions for rendering templates with child data.
+- [Readability Library](lib/readability.py)
+	- Text analysis using textstat for readability scoring.
+
+## Agent Prompts
+
+- [System Prompt: Generation](prompts/system_generation.yaml)
+	- Template generation system prompt for AI agents.
+- [System Prompt: Validation](prompts/system_validation.yaml)
+	- Template validation system prompt for quality assurance.
+- [System Prompt: Simplification](prompts/system_simplification.yaml)
+	- Template simplification prompt for readability improvement.
 
 ## How-to (processes)
 

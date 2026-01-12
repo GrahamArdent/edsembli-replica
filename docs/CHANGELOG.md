@@ -17,6 +17,14 @@ The format is loosely based on Keep a Changelog, and this project aims to follow
 
 ## [Unreleased]
 
+### Added (Phase 4 Sprint 4.1 - 2026-01-11)
+
+- Prompt templates library in `prompts/` for AI agent integration
+- System prompts for generation, validation, and simplification tasks
+- Assembly library (`lib/assembly.py`) for slot filling with PII safety checks
+- Readability library (`lib/readability.py`) using textstat for Flesch scores
+- Tests for assembly and readability functions (8 new tests, 24 total)
+
 ### Added (Phase 3B Sprint 3B.2 - 2026-01-11)
 
 - Evidence-template matrix CLI command (`edsembli evidence-matrix`) showing heuristic matches using ADR-001 algorithm

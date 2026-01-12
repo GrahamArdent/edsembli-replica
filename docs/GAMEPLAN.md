@@ -190,12 +190,12 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 #### Deliverables
 
-- [ ] `prompts/system_generation.yaml`
-- [ ] `prompts/system_validation.yaml`
-- [ ] `prompts/system_simplification.yaml`
-- [ ] `lib/assembly.py`
-- [ ] `lib/readability.py`
-- [ ] Tests for assembly + readability
+- [x] `prompts/system_generation.yaml`
+- [x] `prompts/system_validation.yaml`
+- [x] `prompts/system_simplification.yaml`
+- [x] `lib/assembly.py`
+- [x] `lib/readability.py`
+- [x] Tests for assembly + readability
 
 ### Sprint 4.2 (Week 3-4): Agent Pipeline
 
