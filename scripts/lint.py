@@ -22,6 +22,7 @@ from ruamel.yaml import YAML
 # Optional: readability analysis
 try:
     import textstat
+
     HAS_TEXTSTAT = True
 except ImportError:
     HAS_TEXTSTAT = False
@@ -126,7 +127,7 @@ def main() -> int:
         # Deprecation consistency checks
         status = tmpl.get("status", "draft")
         deprecated_by = tmpl.get("deprecated_by")
-        replaces = tmpl.get("replaces")
+        # Note: 'replaces' field is set on the NEW template, not checked here
 
         if status == "deprecated" and not deprecated_by:
             failures.append(f"{tid}: status is 'deprecated' but 'deprecated_by' is not set")

@@ -169,6 +169,9 @@ Last updated: 2026-01-11
 
 ## CLI Tools
 
+- **Master Check** (`scripts/check_all.py`) ⭐
+	- `python scripts/check_all.py` — run ALL validation checks
+	- `python scripts/check_all.py --quick` — fast checks only
 - **Edsembli CLI** (`scripts/edsembli_cli.py`)
 	- `edsembli search <query>` — fuzzy template search
 	- `edsembli matrix-sql <sql>` — DuckDB queries over traceability matrix

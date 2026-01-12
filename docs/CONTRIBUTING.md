@@ -180,27 +180,20 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ### 5.1 Before Committing
 
-Run the full validation pipeline:
+Run the master validation script:
 
 ```bash
-# Format and lint
-ruff format .
-ruff check .
+python scripts/check_all.py          # Full check (recommended)
+python scripts/check_all.py --quick   # Fast checks only
+```
 
-# Validate content
-python scripts/validate.py
-python scripts/lint.py
-python scripts/coverage.py
+This runs: ruff format, ruff lint, validate.py, lint.py, check_index.py, pytest, pyright, and sync_docs.
 
-# Run tests
-pytest -v
-
-# Type check
-pyright
-
-# Build docs (if changed)
-python scripts/sync_docs.py
-mkdocs build
+Or run individual checks:
+```bash
+ruff format . && ruff check .   # Format and lint
+python scripts/validate.py      # Schema validation
+pytest -v                       # Tests
 ```
 
 ### 5.2 Documentation Changes
