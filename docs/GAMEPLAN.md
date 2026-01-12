@@ -133,11 +133,11 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 #### Deliverables
 
-- [ ] `scripts/generate_coverage_report.py`
-- [ ] `scripts/generate_gaps_report.py`
-- [ ] `reports/coverage.md` (auto-generated)
-- [ ] `reports/gaps.md` (auto-generated)
-- [ ] Updated `templates/comment_templates.yaml` with `text_fr` stubs
+- [x] `scripts/generate_coverage_report.py`
+- [x] `scripts/generate_gaps_report.py`
+- [x] `reports/coverage.md` (auto-generated)
+- [x] `reports/gaps.md` (auto-generated)
+- [x] Updated `templates/comment_templates.yaml` with `text_fr` stubs
 
 ### Sprint 3B.2 (Week 2)
 

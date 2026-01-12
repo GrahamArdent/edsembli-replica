@@ -69,6 +69,13 @@ python scripts/check_index.py
 ```
 Verifies that all canonical files (docs, taxonomy, schemas, etc.) are linked in `index.md`.
 
+### Coverage Reports
+```bash
+python scripts/generate_coverage_report.py  # Generate reports/coverage.md
+python scripts/generate_gaps_report.py      # Generate reports/gaps.md (exit 1 if gaps)
+```
+Analyze template distribution and identify coverage deficiencies.
+
 ### Quick Queries (CLI)
 ```bash
 python scripts/edsembli_cli.py --help

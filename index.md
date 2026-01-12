@@ -82,6 +82,13 @@ Last updated: 2026-01-11
 - [Traceability Matrix](datasets/traceability/README.md)
 	- Coverage and audit datasets (generated + planned extensions).
 
+## Reports (auto-generated)
+
+- [Coverage Report](reports/coverage.md)
+	- Template distribution across frames, indicators, and sections.
+- [Gaps Report](reports/gaps.md)
+	- Identifies indicators with <2 templates, sections with <3 templates.
+
 ## Validation & Automation
 
 - [Schemas](schemas/README.md)

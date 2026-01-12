@@ -21,7 +21,7 @@ from ruamel.yaml import YAML
 
 # Optional: readability analysis
 try:
-    import textstat
+    import textstat  # type: ignore[import-untyped]
 
     HAS_TEXTSTAT = True
 except ImportError:

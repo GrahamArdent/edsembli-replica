@@ -17,6 +17,21 @@ The format is loosely based on Keep a Changelog, and this project aims to follow
 
 ## [Unreleased]
 
+### Added (Phase 3B Sprint 3B.1 - 2026-01-11)
+
+- Coverage report generator (`scripts/generate_coverage_report.py`) showing template distribution across frames, indicators, and sections
+- Gaps report generator (`scripts/generate_gaps_report.py`) identifying indicators with <2 templates and sections with <3 templates
+- Auto-generated reports: `reports/coverage.md` and `reports/gaps.md`
+- French text placeholders (`text_fr: "TODO"`) added to all 36 templates in preparation for bilingual support
+- Reports section added to `index.md` for easy navigation to coverage analysis
+
+### Changed
+
+- Template schema now supports bilingual content with `text_fr` field
+- Gap reporting exits with code 1 when critical gaps exist (CI integration ready)
+
+### Previous Work
+
 - Initialize documentation scaffolding (index/framework/infrastructure, sources retention).
 - Normalize ID examples and placeholder conventions across spec and examples.
 - Add discussion notes and clarify examples as illustrative.
