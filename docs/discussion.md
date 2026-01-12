@@ -73,6 +73,11 @@ Completed a comprehensive gap analysis and implemented all recommendations:
    - **Phase 6** (ongoing): French translations (36 templates)
    - Includes task IDs, deliverables, success metrics, risk register
 
+8. **Documentation Polish** (`index.md`, `docs/CONTRIBUTING.md`)
+   - **Unified Index**: Centralized navigation in root `index.md`.
+   - **Developer Guide**: Added commit conventions, development tips, and quick start guide.
+   - **Status Visibility**: Added project status and quick start checks to index.
+
 ### Repository Cleanup
 
 **Eliminated ~67 Duplicate Files:**

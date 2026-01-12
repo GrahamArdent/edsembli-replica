@@ -164,6 +164,18 @@ All Python code must follow:
 - **Imports**: Use `from __future__ import annotations` at top of file
 - **Docstrings**: Add module-level docstring explaining purpose
 
+### 4.6 Commit Convention
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+- `feat: ...` for new features (scripts, templates)
+- `fix: ...` for bug fixes
+- `docs: ...` for documentation only
+- `style: ...` for formatting, missing semi-colons, etc.
+- `refactor: ...` for code restructuring without API changes
+- `test: ...` for adding missing tests
+- `chore: ...` for maintenance tasks
+
 ## 5. Build and Test Workflow
 
 ### 5.1 Before Committing
@@ -261,7 +273,7 @@ Key decisions already documented:
 If pre-commit blocks your commit:
 
 1. **Trailing whitespace / formatting**: Auto-fixed, just re-add files and commit
-2. **Type errors (pyright)**: 
+2. **Type errors (pyright)**:
    - If false positive (imports not resolved), use `--no-verify` as last resort
    - Prefer fixing by adding `# type: ignore[import]` with comment
 3. **Validation errors**: Fix the content issue before committing
@@ -281,7 +293,14 @@ Before submitting changes:
 - [ ] `CHANGELOG.md` updated (for user-facing changes)
 - [ ] `docs/discussion.md` updated (for design decisions)
 
-## 10. Getting Help
+## 10. Development Tips
+
+- **VS Code**: We recommend the "Python", "YAML", and "Markdown All in One" extensions.
+- **Fast Testing**: Use `pytest -k "keyword"` to run specific tests instead of the full suite.
+- **Docs Preview**: Run `mkdocs serve` to see changes live at `http://localhost:8000`.
+- **Linter Output**: If `lint.py` is noisy, check `scripts/lint.py` configuration to adjust thresholds.
+
+## 11. Getting Help
 
 - **Questions about structure**: See `docs/infrastructure.md`
 - **Questions about tooling**: See `README.md` or `scripts/README.md`

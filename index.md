@@ -15,6 +15,19 @@ Start here for the current, authoritative documents and the saved research input
 
 Last updated: 2026-01-11
 
+## Project Status
+
+- **Version**: 0.2.0 (Active Development)
+- **Validation**: Strict (Pre-commit hooks, Type checking)
+- **Documentation**: Canonical files in root, auto-synced to site.
+
+## Quick Start
+
+1. **Setup**: Run `pip install -r requirements.lock.txt` and `pre-commit install`.
+2. **Concept**: Read [docs/framework.md](docs/framework.md) for the core philosophy.
+3. **CLI**: Run `python scripts/edsembli_cli.py --help` to explore tools.
+4. **Validate**: Run `python scripts/validate.py` to check integrity.
+
 ## Explanation (why it exists)
 
 - [Framework](docs/framework.md)
