@@ -17,6 +17,15 @@ The format is loosely based on Keep a Changelog, and this project aims to follow
 
 ## [Unreleased]
 
+### Added (Phase 4 Sprint 4.2 - 2026-01-11)
+
+- Template generation agent (`lib/agents/generation.py`) for AI-assisted template creation
+- Validation agent (`lib/agents/validation.py`) for quality assurance and feedback
+- Comment assembly pipeline (`lib/pipeline/assemble.py`) for building complete CoL comments
+- `edsembli review` CLI command for validating draft templates with detailed feedback
+- Integration tests for agents and pipeline (18 new tests, 42 total)
+- Mock LLM mode for testing without API credentials
+
 ### Added (Phase 4 Sprint 4.1 - 2026-01-11)
 
 - Prompt templates library in `prompts/` for AI agent integration

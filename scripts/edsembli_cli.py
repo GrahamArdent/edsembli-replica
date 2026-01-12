@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 import duckdb
@@ -8,6 +9,12 @@ import typer
 from rich.console import Console
 from rich.table import Table
 from ruamel.yaml import YAML
+
+# Add lib to path for agent imports
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from lib.agents.validation import ValidationAgent
 
 app = typer.Typer(add_completion=False, help="Lightweight query tools for this design repo")
 console = Console()
@@ -236,6 +243,116 @@ def _match_evidence(template: dict, evidence_pool: list[dict], min_score: int = 
 
     # Sort by score descending
     return sorted(matches, key=lambda x: -x[1])
+
+
+@app.command("review")
+def review_template(
+    draft_file: Path,
+    verbose: bool = typer.Option(False, "--verbose", "-v", help="Show full validation details"),
+) -> None:
+    """Review a draft template with automated validation.
+
+    Validates schema, privacy, slots, indicators, and readability.
+    Provides pass/fail/needs_revision status with actionable feedback.
+
+    Args:
+        draft_file: Path to draft template YAML file (required positional argument)
+        verbose: Show full validation details (optional flag)
+    """
+    console.print(f"\n[bold]Reviewing template:[/bold] {draft_file}", style="blue")
+
+    # Load the draft template
+    try:
+        with draft_file.open("r", encoding="utf-8") as f:
+            drafts = YAML_LOADER.load(f)
+            if isinstance(drafts, list):
+                draft = drafts[0]  # Take first template if list
+            else:
+                draft = drafts
+    except Exception as e:
+        console.print(f"[red]Error loading file:[/red] {e}")
+        raise typer.Exit(1) from e
+
+    # Run validation
+    agent = ValidationAgent()
+    result = agent.validate(draft)
+
+    # Display results
+    console.print()
+    status_colors = {"pass": "green", "needs_revision": "yellow", "fail": "red"}
+    status_color = status_colors.get(result.overall_status, "white")
+    console.print(f"[bold {status_color}]Status: {result.overall_status.upper()}[/bold {status_color}]")
+    console.print()
+
+    # Show checks summary
+    table = Table(title="Validation Checks")
+    table.add_column("Check", style="cyan")
+    table.add_column("Status", justify="center")
+
+    checks = [
+        ("Schema Compliance", result.schema_valid),
+        ("Privacy & Safety", result.privacy_safe),
+        ("Slot Consistency", result.slots_consistent),
+        ("Indicator Alignment", result.indicators_valid),
+    ]
+
+    for check_name, passed in checks:
+        status = "✓ PASS" if passed else "✗ FAIL"
+        color = "green" if passed else "red"
+        table.add_row(check_name, f"[{color}]{status}[/{color}]")
+
+    console.print(table)
+    console.print()
+
+    # Show readability scores
+    if result.readability_score is not None and result.readability_grade is not None:
+        console.print("[bold]Readability:[/bold]")
+        console.print(f"  Flesch Reading Ease: {result.readability_score:.1f}")
+        console.print(f"  Flesch-Kincaid Grade: {result.readability_grade:.1f}")
+        target_met = 60 <= result.readability_score <= 80 and 6 <= result.readability_grade <= 8
+        if target_met:
+            console.print("  [green]✓ Meets readability targets[/green]")
+        else:
+            console.print("  [yellow]⚠ Outside readability targets (Flesch 60-80, Grade 6-8)[/yellow]")
+        console.print()
+
+    # Show errors
+    if result.errors:
+        console.print("[bold red]Errors:[/bold red]")
+        for error in result.errors:
+            console.print(f"  • {error}", style="red")
+        console.print()
+
+    # Show warnings
+    if result.warnings:
+        console.print("[bold yellow]Warnings:[/bold yellow]")
+        for warning in result.warnings:
+            console.print(f"  • {warning}", style="yellow")
+        console.print()
+
+    # Show suggestions
+    if result.suggestions:
+        console.print("[bold cyan]Suggestions:[/bold cyan]")
+        for suggestion in result.suggestions:
+            console.print(f"  • {suggestion}", style="cyan")
+        console.print()
+
+    # Show full template if verbose
+    if verbose:
+        console.print("[bold]Draft Template:[/bold]")
+        console.print(json.dumps(draft, indent=2))
+        console.print()
+
+    # Exit code based on status
+    if result.overall_status == "fail":
+        console.print("[red]❌ Template failed validation. Fix errors and try again.[/red]")
+        raise typer.Exit(1)
+    elif result.overall_status == "needs_revision":
+        console.print("[yellow]⚠ Template needs revision. Address warnings before finalizing.[/yellow]")
+        raise typer.Exit(0)
+    else:
+        console.print("[green]✅ Template passed validation![/green]")
+        raise typer.Exit(0)
 
 
 def main() -> None:

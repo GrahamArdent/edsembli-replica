@@ -72,6 +72,15 @@ Last updated: 2026-01-11
 - [Readability Library](lib/readability.py)
 	- Text analysis using textstat for readability scoring.
 
+## AI Agent System
+
+- [Generation Agent](lib/agents/generation.py)
+	- AI-assisted template generation with example retrieval.
+- [Validation Agent](lib/agents/validation.py)
+	- Quality assurance with schema, privacy, and readability checks.
+- [Comment Assembly Pipeline](lib/pipeline/assemble.py)
+	- Complete comment assembly following guidance/comment-assembly.md rules.
+
 ## Agent Prompts
 
 - [System Prompt: Generation](prompts/system_generation.yaml)
