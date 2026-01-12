@@ -168,7 +168,9 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 **Goal:** Enable AI-assisted template generation with human-in-the-loop validation.
 
-### Sprint 4.1 (Week 1-2): Foundation
+### Sprint 4.1 (Week 1-2): Foundation ✅
+
+**Status:** Complete (2026-01-11, commit cf61077)
 
 #### Tasks
 
@@ -179,23 +181,23 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 2. **[TASK-4-1-2] Slot fill function**
    - `lib/assembly.py`: `fill_slots(template, child_data) -> str`
-   - Uses Jinja2 for rendering
+   - Uses string replacement for `{slot}` syntax (not Jinja2)
    - Validates against slot_guidance.yaml rules
-   - Returns filled text or validation errors
+   - Returns filled text or validation errors with PII checks
 
 3. **[TASK-4-1-3] Readability gate function**
    - `lib/readability.py`: `check_readability(text) -> ReadabilityResult`
-   - Uses textstat
-   - Returns scores + pass/fail + suggestions
+   - Uses textstat (graceful degradation if not installed)
+   - Returns Flesch scores + pass/fail + suggestions
 
 #### Deliverables
 
 - [x] `prompts/system_generation.yaml`
 - [x] `prompts/system_validation.yaml`
 - [x] `prompts/system_simplification.yaml`
-- [x] `lib/assembly.py`
-- [x] `lib/readability.py`
-- [x] Tests for assembly + readability
+- [x] `lib/assembly.py` (with PII validation)
+- [x] `lib/readability.py` (with optional textstat)
+- [x] Tests for assembly + readability (8 tests)
 
 ### Sprint 4.2 (Week 3-4): Agent Pipeline
 
