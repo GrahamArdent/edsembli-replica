@@ -2,7 +2,7 @@
 id: doc.discussion
 type: document
 title: Discussion / Working Notes
-version: 0.1.0
+version: 0.2.0
 status: draft
 tags: [discussion, notes]
 refs: []
@@ -15,6 +15,135 @@ updated: 2026-01-11
 > This file is a living reference for future refactors.
 >
 > Last updated: 2026-01-11
+
+## Latest Session (2026-01-11): Implementation Deep Dive
+
+### Recommendations Implemented
+
+Completed a comprehensive gap analysis and implemented all recommendations:
+
+1. **Slot Guidance System** (`taxonomy/slot_guidance.yaml`)
+   - Added slot type taxonomy: identity, pronoun, observation, attribute, growth, next_step
+   - Added pronoun localization (en/fr) with grammatical mappings
+   - Added validation rules: no_other_children, observable_only, positive_framing, achievable_goals
+   - Added new slots: school_strategy, home_strategy
+   - Bumped version to 0.2.0
+
+2. **Dependency Cleanup** (`requirements.in`)
+   - **Removed**: frictionless (unused, DuckDB covers dataset validation)
+   - **Removed**: networkx (unused, matrix covers traceability)
+   - **Removed**: sqlalchemy (unused, DuckDB sufficient)
+   - **Added**: textstat (readability scoring)
+   - **Added**: jinja2 (template rendering for Phase 4)
+
+3. **Readability Checks** (`scripts/lint.py`)
+   - Integrated textstat library for automated readability analysis
+   - Added Flesch Reading Ease checks (target: 60-80)
+   - Added Flesch-Kincaid Grade Level checks (target: 6-8)
+   - Runs as warnings (non-blocking) during lint
+
+4. **Comment Assembly Rules** (`guidance/comment-assembly.md`)
+   - Documented section requirements (key_learning, growth, next_steps)
+   - Defined character limits: per section 100-600, total 400-1500
+   - Added readability targets using textstat metrics
+   - Defined slot fill constraints and indicator coverage rules (≥2 distinct)
+   - Added error codes for validation failures
+   - Documented assembly workflow and compatibility rules
+
+5. **Architecture Decision Records**
+   - **ADR-001** (`docs/adr/ADR-001-evidence-template-linking.md`): Evidence-Template Linking Strategy
+     - Decision: Use heuristic matching over explicit linking
+     - Algorithm: frame match (+3), indicator match (+5), preferred (+10)
+     - Optional `preferred_evidence` field for soft constraints
+   - **ADR-002** (`docs/adr/ADR-002-template-deprecation.md`): Template Deprecation Workflow
+     - Added lifecycle states: draft → stable → deprecated → archived
+     - Added schema fields: `replaces`, `deprecated_by`, `lifecycle` timestamps
+     - Defined 6-month grace period before archiving
+
+6. **Bilingual Validation** (`schemas/comment_templates.schema.json`)
+   - Schema now requires `text_fr` when `status: stable` (via JSON Schema `allOf`)
+   - Lint checks stable templates for missing French translations
+   - Added `deprecated_by` requirement when `status: deprecated`
+   - Bumped schema version to 1.1.0
+
+7. **Implementation Gameplan** (`docs/GAMEPLAN.md`)
+   - **Phase 3B** (2 weeks): Coverage reports, gap analysis, evidence-matrix CLI
+   - **Phase 4** (4 weeks): Agent integration, template generation, assembly pipeline
+   - **Phase 5** (3 weeks): SIS export formats, board configuration presets
+   - **Phase 6** (ongoing): French translations (36 templates)
+   - Includes task IDs, deliverables, success metrics, risk register
+
+### Repository Cleanup
+
+**Eliminated ~67 Duplicate Files:**
+
+- **Problem**: Entire codebase duplicated between root and `site_docs/` for MkDocs
+  - Root: 77 canonical files
+  - site_docs: 67 duplicate files (manually maintained, drifting)
+  - Maintenance burden: every change required edits in 2 places
+  - Drift: site_docs missing ADRs, GAMEPLAN, comment-assembly.md, slot_guidance updates
+
+- **Solution**: Auto-sync pattern
+  1. Created `scripts/sync_docs.py` - syncs canonical → `docs_site/` on demand
+  2. Updated `mkdocs.yml` to use `docs_site/` as source (git-ignored)
+  3. Deleted entire `site_docs/` folder (67 files removed)
+  4. Added `docs_site/.gitignore` to mark folder as auto-generated
+
+- **Workflow**: Edit canonical files → run `python scripts/sync_docs.py` → build docs
+- **Benefit**: Single source of truth, no drift, automated sync
+
+**Index Consolidation:**
+
+- Deleted orphaned `docs/index.md` (unused, confusing)
+- Root `index.md` now the sole source of truth (v0.2.0, status: stable)
+- Updated `index.md` with:
+  - Slot guidance, comment assembly, ADRs, CLI tools, config files
+  - Fixed broken links and knowledge/entities reference
+- Updated `docs/CONTRIBUTING.md`: require index.md update when adding canonical files
+
+**Fixed Broken Links:**
+
+- Updated `knowledge/processes/process.onboarding.contributor.md`: docs/index.md → index.md
+- Updated `audits/audit.2026-01-11.md`: docs/index.md → index.md (2 occurrences)
+
+### Technology Stack Finalized
+
+| Category | Keep | Add | Remove |
+|----------|------|-----|--------|
+| Core | pydantic, DuckDB, typer+rich, mkdocs, pytest, ruff, pyright | textstat, jinja2 | frictionless, networkx, sqlalchemy |
+| Phase 4 | — | LLM integration (to be determined) | — |
+| Future | — | Vector stores (if corpus grows to 200+) | — |
+
+### Metrics
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Files maintained | ~144 | ~77 |
+| Duplicate docs | 67 | 0 |
+| Unused dependencies | 3 | 0 |
+| ADRs | 5 (legacy) | 7 (added ADR-001, ADR-002) |
+| Guidance docs | 3 | 4 (added comment-assembly) |
+| Schema validation | Basic | Bilingual + deprecation |
+| Readability checks | None | Automated (textstat) |
+
+### Next Steps
+
+**Immediate (Phase 3B):**
+1. Create coverage report generator (`scripts/generate_coverage_report.py`)
+2. Create gap analysis report (`scripts/generate_gaps_report.py`)
+3. Add bilingual placeholder (`text_fr: "TODO"`) to all 36 templates
+
+**Short-term (Phase 4):**
+1. Create prompt library (`prompts/` folder)
+2. Implement slot fill + assembly functions (`lib/assembly.py`)
+3. Build agent generation pipeline
+
+**Long-term (Phase 5+):**
+1. SIS export formats (Edsembli CSV compatibility)
+2. Board configuration presets (NCDSB, TCDSB)
+3. French translations (all 36 templates)
+
+---
 
 ## 1) Snapshot: What we have so far
 
