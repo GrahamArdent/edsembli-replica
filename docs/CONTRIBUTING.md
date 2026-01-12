@@ -183,8 +183,11 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 Run the master validation script:
 
 ```bash
-python scripts/check_all.py          # Full check (recommended)
-python scripts/check_all.py --quick   # Fast checks only
+.\check          # Full check (recommended before commits)
+.\check --quick   # Fast checks only (during development)
+
+# Or use the full path:
+python scripts/check_all.py
 ```
 
 This runs: ruff format, ruff lint, validate.py, lint.py, check_index.py, pytest, pyright, and sync_docs.

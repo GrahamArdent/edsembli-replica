@@ -17,8 +17,12 @@ Local scripts for validating, linting, and analyzing canonical artifacts.
 
 **Run all checks with one command:**
 ```bash
-python scripts/check_all.py        # Full validation
-python scripts/check_all.py --quick # Fast checks only (skips pytest/pyright)
+.\check              # Full validation (from project root)
+.\check --quick      # Fast checks only
+
+# Or use the full path:
+python scripts/check_all.py
+python scripts/check_all.py --quick
 ```
 
 ## Individual Scripts

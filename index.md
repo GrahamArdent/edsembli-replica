@@ -25,8 +25,8 @@ Last updated: 2026-01-11
 
 1. **Setup**: Run `pip install -r requirements.lock.txt` and `pre-commit install`.
 2. **Concept**: Read [docs/framework.md](docs/framework.md) for the core philosophy.
-3. **CLI**: Run `python scripts/edsembli_cli.py --help` to explore tools.
-4. **Validate**: Run `python scripts/validate.py` to check integrity.
+3. **Validate**: Run `.\check --quick` to verify everything works.
+4. **CLI**: Run `python scripts/edsembli_cli.py --help` to explore tools.
 
 ## Explanation (why it exists)
 
@@ -169,6 +169,9 @@ Last updated: 2026-01-11
 
 ## CLI Tools
 
+- **Quick Shortcuts** ⚡
+	- `.\check` — run all validation checks
+	- `.\check --quick` — fast checks only (recommended during development)
 - **Master Check** (`scripts/check_all.py`) ⭐
 	- `python scripts/check_all.py` — run ALL validation checks
 	- `python scripts/check_all.py --quick` — fast checks only
