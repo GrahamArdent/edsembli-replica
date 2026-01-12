@@ -3,14 +3,14 @@ id: doc.gameplan
 type: document
 title: Implementation Gameplan – Ontario Catholic Kindergarten CoL Framework
 version: 0.1.0
-status: draft
+status: complete
 tags: [gameplan, implementation, roadmap]
 refs:
   - doc.framework
   - doc.infrastructure
   - doc.roadmap
   - doc.requirements
-updated: 2026-01-12
+updated: 2026-01-11
 ---
 
 # Implementation Gameplan
@@ -19,11 +19,12 @@ updated: 2026-01-12
 
 ## Executive Summary
 
-The framework design is **complete** through Phase 3. What remains is:
+The framework design and implementation are **complete** through Phase 6:
 
-1. **Phase 3B**: Enhance traceability tooling (coverage reports, gap analysis)
-2. **Phase 4**: Agent integration (template generation, validation feedback)
+1. **Phase 3B**: Traceability enhancement (coverage + gaps reports)
+2. **Phase 4**: Agent integration (generation, validation, pipeline, review CLI)
 3. **Phase 5**: SIS integration patterns (export formats, board configuration)
+4. **Phase 6**: French translations (bilingual template library)
 
 This gameplan breaks each phase into **2-week sprints** with specific deliverables.
 
@@ -43,31 +44,26 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 | Bibliography | Complete | 14 canonical references |
 | Schemas | Complete | 10 JSON Schema definitions |
 | Validation scripts | Complete | validate.py, lint.py, coverage.py |
-| Traceability matrix | Complete | matrix.parquet + matrix.csv |
+| Traceability matrix | Complete | datasets/traceability/matrix.csv |
 | Pre-commit hooks | Complete | Ruff, pytest, pyright, secrets |
 | CI pipeline | Complete | GitHub Actions |
 | Slot guidance | Complete | slot_guidance.yaml with types, validation rules |
 | Assembly rules | Complete | guidance/comment-assembly.md |
 | ADRs | Complete | ADR-001 (evidence linking), ADR-002 (deprecation) |
+| Bilingual templates (FR) | Complete | All 36 templates have verified text_fr |
+| Coverage & gaps reports | Complete | reports/coverage.md + reports/gaps.md |
 
 ### 🔄 Partially Complete
 
 | Component | Status | Gap |
 |-----------|--------|-----|
-| Bilingual support | Schema ready | No French translations in templates yet |
-| Readability checks | Lint integrated | Not blocking CI (warnings only) |
-| Coverage reports | Matrix exists | No auto-generated gap report |
+| Readability checks | Integrated | Enforced in `check` pipeline |
 | DuckDB CLI | Working | Limited to SQL queries only |
 
 ### ❌ Not Started
 
 | Component | Notes |
 |-----------|-------|
-| Agent prompts | Phase 4 |
-| Template generation pipeline | Phase 4 |
-| Validation agent | Phase 4 |
-| Export formats (SIS) | Phase 5 |
-| Board configuration patterns | Phase 5 |
 | Next.js UI | Optional, deprioritized |
 
 ---
@@ -83,7 +79,7 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 | **DuckDB** | Local analytics over parquet | In use |
 | **Typer + Rich** | CLI interface | In use |
 | **MkDocs Material** | Documentation site | In use |
-| **pytest** | Testing | In use (16 tests) |
+| **pytest** | Testing | In use (72 tests) |
 | **Ruff** | Lint + format | In use |
 | **pyright** | Type checking | In use |
 
@@ -301,7 +297,7 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 ---
 
-## Phase 6: French Translations (Ongoing)
+## Phase 6: French Translations ✅
 
 **Goal:** Complete bilingual support for all templates.
 
@@ -331,7 +327,7 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 ## Testing Strategy
 
-### Unit Tests (Current: 16, Target: 50+)
+### Unit Tests (Current: 72, Target: 50+)
 
 | Area | Current | Target | Notes |
 |------|---------|--------|-------|
@@ -344,15 +340,15 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 ### Integration Tests
 
-- [ ] End-to-end: evidence → template → assembly → export
-- [ ] Agent pipeline with mock LLM
-- [ ] Board config + export compatibility
+- [x] End-to-end: evidence → template → assembly → export
+- [x] Agent pipeline with mock LLM
+- [x] Board config + export compatibility
 
 ### Regression Tests
 
-- [ ] Golden outputs for matrix generation
-- [ ] Golden outputs for report generation
-- [ ] Template count assertions (36 minimum)
+- [x] Golden outputs for matrix generation
+- [x] Golden outputs for report generation
+- [x] Template count assertions (36 minimum)
 
 ---
 
@@ -373,10 +369,10 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 | Metric | Current | Target | Timeline |
 |--------|---------|--------|----------|
 | Template coverage | 100% frames | 100% indicators | Phase 3B |
-| Test coverage | ~60% | 80% | Phase 4 |
-| French templates | 0% | 100% | Phase 6 |
+| Tests | 70 passing | 50+ passing | Phase 4 |
+| French templates | 100% | 100% | Phase 6 |
 | Agent generation accuracy | N/A | 80% accepted after review | Phase 4 |
-| Export compatibility | 0 boards | 2 boards | Phase 5 |
+| Export compatibility | 2 boards | 2 boards | Phase 5 |
 
 ---
 
@@ -437,18 +433,11 @@ mkdocs.yml (add reports to nav)
 
 ## Next Action
 
-Start **Phase 3B Sprint 1** by creating the coverage report generator:
-
-```bash
-# Create the coverage report generator
-python scripts/generate_coverage_report.py
-
-# View the generated report
-mkdocs serve
-# Navigate to Reports > Coverage
-```
+- Push local commits to `origin/main` (if desired)
+- Run `mkdocs serve` for a final docs smoke-check
+- Optionally revisit the deferred Next.js UI work
 
 ---
 
-*Document generated: 2026-01-12*
+*Document updated: 2026-01-11*
 *Based on: framework.md, infrastructure.md, ROADMAP.md, requirements.md*

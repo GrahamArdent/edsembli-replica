@@ -73,7 +73,7 @@ Additional hardening added:
 - Generator: [scripts/generate_matrix.py](../scripts/generate_matrix.py)
 - Outputs:
   - [datasets/traceability/matrix.csv](../datasets/traceability/matrix.csv)
-  - [datasets/traceability/matrix.parquet](../datasets/traceability/matrix.parquet)
+  - matrix.parquet (optional local artifact; not checked in)
 
 Notes:
 - Rows represent template→indicator trace links, optionally joined to an evidence pattern and refs.

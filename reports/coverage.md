@@ -33,7 +33,7 @@
 | **Demonstrating Literacy and Mathematics Behaviours** | |
 | ✓ Oral Language | 4 |
 | ✓ Reading Behaviours | 3 |
-| ⚠️ Writing Behaviours | 1 |
+| ✓ Writing Behaviours | 2 |
 | ✓ Numeracy Behaviours | 3 |
 | **Problem Solving and Innovating** | |
 | ✓ Inquiry Skills | 3 |
