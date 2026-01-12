@@ -272,29 +272,32 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 **Commit:** 81375d3
 
-### Sprint 5.2 (Week 3): Board Configuration
+### Sprint 5.2 (Week 3): Board Configuration ✅ (d2d7ffa)
 
 #### Tasks
 
-1. **[TASK-5-2-1] Board config schema**
+1. **[TASK-5-2-1] Board config schema** ✅
    - Create `schemas/board_config.schema.json`
    - Fields: char_limits, locale, required_sections, custom_slots
 
-2. **[TASK-5-2-2] Board presets**
+2. **[TASK-5-2-2] Board presets** ✅
    - Create `config/boards/` directory
    - Add NCDSB, TCDSB presets (example)
    - Export command respects board limits
 
-3. **[TASK-5-2-3] Update guidance docs**
+3. **[TASK-5-2-3] Update guidance docs** ✅
    - Expand `guidance/board-customization.md`
    - Link to board presets
 
 #### Deliverables
 
-- [ ] `schemas/board_config.schema.json`
-- [ ] `config/boards/ncdsb.yaml`
-- [ ] `config/boards/tcdsb.yaml`
-- [ ] Updated `guidance/board-customization.md`
+- [x] `schemas/board_config.schema.json`
+- [x] `config/boards/ncdsb.yaml`
+- [x] `config/boards/tcdsb.yaml`
+- [x] Updated `guidance/board-customization.md`
+- [x] `tests/test_board_config.py` (9 new tests)
+- [x] CLI `--board` flag for export commands
+- [x] Updated `index.md` and `mkdocs.yml`
 
 ---
 
