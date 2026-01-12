@@ -16,6 +16,8 @@ function App() {
   const isHydrated = useAppStore(state => state.isHydrated);
   const theme = useAppStore(state => state.theme);
   const flushPendingSaves = useAppStore(state => state.flushPendingSaves);
+  const undo = useAppStore(state => state.undo);
+  const redo = useAppStore(state => state.redo);
   const [logs, setLogs] = useState<string[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const didInit = useRef(false);
@@ -87,6 +89,7 @@ function App() {
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase();
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
         void flushPendingSaves();
@@ -94,6 +97,19 @@ function App() {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === ",") {
         e.preventDefault();
         setSettingsOpen(true);
+      }
+
+      if (e.ctrlKey || e.metaKey) {
+        // Ctrl+Z / Cmd+Z => undo
+        if (key === 'z' && !e.shiftKey) {
+          e.preventDefault();
+          undo();
+        }
+        // Ctrl+Y / Cmd+Shift+Z => redo
+        if (key === 'y' || (key === 'z' && e.shiftKey)) {
+          e.preventDefault();
+          redo();
+        }
       }
     };
     const onOpenSettings = () => setSettingsOpen(true);

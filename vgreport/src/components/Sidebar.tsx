@@ -3,7 +3,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { cn } from '../lib/utils'; // Assuming this exists from shadcn init
 import { useMemo, useState } from 'react';
 import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { FRAMES, SECTIONS } from '../constants';
 
 export function Sidebar() {
@@ -101,9 +101,18 @@ export function Sidebar() {
           const isSelected = selectedStudentId === student.id;
           const completedFrames = FRAMES.reduce((acc, f) => acc + (computeFrameCompletion(student.id, f.id) ? 1 : 0), 0);
           return (
-            <button
+            <div
               key={student.id}
               onClick={() => setSelectedStudentId(student.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setSelectedStudentId(student.id);
+                }
+              }}
+              role="button"
+              tabIndex={0}
+              aria-current={isSelected ? 'true' : undefined}
               className={cn(
                 "w-full text-left px-3 py-2 rounded-md flex items-center gap-3 transition-colors",
                 isSelected
@@ -164,7 +173,7 @@ export function Sidebar() {
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>
-            </button>
+            </div>
           );
         })}
       </div>
@@ -177,6 +186,9 @@ export function Sidebar() {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add Student</DialogTitle>
+              <DialogDescription>
+                Create a new student in your classroom roster.
+              </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-3">
@@ -214,6 +226,9 @@ export function Sidebar() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Student</DialogTitle>
+            <DialogDescription>
+              Update the student name shown in the roster.
+            </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-3">
@@ -249,6 +264,9 @@ export function Sidebar() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete Student</DialogTitle>
+            <DialogDescription>
+              This permanently removes the student and their drafts from this device.
+            </DialogDescription>
           </DialogHeader>
 
           <div className="text-sm text-gray-700">

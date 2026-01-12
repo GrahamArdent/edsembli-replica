@@ -3,6 +3,7 @@ import { FRAMES, SECTIONS } from '../constants';
 import { cn } from '../lib/utils';
 import { SectionEditor } from './SectionEditor';
 import { Button } from './ui/button';
+import { Redo2, Undo2 } from 'lucide-react';
 
 export function Workspace() {
   const {
@@ -12,7 +13,11 @@ export function Workspace() {
     setSelectedFrameId,
     saveStatus,
     lastSavedAt,
-    lastSaveError
+    lastSaveError,
+    undo,
+    redo,
+    undoStack,
+    redoStack,
   } = useAppStore();
 
   const student = students.find(s => s.id === selectedStudentId);
@@ -51,6 +56,24 @@ export function Workspace() {
             onClick={() => window.dispatchEvent(new Event('open-settings'))}
           >
             Settings
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => undo()}
+            disabled={undoStack.length === 0}
+            title={undoStack.length === 0 ? 'Nothing to undo' : 'Undo (Ctrl+Z)'}
+          >
+            <Undo2 className="h-4 w-4 mr-1" /> Undo
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => redo()}
+            disabled={redoStack.length === 0}
+            title={redoStack.length === 0 ? 'Nothing to redo' : 'Redo (Ctrl+Y)'}
+          >
+            <Redo2 className="h-4 w-4 mr-1" /> Redo
           </Button>
           {saveStatus === 'saving' && <span className="text-blue-700">Saving…</span>}
           {saveStatus === 'saved' && <span className="text-green-700">Saved</span>}

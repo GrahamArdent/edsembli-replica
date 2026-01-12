@@ -3,6 +3,52 @@ import { v4 as uuidv4 } from 'uuid';
 import { Student, FrameId, ReportPeriod, ReportDraft, CommentDraft, SectionId, Template } from '../types';
 import { dbDeleteStudent, dbGetSetting, dbInit, dbListDrafts, dbListStudents, dbSetSetting, dbUpsertDraft, dbUpsertStudent, type DraftRow } from '../services/db';
 
+type HistoryEntry = {
+  studentId: string;
+  frameId: FrameId;
+  sectionId: SectionId;
+  before: CommentDraft;
+  after: CommentDraft;
+  ts: number;
+};
+
+function cloneCommentDraft(comment: CommentDraft): CommentDraft {
+  return {
+    templateId: comment.templateId,
+    slots: { ...(comment.slots ?? {}) },
+    rendered: comment.rendered,
+    validation: comment.validation
+      ? {
+          valid: comment.validation.valid,
+          errors: comment.validation.errors ? [...comment.validation.errors] : undefined,
+          warnings: comment.validation.warnings ? [...comment.validation.warnings] : undefined,
+        }
+      : undefined,
+  };
+}
+
+function sameTemplateAndSlots(a: CommentDraft | undefined, b: CommentDraft | undefined): boolean {
+  const at = a?.templateId;
+  const bt = b?.templateId;
+  if (at !== bt) return false;
+
+  const as = a?.slots ?? {};
+  const bs = b?.slots ?? {};
+  const aKeys = Object.keys(as);
+  const bKeys = Object.keys(bs);
+  if (aKeys.length !== bKeys.length) return false;
+  for (const k of aKeys) {
+    if (!(k in bs)) return false;
+    if (String((as as any)[k] ?? '') !== String((bs as any)[k] ?? '')) return false;
+  }
+  return true;
+}
+
+const HISTORY_COALESCE_MS = 1000;
+const HISTORY_MAX = 200;
+
+let isApplyingHistory = false;
+
 interface AppState {
   // App Init
   isHydrated: boolean;
@@ -36,6 +82,11 @@ interface AppState {
   setTemplates: (templates: Template[]) => void;
   drafts: Record<string, ReportDraft>; // studentId -> Draft
   updateComment: (studentId: string, frameId: FrameId, sectionId: SectionId, comment: CommentDraft) => void;
+
+  undoStack: HistoryEntry[];
+  redoStack: HistoryEntry[];
+  undo: () => void;
+  redo: () => void;
 
   saveStatus: 'idle' | 'saving' | 'saved' | 'error';
   lastSavedAt: number | null;
@@ -99,6 +150,9 @@ export const useAppStore = create<AppState>((set) => ({
   hasOnboarded: false,
   templates: [],
   drafts: {},
+
+  undoStack: [],
+  redoStack: [],
 
   saveStatus: 'idle',
   lastSavedAt: null,
@@ -170,7 +224,9 @@ export const useAppStore = create<AppState>((set) => ({
       boardId: savedBoardId ?? 'tcdsb',
       theme: savedTheme ?? 'system',
       hasOnboarded: savedHasOnboarded ?? false,
-      drafts: draftsByStudent
+      drafts: draftsByStudent,
+      undoStack: [],
+      redoStack: [],
     });
   },
 
@@ -241,6 +297,23 @@ export const useAppStore = create<AppState>((set) => ({
   setSelectedFrameId: (id) => set({ selectedFrameId: id }),
 
   updateComment: (studentId, frameId, sectionId, comment) => {
+    const snapshot = useAppStore.getState();
+    const prevDraft = snapshot.drafts[studentId] || emptyDraft(studentId, snapshot.currentPeriod);
+    const prevFrameComments = (prevDraft.comments as any)?.[frameId] || {};
+    const prevComment = (prevFrameComments as any)?.[sectionId] as CommentDraft | undefined;
+
+    const historyEntry: HistoryEntry | null =
+      !isApplyingHistory && !sameTemplateAndSlots(prevComment, comment)
+        ? {
+            studentId,
+            frameId,
+            sectionId,
+            before: cloneCommentDraft(prevComment ?? { slots: {} }),
+            after: cloneCommentDraft(comment ?? { slots: {} }),
+            ts: Date.now(),
+          }
+        : null;
+
     set((state) => {
       const existingDraft = state.drafts[studentId] || emptyDraft(studentId, state.currentPeriod);
       const frameComments = { ...(existingDraft.comments[frameId] || {}) };
@@ -261,6 +334,36 @@ export const useAppStore = create<AppState>((set) => ({
         }
       };
     });
+
+    if (historyEntry) {
+      set((state) => {
+        const undoStack = state.undoStack.slice();
+        const last = undoStack.length > 0 ? undoStack[undoStack.length - 1] : undefined;
+        if (
+          last &&
+          last.studentId === historyEntry.studentId &&
+          last.frameId === historyEntry.frameId &&
+          last.sectionId === historyEntry.sectionId &&
+          historyEntry.ts - last.ts <= HISTORY_COALESCE_MS
+        ) {
+          undoStack[undoStack.length - 1] = {
+            ...last,
+            after: historyEntry.after,
+            ts: historyEntry.ts,
+          };
+        } else {
+          undoStack.push(historyEntry);
+          if (undoStack.length > HISTORY_MAX) {
+            undoStack.splice(0, undoStack.length - HISTORY_MAX);
+          }
+        }
+
+        return {
+          undoStack,
+          redoStack: [],
+        };
+      });
+    }
 
     // Debounced autosave for this single draft row.
     const state = useAppStore.getState();
@@ -283,5 +386,41 @@ export const useAppStore = create<AppState>((set) => ({
       }
     }, 650);
     saveTimers.set(key, { timer, row });
-  }
+  },
+
+  undo: () => {
+    const state = useAppStore.getState();
+    const entry = state.undoStack[state.undoStack.length - 1];
+    if (!entry) return;
+
+    useAppStore.setState({
+      undoStack: state.undoStack.slice(0, -1),
+      redoStack: [...state.redoStack, entry],
+    });
+
+    try {
+      isApplyingHistory = true;
+      state.updateComment(entry.studentId, entry.frameId, entry.sectionId, entry.before);
+    } finally {
+      isApplyingHistory = false;
+    }
+  },
+
+  redo: () => {
+    const state = useAppStore.getState();
+    const entry = state.redoStack[state.redoStack.length - 1];
+    if (!entry) return;
+
+    useAppStore.setState({
+      redoStack: state.redoStack.slice(0, -1),
+      undoStack: [...state.undoStack, entry],
+    });
+
+    try {
+      isApplyingHistory = true;
+      state.updateComment(entry.studentId, entry.frameId, entry.sectionId, entry.after);
+    } finally {
+      isApplyingHistory = false;
+    }
+  },
 }));

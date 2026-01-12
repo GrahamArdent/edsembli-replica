@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { useAppStore } from "../store/useAppStore";
 import type { ReportPeriod } from "../types";
@@ -30,6 +30,9 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Settings</DialogTitle>
+          <DialogDescription>
+            Configure board, reporting period, and theme.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">

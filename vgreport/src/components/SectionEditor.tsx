@@ -1,8 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { FrameId, SectionId, Student, Template } from '../types';
+import { CommentDraft, FrameId, SectionId, Student, Template } from '../types';
 import { TemplateSelector } from './TemplateSelector';
 import { sidecar } from '../services/sidecar';
 import { useAppStore } from '../store/useAppStore';
+
+const EMPTY_SLOTS: Record<string, string> = {};
+const EMPTY_COMMENT: CommentDraft = { slots: EMPTY_SLOTS };
 
 interface SectionEditorProps {
   section: { id: SectionId; label: string };
@@ -18,7 +21,7 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
 
   const comment = useAppStore(s => {
     const draft = s.drafts[student.id];
-    return (draft?.comments?.[frameId]?.[section.id] ?? { slots: {} });
+    return (draft?.comments?.[frameId]?.[section.id] ?? EMPTY_COMMENT);
   });
 
   const selectedTemplate = useMemo(() => {
@@ -79,7 +82,7 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
 
         updateComment(student.id, frameId, section.id, {
           templateId: comment.templateId,
-          slots: comment.slots || {},
+          slots: { ...(comment.slots || {}) },
           rendered: result?.text ?? '',
           validation: result?.validation,
         });

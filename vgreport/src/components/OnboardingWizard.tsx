@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { useAppStore } from "../store/useAppStore";
 import type { ReportPeriod } from "../types";
@@ -69,6 +69,9 @@ export function OnboardingWizard() {
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>Onboarding — {title}</DialogTitle>
+          <DialogDescription>
+            Quick setup for board, roster, and reporting period.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
