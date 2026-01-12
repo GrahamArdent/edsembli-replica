@@ -241,30 +241,36 @@ This gameplan breaks each phase into **2-week sprints** with specific deliverabl
 
 **Goal:** Document and implement export formats compatible with Edsembli and other SIS.
 
-### Sprint 5.1 (Week 1-2): Export Formats
+### Sprint 5.1 (Week 1-2): Export Formats ✅ COMPLETE
+
+**Completed:** 2026-01-11
 
 #### Tasks
 
-1. **[TASK-5-1-1] Research SIS import capabilities**
+1. **[TASK-5-1-1] Research SIS import capabilities** ✅
    - Document Edsembli CSV/XML import formats
    - Identify field mappings (template → SIS field)
    - Add to `docs/integration/sis-formats.md`
 
-2. **[TASK-5-1-2] Comment bank export**
+2. **[TASK-5-1-2] Comment bank export** ✅
    - `edsembli export --format csv --output bank.csv`
    - Columns: id, frame, section, tone, text, text_fr
    - Compatible with SIS bulk import
 
-3. **[TASK-5-1-3] Assembled comment export**
+3. **[TASK-5-1-3] Assembled comment export** ✅
    - `edsembli export-comment --child-file data.json --output comment.txt`
    - Fills slots and exports final comment
 
 #### Deliverables
 
-- [ ] `docs/integration/sis-formats.md`
-- [ ] `edsembli export` command
-- [ ] `edsembli export-comment` command
-- [ ] Sample CSV exports in `examples/exports/`
+- [x] `docs/integration/sis-formats.md` (comprehensive SIS export documentation)
+- [x] `edsembli export` command (CSV/JSON formats, filtering)
+- [x] `edsembli export-comment` command (txt/json formats)
+- [x] Sample CSV exports in `examples/exports/` (6 example files)
+- [x] 10 new tests in `tests/test_export.py`
+- [x] Updated index.md and mkdocs.yml
+
+**Commit:** 81375d3
 
 ### Sprint 5.2 (Week 3): Board Configuration
 
