@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import type { ReportPeriod, Student } from "../types";
+import type { DraftStatus, ReportPeriod, Student, UserRole } from "../types";
 
 export interface DraftRow {
   studentId: string;
@@ -9,6 +9,8 @@ export interface DraftRow {
   templateId?: string;
   slotValues: Record<string, unknown>;
   renderedText?: string;
+  author?: UserRole;
+  status?: DraftStatus;
 }
 
 export async function dbInit(): Promise<{ path: string }> {

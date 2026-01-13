@@ -2,7 +2,7 @@
 id: doc.vgreport.kindergarten_alignment_gameplan
 type: document
 title: VGReport Kindergarten Alignment Gameplan (Edsembli-Oriented Input)
-version: 0.2.1
+version: 0.2.2
 status: draft
 tags: [gameplan, vgreport, kindergarten, alignment, edsembli, user-roles]
 refs:
@@ -1000,3 +1000,4 @@ success_criteria:
 | 0.1.2 | 2026-01-12 | Added High-ROI Teacher Convenience Features section |
 | 0.2.0 | 2026-01-12 | Replaced K3 "ECE notes model" with simpler "User Role + Approval" approach; added critical review; added execution prompt |
 | 0.2.1 | 2026-01-12 | Aligned consolidated phase order with revised order; removed stale "ECE notes" phrasing; added acceptance criteria for Tier 1 convenience items; aligned execution prompt gate command |
+| 0.2.2 | 2026-01-12 | Phase B implementation: role picker (Teacher/ECE), per-box author/status persistence + migration, approval toggle UI, minimal unit tests, and contracts type generation |

@@ -11,6 +11,7 @@ export function Workspace() {
     students,
     selectedFrameId,
     setSelectedFrameId,
+    currentRole,
     saveStatus,
     lastSavedAt,
     lastSaveError,
@@ -50,6 +51,17 @@ export function Workspace() {
         </div>
 
         <div className="text-xs text-gray-500 flex items-center gap-2">
+          <span
+            className={cn(
+              'px-2 py-0.5 rounded border text-[11px]',
+              currentRole === 'teacher'
+                ? 'bg-blue-50 border-blue-200 text-blue-800'
+                : 'bg-amber-50 border-amber-200 text-amber-800'
+            )}
+            title="Current role affects draft author and approval"
+          >
+            Role: {currentRole === 'teacher' ? 'Teacher' : 'ECE'}
+          </span>
           <Button
             variant="outline"
             size="sm"

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Button } from "./ui/button";
 import { useAppStore } from "../store/useAppStore";
-import type { ReportPeriod } from "../types";
+import type { ReportPeriod, UserRole } from "../types";
 
 const BOARDS = [
   { id: "tcdsb", label: "TCDSB" },
@@ -23,6 +23,9 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
   const currentPeriod = useAppStore(s => s.currentPeriod);
   const setCurrentPeriod = useAppStore(s => s.setCurrentPeriod);
 
+  const currentRole = useAppStore(s => s.currentRole);
+  const setCurrentRole = useAppStore(s => s.setCurrentRole);
+
   const boardLabel = useMemo(() => BOARDS.find(b => b.id === boardId)?.label ?? boardId, [boardId]);
 
   return (
@@ -36,6 +39,21 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
         </DialogHeader>
 
         <div className="space-y-4">
+          <div className="space-y-1">
+            <div className="text-xs font-medium text-foreground">Current Role</div>
+            <select
+              className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background"
+              value={currentRole}
+              onChange={(e) => void setCurrentRole(e.target.value as UserRole)}
+            >
+              <option value="teacher">Teacher</option>
+              <option value="ece">ECE</option>
+            </select>
+            <div className="text-[11px] text-muted-foreground">
+              Role affects draft authoring and approval status.
+            </div>
+          </div>
+
           <div className="space-y-1">
             <div className="text-xs font-medium text-foreground">School Board</div>
             <select

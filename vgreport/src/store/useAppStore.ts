@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
-import { Student, FrameId, ReportPeriod, ReportDraft, CommentDraft, SectionId, Template } from '../types';
+import { Student, FrameId, ReportPeriod, ReportDraft, CommentDraft, SectionId, Template, type UserRole, type DraftStatus } from '../types';
 import { dbDeleteStudent, dbGetSetting, dbInit, dbListDrafts, dbListStudents, dbSetSetting, dbUpsertDraft, dbUpsertStudent, type DraftRow } from '../services/db';
+import { normalizeDraftMeta } from './roleApproval';
 
 type HistoryEntry = {
   studentId: string;
@@ -17,6 +18,8 @@ function cloneCommentDraft(comment: CommentDraft): CommentDraft {
     templateId: comment.templateId,
     slots: { ...(comment.slots ?? {}) },
     rendered: comment.rendered,
+    author: comment.author,
+    status: comment.status,
     validation: comment.validation
       ? {
           valid: comment.validation.valid,
@@ -69,6 +72,10 @@ interface AppState {
   // Writing State
   currentPeriod: ReportPeriod;
   setCurrentPeriod: (period: ReportPeriod) => Promise<void>;
+
+  currentRole: UserRole;
+  setCurrentRole: (role: UserRole) => Promise<void>;
+  setDraftStatus: (studentId: string, frameId: FrameId, sectionId: SectionId, status: DraftStatus) => void;
 
   boardId: string;
   setBoardId: (boardId: string) => Promise<void>;
@@ -135,7 +142,9 @@ function toDraftRow(
     section: sectionId,
     templateId: comment.templateId,
     slotValues: comment.slots ?? {},
-    renderedText: comment.rendered
+    renderedText: comment.rendered,
+    author: comment.author,
+    status: comment.status,
   };
 }
 
@@ -145,6 +154,7 @@ export const useAppStore = create<AppState>((set) => ({
   selectedStudentId: null,
   selectedFrameId: 'belonging_and_contributing',
   currentPeriod: 'february',
+  currentRole: 'teacher',
   boardId: 'tcdsb',
   theme: 'system',
   hasOnboarded: false,
@@ -184,6 +194,7 @@ export const useAppStore = create<AppState>((set) => ({
     const savedTheme = await dbGetSetting<'light' | 'dark' | 'system'>('theme');
     const savedPeriod = await dbGetSetting<ReportPeriod>('currentPeriod');
     const savedHasOnboarded = await dbGetSetting<boolean>('hasOnboarded');
+    const savedRole = await dbGetSetting<UserRole>('currentRole');
 
     let students = await dbListStudents();
     if (students.length === 0) {
@@ -212,7 +223,9 @@ export const useAppStore = create<AppState>((set) => ({
       studentDraft.comments[frame][section] = {
         templateId: row.templateId,
         slots,
-        rendered: row.renderedText
+        rendered: row.renderedText,
+        author: row.author ?? 'teacher',
+        status: row.status ?? 'approved',
       };
     }
 
@@ -221,6 +234,7 @@ export const useAppStore = create<AppState>((set) => ({
       students,
       selectedStudentId: students[0]?.id ?? null,
       currentPeriod: period,
+      currentRole: savedRole ?? 'teacher',
       boardId: savedBoardId ?? 'tcdsb',
       theme: savedTheme ?? 'system',
       hasOnboarded: savedHasOnboarded ?? false,
@@ -233,6 +247,19 @@ export const useAppStore = create<AppState>((set) => ({
   setCurrentPeriod: async (period) => {
     set({ currentPeriod: period });
     await dbSetSetting('currentPeriod', period);
+  },
+
+  setCurrentRole: async (role) => {
+    set({ currentRole: role });
+    await dbSetSetting('currentRole', role);
+  },
+
+  setDraftStatus: (studentId, frameId, sectionId, status) => {
+    const snapshot = useAppStore.getState();
+    const existingDraft = snapshot.drafts[studentId] || emptyDraft(studentId, snapshot.currentPeriod);
+    const prev = existingDraft.comments?.[frameId]?.[sectionId] as CommentDraft | undefined;
+    if (!prev) return;
+    snapshot.updateComment(studentId, frameId, sectionId, { ...prev, status });
   },
 
   setBoardId: async (boardId) => {
@@ -302,14 +329,22 @@ export const useAppStore = create<AppState>((set) => ({
     const prevFrameComments = (prevDraft.comments as any)?.[frameId] || {};
     const prevComment = (prevFrameComments as any)?.[sectionId] as CommentDraft | undefined;
 
+    const meta = normalizeDraftMeta(snapshot.currentRole, prevComment, comment);
+    const nextComment: CommentDraft = {
+      ...(prevComment ?? { slots: {} }),
+      ...comment,
+      author: meta.author,
+      status: meta.status,
+    };
+
     const historyEntry: HistoryEntry | null =
-      !isApplyingHistory && !sameTemplateAndSlots(prevComment, comment)
+      !isApplyingHistory && !sameTemplateAndSlots(prevComment, nextComment)
         ? {
             studentId,
             frameId,
             sectionId,
             before: cloneCommentDraft(prevComment ?? { slots: {} }),
-            after: cloneCommentDraft(comment ?? { slots: {} }),
+            after: cloneCommentDraft(nextComment ?? { slots: {} }),
             ts: Date.now(),
           }
         : null;
@@ -317,7 +352,7 @@ export const useAppStore = create<AppState>((set) => ({
     set((state) => {
       const existingDraft = state.drafts[studentId] || emptyDraft(studentId, state.currentPeriod);
       const frameComments = { ...(existingDraft.comments[frameId] || {}) };
-      frameComments[sectionId] = comment;
+      frameComments[sectionId] = nextComment;
 
       return {
         saveStatus: 'saving',
@@ -367,7 +402,7 @@ export const useAppStore = create<AppState>((set) => ({
 
     // Debounced autosave for this single draft row.
     const state = useAppStore.getState();
-    const row = toDraftRow(studentId, state.currentPeriod, frameId, sectionId, comment);
+    const row = toDraftRow(studentId, state.currentPeriod, frameId, sectionId, nextComment);
     const key = draftKey(row);
 
     const existingTimer = saveTimers.get(key);

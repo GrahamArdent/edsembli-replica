@@ -30,6 +30,8 @@ struct DraftRow {
     template_id: Option<String>,
     slot_values: serde_json::Value,
     rendered_text: Option<String>,
+    author: Option<String>,
+    status: Option<String>,
 }
 
 fn db_path(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
@@ -99,7 +101,57 @@ CREATE TABLE IF NOT EXISTS app_settings (
 "#,
     )
     .map_err(|e| format!("failed to init schema: {e}"))?;
+
+    ensure_drafts_columns(conn)?;
     Ok(())
+}
+
+fn ensure_drafts_columns(conn: &Connection) -> Result<(), String> {
+    // Phase B migration: add author/status to drafts.
+    // NOTE: SQLite supports ADD COLUMN, but not IF NOT EXISTS; we must probe first.
+    ensure_column(
+        conn,
+        "drafts",
+        "author",
+        "ALTER TABLE drafts ADD COLUMN author TEXT NOT NULL DEFAULT 'teacher'",
+    )?;
+    ensure_column(
+        conn,
+        "drafts",
+        "status",
+        "ALTER TABLE drafts ADD COLUMN status TEXT NOT NULL DEFAULT 'approved'",
+    )?;
+    Ok(())
+}
+
+fn ensure_column(conn: &Connection, table: &str, column: &str, ddl: &str) -> Result<(), String> {
+    if column_exists(conn, table, column)? {
+        return Ok(());
+    }
+    conn.execute(ddl, [])
+        .map_err(|e| format!("failed to migrate {table}.{column}: {e}"))?;
+    Ok(())
+}
+
+fn column_exists(conn: &Connection, table: &str, column: &str) -> Result<bool, String> {
+    let mut stmt = conn
+        .prepare(&format!("PRAGMA table_info({table})"))
+        .map_err(|e| format!("failed to read schema for {table}: {e}"))?;
+
+    let mut rows = stmt
+        .query([])
+        .map_err(|e| format!("failed to query table info for {table}: {e}"))?;
+
+    while let Some(row) = rows
+        .next()
+        .map_err(|e| format!("failed to iterate table info for {table}: {e}"))?
+    {
+        let name: String = row.get(1).map_err(|e| format!("failed to read column name: {e}"))?;
+        if name == column {
+            return Ok(true);
+        }
+    }
+    Ok(false)
 }
 
 #[tauri::command]
@@ -249,7 +301,7 @@ fn db_list_drafts(app: tauri::AppHandle, report_period_id: String) -> Result<Vec
 
     let mut stmt = conn
         .prepare(
-            "SELECT student_id, report_period_id, frame, section, template_id, slot_values_json, rendered_text FROM drafts WHERE report_period_id=?1",
+            "SELECT student_id, report_period_id, frame, section, template_id, slot_values_json, rendered_text, author, status FROM drafts WHERE report_period_id=?1",
         )
         .map_err(|e| format!("failed to prepare statement: {e}"))?;
 
@@ -266,6 +318,8 @@ fn db_list_drafts(app: tauri::AppHandle, report_period_id: String) -> Result<Vec
                 template_id: row.get(4)?,
                 slot_values,
                 rendered_text: row.get(6)?,
+                author: row.get(7)?,
+                status: row.get(8)?,
             })
         })
         .map_err(|e| format!("failed to query drafts: {e}"))?;
@@ -289,17 +343,22 @@ fn db_upsert_draft(app: tauri::AppHandle, draft: DraftRow) -> Result<(), String>
     let slot_values_json = serde_json::to_string(&draft.slot_values)
         .unwrap_or_else(|_| "{}".to_string());
 
+    let author = draft.author.unwrap_or_else(|| "teacher".to_string());
+    let status = draft.status.unwrap_or_else(|| "approved".to_string());
+
     conn.execute(
         r#"
 INSERT INTO drafts (
-  id, student_id, report_period_id, frame, section, template_id,
-  slot_values_json, rendered_text, updated_at
+    id, student_id, report_period_id, frame, section, template_id,
+    slot_values_json, rendered_text, author, status, updated_at
 )
-VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, datetime('now'))
+VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, datetime('now'))
 ON CONFLICT(student_id, report_period_id, frame, section) DO UPDATE SET
   template_id=excluded.template_id,
   slot_values_json=excluded.slot_values_json,
   rendered_text=excluded.rendered_text,
+    author=excluded.author,
+    status=excluded.status,
   updated_at=datetime('now');
 "#,
         params![
@@ -311,6 +370,8 @@ ON CONFLICT(student_id, report_period_id, frame, section) DO UPDATE SET
             draft.template_id,
             slot_values_json,
             draft.rendered_text,
+                        author,
+                        status,
         ],
     )
     .map_err(|e| format!("failed to upsert draft: {e}"))?;

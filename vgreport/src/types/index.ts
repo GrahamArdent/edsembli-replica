@@ -1,5 +1,9 @@
 export type ReportPeriod = 'initial' | 'february' | 'june';
 
+export type UserRole = 'teacher' | 'ece';
+
+export type DraftStatus = 'draft' | 'approved';
+
 export interface Student {
   id: string;
   firstName: string;
@@ -31,6 +35,8 @@ export interface CommentDraft {
   templateId?: string;
   slots: Record<string, string>; // { "evidence": "...", "change": "..." }
   rendered?: string;
+  author?: UserRole;
+  status?: DraftStatus;
   validation?: {
     valid: boolean;
     errors?: string[];

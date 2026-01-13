@@ -3,6 +3,7 @@ import { CommentDraft, FrameId, SectionId, Student, Template } from '../types';
 import { TemplateSelector } from './TemplateSelector';
 import { sidecar } from '../services/sidecar';
 import { useAppStore } from '../store/useAppStore';
+import { Button } from './ui/button';
 
 const EMPTY_SLOTS: Record<string, string> = {};
 const EMPTY_COMMENT: CommentDraft = { slots: EMPTY_SLOTS };
@@ -18,11 +19,16 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
   const updateComment = useAppStore(s => s.updateComment);
   const currentPeriod = useAppStore(s => s.currentPeriod);
   const templates = useAppStore(s => s.templates);
+  const currentRole = useAppStore(s => s.currentRole);
+  const setDraftStatus = useAppStore(s => s.setDraftStatus);
 
   const comment = useAppStore(s => {
     const draft = s.drafts[student.id];
     return (draft?.comments?.[frameId]?.[section.id] ?? EMPTY_COMMENT);
   });
+
+  const author = comment?.author ?? 'teacher';
+  const status = comment?.status ?? (author === 'teacher' ? 'approved' : 'draft');
 
   const selectedTemplate = useMemo(() => {
     if (!comment?.templateId) return undefined;
@@ -105,13 +111,48 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
         <label className="text-sm font-bold text-gray-700 uppercase tracking-wide">
           {section.label}
         </label>
-        <TemplateSelector
-            frameCanonicalId={frameCanonicalId}
-            sectionId={section.id}
-            onSelect={handleTemplateSelect}
-            selectedTemplateId={comment?.templateId}
-            onClear={comment?.templateId ? handleClear : undefined}
-        />
+
+        <div className="flex items-center gap-2">
+          <span
+            className={
+              author === 'teacher'
+                ? 'text-[11px] px-2 py-0.5 rounded border bg-blue-50 border-blue-200 text-blue-800'
+                : 'text-[11px] px-2 py-0.5 rounded border bg-amber-50 border-amber-200 text-amber-800'
+            }
+            title="Draft author"
+          >
+            {author === 'teacher' ? 'Teacher' : 'ECE'}
+          </span>
+          <span
+            className={
+              status === 'approved'
+                ? 'text-[11px] px-2 py-0.5 rounded border bg-green-50 border-green-200 text-green-800'
+                : 'text-[11px] px-2 py-0.5 rounded border bg-gray-50 border-gray-200 text-gray-700'
+            }
+            title="Approval status"
+          >
+            {status === 'approved' ? 'Approved' : 'Draft'}
+          </span>
+
+          {currentRole === 'teacher' && author === 'ece' && (
+            <Button
+              variant={status === 'approved' ? 'outline' : 'default'}
+              size="sm"
+              onClick={() => setDraftStatus(student.id, frameId, section.id, status === 'approved' ? 'draft' : 'approved')}
+              title={status === 'approved' ? 'Mark as unapproved' : 'Approve this box'}
+            >
+              {status === 'approved' ? 'Unapprove' : 'Approve'}
+            </Button>
+          )}
+
+          <TemplateSelector
+              frameCanonicalId={frameCanonicalId}
+              sectionId={section.id}
+              onSelect={handleTemplateSelect}
+              selectedTemplateId={comment?.templateId}
+              onClear={comment?.templateId ? handleClear : undefined}
+          />
+        </div>
       </div>
 
       {!selectedTemplate && (
