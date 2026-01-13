@@ -2,7 +2,7 @@
 id: doc.changelog
 type: document
 title: Changelog
-version: 0.1.4
+version: 0.1.5
 status: draft
 tags: [changelog]
 refs: []
@@ -20,6 +20,7 @@ The format is loosely based on Keep a Changelog, and this project aims to follow
 ### Added (2026-01-12)
 
 - VGReport: Export Center presets + Kindergarten golden exports (per-box clipboard copy + 12-box CSV)
+- VGReport: Tauri smoke E2E harness (`npm run e2e:tauri`) + Kindergarten QA checklist in docs/TESTING.md
 
 ### Added (2026-01-12)
 

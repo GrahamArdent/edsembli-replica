@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ReportDraft, Student } from '../types';
-import { buildKindergarten12BoxCsv, kindergarten12BoxCsvHeader } from './kindergarten';
+import { buildClipboardPerBox, buildClipboardPerBoxAll, buildKindergarten12BoxCsv, kindergarten12BoxCsvHeader } from './kindergarten';
 
 function splitCsvRows(csvWithoutBom: string): string[] {
   const rows: string[] = [];
@@ -76,6 +76,27 @@ describe('kindergarten 12-box CSV (golden)', () => {
     expect(header).toContain('problem_solving_next_steps');
   });
 
+  it('matches the full stable header order', () => {
+    expect(kindergarten12BoxCsvHeader()).toEqual([
+      'student_local_id',
+      'student_last_name',
+      'student_first_name',
+      'report_period_id',
+      'belonging_key_learning',
+      'belonging_growth',
+      'belonging_next_steps',
+      'self_regulation_key_learning',
+      'self_regulation_growth',
+      'self_regulation_next_steps',
+      'literacy_math_key_learning',
+      'literacy_math_growth',
+      'literacy_math_next_steps',
+      'problem_solving_key_learning',
+      'problem_solving_growth',
+      'problem_solving_next_steps',
+    ]);
+  });
+
   it('includes UTF-8 BOM and CRLF line endings', () => {
     const students: Student[] = [
       { id: '2', firstName: 'Maria', lastName: 'Santos', pronouns: { subject: 'she', object: 'her', possessive: 'her' }, needs: [] },
@@ -130,5 +151,24 @@ describe('kindergarten 12-box CSV (golden)', () => {
     const colIdx = header.indexOf('belonging_key_learning');
     expect(colIdx).toBeGreaterThanOrEqual(0);
     expect(row[colIdx]).toBe('');
+  });
+});
+
+describe('kindergarten clipboard-per-box (golden)', () => {
+  it('exports a single box as CRLF-normalized plain text', () => {
+    const draft = emptyDraft('1', 'february');
+    (draft.comments as any).belonging_and_contributing.key_learning.rendered = 'A\nB';
+    const r = buildClipboardPerBox(draft, 'belonging_and_contributing' as any, 'key_learning' as any);
+    expect(r.exportReady).toBe(true);
+    expect(r.text).toBe('A\r\nB');
+  });
+
+  it('copy-all includes headings and reports missing boxes', () => {
+    const draft = emptyDraft('1', 'february');
+    (draft.comments as any).belonging_and_contributing.key_learning.rendered = 'OK';
+    const all = buildClipboardPerBoxAll(draft);
+    expect(all.text).toContain('Belonging & Contributing — Key Learning');
+    expect(all.text).toContain('OK');
+    expect(all.missing.length).toBeGreaterThan(0);
   });
 });
