@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { CommentDraft, FrameId, SectionId, Student, Template } from '../types';
 import { TemplateSelector } from './TemplateSelector';
-import { sidecar } from '../services/sidecar';
+import { sidecar, type RenderCommentResponse } from '../services/sidecar';
 import { useAppStore } from '../store/useAppStore';
 import { Button } from './ui/button';
 import { analyzeTier1 } from '../validation/tier1';
@@ -30,7 +30,6 @@ interface SectionEditorProps {
 
 export function SectionEditor({ section, frameId, frameCanonicalId, student }: SectionEditorProps) {
   const updateComment = useAppStore(s => s.updateComment);
-  const currentPeriod = useAppStore(s => s.currentPeriod);
   const templates = useAppStore(s => s.templates);
   const currentRole = useAppStore(s => s.currentRole);
   const setDraftStatus = useAppStore(s => s.setDraftStatus);
@@ -72,6 +71,7 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
 
   const [openModifierFor, setOpenModifierFor] = useState<string | null>(null);
   const slotRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
+  const [lastActiveSlot, setLastActiveSlot] = useState<string | null>(null);
 
   const insertModifier = (key: string, phrase: string) => {
     const current = String((slots as any)[key] ?? '');
@@ -141,7 +141,7 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
       try {
         setIsRendering(true);
         setRenderErr(null);
-        const result = await sidecar.call('render_comment', {
+        const result = await sidecar.call<RenderCommentResponse>('render_comment', {
           template_id: comment.templateId,
           slots: comment.slots || {}
         });
@@ -158,12 +158,40 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
         setIsRendering(false);
       }
     }, 350);
+  }, [comment?.templateId, comment?.slots, student.id, frameId, section.id, updateComment]);
 
-    return () => {
-      if (renderTimer.current) window.clearTimeout(renderTimer.current);
+  // Listen for insert-evidence events from EvidenceBank
+  useEffect(() => {
+    const handleInsertEvidence = (event: Event) => {
+      const customEvent = event as CustomEvent<{ text: string }>;
+      const text = customEvent.detail.text;
+
+      // Insert into the last active slot, or the first slot if none
+      const targetKey = lastActiveSlot ?? slotKeys[0];
+      if (!targetKey) return;
+
+      const current = String((slots as any)[targetKey] ?? '');
+      const el = slotRefs.current[targetKey];
+      const start = typeof el?.selectionStart === 'number' ? el.selectionStart : current.length;
+      const end = typeof el?.selectionEnd === 'number' ? el.selectionEnd : current.length;
+
+      const newValue = current.slice(0, start) + text + current.slice(end);
+      handleSlotChange(targetKey, newValue);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [comment?.templateId, JSON.stringify(comment?.slots), student.id, frameId, section.id, currentPeriod]);
+
+    window.addEventListener('insert-evidence', handleInsertEvidence);
+    return () => window.removeEventListener('insert-evidence', handleInsertEvidence);
+  }, [lastActiveSlot, slotKeys, slots]);
+
+  const handleSlotChange = (key: string, value: string) => {
+    setLastActiveSlot(key);
+    updateComment(student.id, frameId, section.id, {
+      templateId: comment?.templateId,
+      slots: { ...(slots as any), [key]: value },
+      rendered: comment?.rendered,
+      validation: comment?.validation,
+    });
+  };
 
   return (
     <div className="space-y-3">
@@ -277,6 +305,7 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
               <textarea
                 value={String((slots as any)[key] ?? '')}
                 onChange={(e) => setSlotValue(key, e.target.value)}
+                onFocus={() => setLastActiveSlot(key)}
                 ref={(el) => {
                   slotRefs.current[key] = el;
                 }}

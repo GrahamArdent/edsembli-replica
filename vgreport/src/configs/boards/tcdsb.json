@@ -1,0 +1,22 @@
+{
+  "id": "tcdsb",
+  "board_name": "Toronto Catholic District School Board",
+  "board_abbrev": "TCDSB",
+  "char_limits": {
+    "per_section_min": 80,
+    "per_section_max": 500,
+    "total_min": 350,
+    "total_max": 1200
+  },
+  "export_settings": {
+    "csv_delimiter": ",",
+    "csv_encoding": "utf-8-sig",
+    "include_metadata": true,
+    "include_french": false
+  },
+  "terminology": {
+    "kindergarten": "Kindergarten",
+    "col": "Progress Report Comment",
+    "teacher": "Teacher"
+  }
+}

@@ -59,6 +59,7 @@ export function ExportCenter({
           heading: `${frame.label} — ${section.label}`,
           text,
           exportReady,
+          frameColor: frame.color,
         };
       })
     );
@@ -119,9 +120,9 @@ export function ExportCenter({
               <div className="text-sm mt-1">Copy individual boxes as plain text (CRLF newlines). No headings/metadata.</div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
                 {boxes.map((b) => (
-                  <div key={b.key} className="rounded border border-border bg-background p-2">
+                  <div key={b.key} className={`rounded border border-border p-2 ${b.frameColor}`}>
                     <div className="flex items-center justify-between gap-2">
-                      <div className="text-[11px] font-medium text-muted-foreground truncate" title={b.heading}>
+                      <div className="text-[11px] font-medium truncate" title={b.heading}>
                         {b.heading}
                       </div>
                       <Button size="sm" variant="outline" onClick={() => void writeClipboard(b.text)} disabled={!b.exportReady}>

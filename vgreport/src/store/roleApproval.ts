@@ -13,7 +13,3 @@ export function normalizeDraftMeta(
   const status = (next?.status ?? existing?.status ?? defaultStatusForRole(author)) as DraftStatus;
   return { author, status };
 }
-
-export function canApprove(currentRole: UserRole): boolean {
-  return currentRole === 'teacher';
-}

@@ -1,21 +1,27 @@
 import { Command, Child } from '@tauri-apps/plugin-shell';
 import { v4 as uuidv4 } from 'uuid';
+import type { IpcRequest, IpcResponse, IpcError } from '../contracts/generated';
 
-interface JsonRpcRequest {
-  id: string;
-  method: string;
-  params: Record<string, any>;
-}
+// Re-export contract types for consumers
+export type {
+  IpcRequest,
+  IpcResponse,
+  IpcError,
+  Template,
+  RenderCommentParams,
+  HealthResponse,
+  ListTemplatesResponse,
+  RenderCommentResponse,
+  DebugInfoResponse
+} from '../contracts/generated';
 
-interface JsonRpcResponse {
-  id: string;
-  result?: any;
-  error?: any;
-}
+/** Union of valid IPC method names derived from the IpcRequest contract */
+export type IpcMethod = IpcRequest['method'];
 
 class SidecarClient {
   private child: Child | null = null;
-  private pendingRequests = new Map<string, { resolve: (val: any) => void; reject: (err: any) => void }>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private pendingRequests = new Map<string, { resolve: (val: any) => void; reject: (err: IpcError | Error) => void }>();
   private isInitializing = false;
   private isReady = false;
   private logHandlers: ((msg: string) => void)[] = [];
@@ -69,7 +75,7 @@ class SidecarClient {
       command.stdout.on('data', (line) => {
         // console.log(`[PY]: ${line}`);
         try {
-          const response = JSON.parse(line) as JsonRpcResponse;
+          const response = JSON.parse(line) as IpcResponse;
           if (response.id && this.pendingRequests.has(response.id)) {
             const { resolve, reject } = this.pendingRequests.get(response.id)!;
             if (response.error) {
@@ -80,7 +86,7 @@ class SidecarClient {
               if (typeof response.result !== 'undefined') {
                 resolve(response.result);
               } else {
-                resolve(response as any);
+                resolve(response);
               }
             }
             this.pendingRequests.delete(response.id);
@@ -109,7 +115,7 @@ class SidecarClient {
     }
   }
 
-  async call(method: string, params: Record<string, any> = {}): Promise<any> {
+  async call<T = unknown>(method: IpcMethod, params: Record<string, unknown> = {}): Promise<T> {
     if (!this.isReady) {
       await this.init();
     }
@@ -119,9 +125,9 @@ class SidecarClient {
     }
 
     const id = uuidv4();
-    const request: JsonRpcRequest = { id, method, params };
+    const request: IpcRequest = { id, method, params };
 
-    return new Promise((resolve, reject) => {
+    return new Promise<T>((resolve, reject) => {
       this.pendingRequests.set(id, { resolve, reject });
 
       // Write to stdin

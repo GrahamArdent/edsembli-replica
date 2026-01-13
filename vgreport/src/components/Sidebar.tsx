@@ -1,11 +1,12 @@
 import { useAppStore } from '../store/useAppStore';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, Upload } from 'lucide-react';
 import { cn } from '../lib/utils'; // Assuming this exists from shadcn init
 import { useEffect, useMemo, useState } from 'react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { FRAMES, SECTIONS } from '../constants';
 import { type RosterFilter, isBoxExportReady, studentBoxCounts, studentNeedsReview } from '../store/rosterStatus';
+import { RosterImportModal } from './RosterImportModal';
 
 export function Sidebar() {
   const {
@@ -28,6 +29,8 @@ export function Sidebar() {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteStudentId, setDeleteStudentId] = useState<string | null>(null);
+
+  const [importOpen, setImportOpen] = useState(false);
 
   const [rosterFilter, setRosterFilter] = useState<RosterFilter>('all');
 
@@ -358,6 +361,22 @@ export function Sidebar() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Sidebar footer: import roster */}
+      <div className="px-4 py-2 border-t border-border">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setImportOpen(true)}
+          className="w-full"
+        >
+          <Upload className="h-4 w-4 mr-2" />
+          Import Roster CSV
+        </Button>
+      </div>
+
+      {/* Roster Import Modal */}
+      <RosterImportModal open={importOpen} onOpenChange={setImportOpen} />
     </div>
   );
 }

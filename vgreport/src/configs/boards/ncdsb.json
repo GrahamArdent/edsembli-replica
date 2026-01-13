@@ -1,0 +1,22 @@
+{
+  "id": "ncdsb",
+  "board_name": "Northeast Catholic District School Board",
+  "board_abbrev": "NCDSB",
+  "char_limits": {
+    "per_section_min": 100,
+    "per_section_max": 600,
+    "total_min": 400,
+    "total_max": 1500
+  },
+  "export_settings": {
+    "csv_delimiter": ",",
+    "csv_encoding": "utf-8-sig",
+    "include_metadata": true,
+    "include_french": true
+  },
+  "terminology": {
+    "kindergarten": "Full-Day Kindergarten",
+    "col": "Communication of Learning",
+    "teacher": "Educator"
+  }
+}

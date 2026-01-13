@@ -1,7 +1,7 @@
 import type { CommentDraft, FrameId, ReportDraft, SectionId } from "../types";
 import { FRAMES, SECTIONS } from "../constants";
 
-export type RosterFilter = "all" | "incomplete" | "needs_review" | "flagged" | "recent";
+export type RosterFilter = "all" | "incomplete" | "needs_review";
 
 export function isBoxExportReady(comment: CommentDraft | undefined): boolean {
   const rendered = (comment?.rendered ?? "").trim();

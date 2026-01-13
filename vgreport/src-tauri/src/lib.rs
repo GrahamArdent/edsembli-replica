@@ -34,6 +34,16 @@ struct DraftRow {
     status: Option<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct EvidenceSnippet {
+    id: String,
+    student_id: String,
+    text: String,
+    tags: Vec<String>,
+    created_at: String,
+}
+
 fn db_path(app: &tauri::AppHandle) -> Result<std::path::PathBuf, String> {
     let dir = app
         .path()
@@ -378,6 +388,75 @@ ON CONFLICT(student_id, report_period_id, frame, section) DO UPDATE SET
     Ok(())
 }
 
+#[tauri::command]
+fn db_list_evidence(
+    app: tauri::AppHandle,
+    student_id: Option<String>,
+) -> Result<Vec<EvidenceSnippet>, String> {
+    let conn = open_db(&app)?;
+    init_schema(&conn)?;
+
+    let query = if let Some(sid) = student_id {
+        format!("SELECT id, student_id, text, tags_json, created_at FROM evidence_snippets WHERE student_id='{}' ORDER BY created_at DESC", sid)
+    } else {
+        "SELECT id, student_id, text, tags_json, created_at FROM evidence_snippets ORDER BY created_at DESC".to_string()
+    };
+
+    let mut stmt = conn
+        .prepare(&query)
+        .map_err(|e| format!("failed to prepare evidence query: {e}"))?;
+
+    let rows = stmt
+        .query_map([], |row| {
+            let tags_json: String = row.get(3)?;
+            let tags: Vec<String> = serde_json::from_str(&tags_json).unwrap_or_default();
+            Ok(EvidenceSnippet {
+                id: row.get(0)?,
+                student_id: row.get(1)?,
+                text: row.get(2)?,
+                tags,
+                created_at: row.get(4)?,
+            })
+        })
+        .map_err(|e| format!("failed to query evidence: {e}"))?;
+
+    rows.collect::<Result<Vec<_>, _>>()
+        .map_err(|e| format!("failed to collect evidence: {e}"))
+}
+
+#[tauri::command]
+fn db_add_evidence(
+    app: tauri::AppHandle,
+    student_id: String,
+    text: String,
+    tags: Vec<String>,
+) -> Result<String, String> {
+    let conn = open_db(&app)?;
+    init_schema(&conn)?;
+
+    let id = uuid::Uuid::new_v4().to_string();
+    let tags_json = serde_json::to_string(&tags).unwrap_or_else(|_| "[]".to_string());
+
+    conn.execute(
+        "INSERT INTO evidence_snippets (id, student_id, text, tags_json) VALUES (?1, ?2, ?3, ?4)",
+        params![id, student_id, text, tags_json],
+    )
+    .map_err(|e| format!("failed to insert evidence: {e}"))?;
+
+    Ok(id)
+}
+
+#[tauri::command]
+fn db_delete_evidence(app: tauri::AppHandle, id: String) -> Result<(), String> {
+    let conn = open_db(&app)?;
+    init_schema(&conn)?;
+
+    conn.execute("DELETE FROM evidence_snippets WHERE id = ?1", params![id])
+        .map_err(|e| format!("failed to delete evidence: {e}"))?;
+
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -391,7 +470,10 @@ pub fn run() {
             db_upsert_student,
             db_delete_student,
             db_list_drafts,
-            db_upsert_draft
+            db_upsert_draft,
+            db_list_evidence,
+            db_add_evidence,
+            db_delete_evidence
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -8,12 +8,63 @@
 // schema:contracts/ipc-response.schema.json sha256:75d6020207f0673fd40b729f68dbee393e3bdb6a5f69e81ab15886994771fd39
 
 /*
-  This file intentionally contains lightweight types.
+  Generated TypeScript interfaces from JSON Schema contracts.
   The repository gate validates the schema sha256 markers above.
 */
 
-export type IpcRequest = unknown;
-export type IpcResponse = unknown;
-export type IpcError = unknown;
-export type RenderCommentParams = unknown;
-export type Template = unknown;
+export interface IpcError {
+  code: string;
+  message: string;
+  details?: unknown;
+}
+export interface Template {
+  id: string;
+  frame: string;
+  section: string;
+  text: string;
+  slots: string[];
+  tone?: string;
+  indicators?: string[];
+}
+export interface RenderCommentParams {
+  template_id: string;
+  slots?: Record<string, string>;
+}
+export interface IpcRequest {
+  id: string;
+  method: 'health' | 'list_templates' | 'get_template' | 'render_comment' | 'debug_info';
+  params: Record<string, unknown>;
+}
+export interface IpcResponse<T = unknown> {
+  id: string;
+  result: T;
+  error: IpcError | null;
+}
+
+// Method-specific response types (derived from Python sidecar handlers)
+export interface HealthResponse {
+  status: string;
+  version: string;
+}
+
+export interface ListTemplatesResponse {
+  templates: Template[];
+}
+
+export interface RenderCommentResponse {
+  text: string;
+  char_count: number;
+  validation: {
+    valid: boolean;
+    errors: string[];
+    warnings: string[];
+  };
+}
+
+export interface DebugInfoResponse {
+  meipass: string | null;
+  frozen: boolean;
+  embedded_len: number;
+  cwd: string;
+  root: string;
+}

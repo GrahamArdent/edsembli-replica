@@ -1,12 +1,14 @@
 import { Sidebar } from "./components/Sidebar";
 import { Workspace } from "./components/Workspace";
 import { Preview } from "./components/Preview";
+import { EvidenceBank } from "./components/EvidenceBank";
 import { useEffect, useRef, useState } from "react";
-import { sidecar } from "./services/sidecar";
+import { sidecar, type ListTemplatesResponse } from "./services/sidecar";
 import { useAppStore } from "./store/useAppStore";
 import { SettingsModal } from "./components/SettingsModal";
 import { OnboardingWizard } from "./components/OnboardingWizard";
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./components/ui/command";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const UI_BUILD_STAMP = "ui-build-2026-01-12T09:05:00Z";
 
@@ -24,6 +26,7 @@ function App() {
   const [logs, setLogs] = useState<string[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [evidenceBankOpen, setEvidenceBankOpen] = useState(false);
   const didInit = useRef(false);
 
   const addLog = (msg: string) =>
@@ -58,7 +61,7 @@ function App() {
           addLog(`engine debug_info failed: ${e?.message || JSON.stringify(e)}`);
         }
 
-        const response = await sidecar.call('list_templates');
+        const response = await sidecar.call<ListTemplatesResponse>('list_templates');
         try {
           const keys = response && typeof response === 'object' ? Object.keys(response) : [];
           addLog(`list_templates response keys: ${keys.join(', ') || '(none)'}`);
@@ -179,6 +182,35 @@ function App() {
       <OnboardingWizard />
       <Sidebar />
       <Workspace />
+
+      {/* Evidence Bank Toggle */}
+      <div className="fixed right-0 top-1/2 z-50 -translate-y-1/2">
+        <button
+          onClick={() => setEvidenceBankOpen(!evidenceBankOpen)}
+          className="rounded-l-md border border-r-0 bg-background p-2 shadow-md hover:bg-accent"
+          title="Evidence Bank"
+        >
+          {evidenceBankOpen ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
+      </div>
+
+      {/* Evidence Bank Panel */}
+      {evidenceBankOpen && (
+        <div className="fixed right-0 top-0 z-40 h-screen w-80 border-l bg-background shadow-xl">
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between border-b p-3">
+              <h2 className="text-sm font-semibold">Evidence Bank</h2>
+              <button
+                onClick={() => setEvidenceBankOpen(false)}
+                className="rounded p-1 hover:bg-accent"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+            <EvidenceBank />
+          </div>
+        </div>
+      )}
       <Preview />
     </div>
   );

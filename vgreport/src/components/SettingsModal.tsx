@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Button } from "./ui/button";
 import { useAppStore } from "../store/useAppStore";
 import type { ReportPeriod, UserRole } from "../types";
+import { loadBoardConfig } from "../configs/boardConfig";
 
 const BOARDS = [
   { id: "tcdsb", label: "TCDSB" },
@@ -43,7 +44,10 @@ export function SettingsModal({
   const showDebugLogs = useAppStore(s => s.showDebugLogs);
   const setShowDebugLogs = useAppStore(s => s.setShowDebugLogs);
 
-  const boardLabel = useMemo(() => BOARDS.find(b => b.id === boardId)?.label ?? boardId, [boardId]);
+  const boardLabel = useMemo(() => {
+    const config = loadBoardConfig(boardId);
+    return config ? `${config.board_abbrev} (${config.char_limits.per_section_min}-${config.char_limits.per_section_max} chars)` : boardId;
+  }, [boardId]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

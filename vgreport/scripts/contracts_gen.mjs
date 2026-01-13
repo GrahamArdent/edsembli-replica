@@ -23,14 +23,129 @@ function sha256(buf) {
   return crypto.createHash('sha256').update(buf).digest('hex');
 }
 
+/**
+ * Convert JSON Schema to TypeScript interface.
+ * This is a simplified converter that handles our specific schemas.
+ */
+function schemaToTypeScript(schema, name) {
+  if (schema.type === 'object') {
+    const props = schema.properties || {};
+    const requiredProps = new Set(schema.required || []);
+
+    const propLines = Object.entries(props).map(([key, propSchema]) => {
+      const optional = requiredProps.has(key) ? '' : '?';
+      const type = schemaTypeToTS(propSchema);
+      return `  ${key}${optional}: ${type};`;
+    });
+
+    return `export interface ${name} {\n${propLines.join('\n')}\n}`;
+  }
+
+  return `export type ${name} = unknown;`;
+}
+
+/**
+ * Convert a JSON Schema type to TypeScript type.
+ */
+function schemaTypeToTS(schema) {
+  if (!schema) return 'unknown';
+
+  // Handle anyOf (union types)
+  if (schema.anyOf) {
+    const types = schema.anyOf.map(s => {
+      if (s.$ref) {
+        // Extract type name from $ref
+        const refName = s.$ref.split('/').pop().replace('.schema.json', '');
+        return pascalCase(refName);
+      }
+      if (s.type === 'null') return 'null';
+      return schemaTypeToTS(s);
+    });
+    return types.join(' | ');
+  }
+
+  // Handle $ref
+  if (schema.$ref) {
+    const refName = schema.$ref.split('/').pop().replace('.schema.json', '');
+    return pascalCase(refName);
+  }
+
+  // Handle enum
+  if (schema.enum) {
+    return schema.enum.map(v => `'${v}'`).join(' | ');
+  }
+
+  // Handle basic types
+  switch (schema.type) {
+    case 'string':
+      return 'string';
+    case 'number':
+    case 'integer':
+      return 'number';
+    case 'boolean':
+      return 'boolean';
+    case 'null':
+      return 'null';
+    case 'array':
+      const itemType = schema.items ? schemaTypeToTS(schema.items) : 'unknown';
+      return `${itemType}[]`;
+    case 'object':
+      if (schema.additionalProperties) {
+        const valueType = schemaTypeToTS(schema.additionalProperties);
+        return `Record<string, ${valueType}>`;
+      }
+      return 'Record<string, unknown>';
+    default:
+      // No type specified = any JSON value
+      return 'unknown';
+  }
+}
+
+function pascalCase(str) {
+  return str
+    .split('-')
+    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .join('');
+}
+
 await fs.mkdir(outDir, { recursive: true });
 
 const markers = [];
+const schemas = {};
+
 for (const name of required) {
   const p = path.join(contractsDir, name);
   const raw = await fs.readFile(p);
   markers.push({ rel: `contracts/${name}`, sha: sha256(raw) });
+  schemas[name] = JSON.parse(raw.toString('utf8'));
 }
+
+// Generate TypeScript interfaces
+const interfaces = [];
+
+// IpcError
+interfaces.push(schemaToTypeScript(schemas['ipc-error.schema.json'], 'IpcError'));
+
+// Template
+interfaces.push(schemaToTypeScript(schemas['template.schema.json'], 'Template'));
+
+// RenderCommentParams
+interfaces.push(schemaToTypeScript(schemas['render-comment-params.schema.json'], 'RenderCommentParams'));
+
+// IpcRequest - with typed method enum
+const ipcRequestSchema = schemas['ipc-request.schema.json'];
+interfaces.push(`export interface IpcRequest {
+  id: string;
+  method: ${ipcRequestSchema.properties.method.enum.map(m => `'${m}'`).join(' | ')};
+  params: Record<string, unknown>;
+}`);
+
+// IpcResponse - with typed error
+interfaces.push(`export interface IpcResponse<T = unknown> {
+  id: string;
+  result: T;
+  error: IpcError | null;
+}`);
 
 const header = [
   '// AUTO-GENERATED FILE. DO NOT EDIT.',
@@ -39,15 +154,11 @@ const header = [
   ...markers.map(m => `// schema:${m.rel} sha256:${m.sha}`),
   '',
   '/*',
-  '  This file intentionally contains lightweight types.',
+  '  Generated TypeScript interfaces from JSON Schema contracts.',
   '  The repository gate validates the schema sha256 markers above.',
   '*/',
   '',
-  'export type IpcRequest = unknown;',
-  'export type IpcResponse = unknown;',
-  'export type IpcError = unknown;',
-  'export type RenderCommentParams = unknown;',
-  'export type Template = unknown;',
+  ...interfaces,
   '',
 ].join('\n');
 

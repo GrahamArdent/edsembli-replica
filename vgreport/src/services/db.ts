@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import type { DraftStatus, ReportPeriod, Student, UserRole } from "../types";
+import type { EvidenceSnippet } from "../types/evidence";
 
 export interface DraftRow {
   studentId: string;
@@ -45,4 +46,20 @@ export async function dbGetSetting<T = unknown>(key: string): Promise<T | null> 
 
 export async function dbSetSetting(key: string, value: unknown): Promise<void> {
   await invoke<void>("db_set_setting", { key, value });
+}
+
+export async function dbListEvidence(studentId?: string): Promise<EvidenceSnippet[]> {
+  return await invoke<EvidenceSnippet[]>("db_list_evidence", { studentId });
+}
+
+export async function dbAddEvidence(
+  studentId: string,
+  text: string,
+  tags: string[]
+): Promise<string> {
+  return await invoke<string>("db_add_evidence", { studentId, text, tags });
+}
+
+export async function dbDeleteEvidence(id: string): Promise<void> {
+  await invoke<void>("db_delete_evidence", { id });
 }

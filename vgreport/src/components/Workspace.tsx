@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { FRAMES, SECTIONS } from '../constants';
 import { cn } from '../lib/utils';
 import { SectionEditor } from './SectionEditor';
 import { Button } from './ui/button';
-import { Redo2, Undo2 } from 'lucide-react';
+import { Redo2, Undo2, Download } from 'lucide-react';
+import { ExportCenter } from './ExportCenter';
 
 export function Workspace() {
   const {
@@ -20,7 +22,11 @@ export function Workspace() {
     redo,
     undoStack,
     redoStack,
+    drafts,
+    currentPeriod,
   } = useAppStore();
+
+  const [exportOpen, setExportOpen] = useState(false);
 
   const student = students.find(s => s.id === selectedStudentId);
   const currentFrame = FRAMES.find(f => f.id === selectedFrameId) || FRAMES[0];
@@ -73,6 +79,14 @@ export function Workspace() {
           <Button
             variant="outline"
             size="sm"
+            onClick={() => setExportOpen(true)}
+            title="Export comments"
+          >
+            <Download className="h-4 w-4 mr-1" /> Export
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => undo()}
             disabled={undoStack.length === 0}
             title={undoStack.length === 0 ? 'Nothing to undo' : 'Undo (Ctrl+Z)'}
@@ -109,7 +123,7 @@ export function Workspace() {
             className={cn(
               "px-4 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
               selectedFrameId === frame.id
-                ? "border-blue-600 text-blue-700 bg-background"
+                ? `border-current bg-background ${frame.color}`
                 : "border-transparent text-muted-foreground hover:text-foreground hover:bg-background/60"
             )}
           >
@@ -132,6 +146,21 @@ export function Workspace() {
 
         <div className="h-20" /> {/* Bottom spacer */}
       </div>
+
+      {/* Export Center modal */}
+      <ExportCenter
+        open={exportOpen}
+        onOpenChange={setExportOpen}
+        student={student}
+        draft={drafts[student.id]}
+        students={students}
+        draftsByStudentId={drafts}
+        currentPeriod={currentPeriod}
+        onPrintStudent={() => {
+          // Print flow: open print-ready window
+          window.print();
+        }}
+      />
     </div>
   );
 }

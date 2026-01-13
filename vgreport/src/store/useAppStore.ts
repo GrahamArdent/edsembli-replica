@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Student, FrameId, ReportPeriod, ReportDraft, CommentDraft, SectionId, Template, type UserRole, type DraftStatus, type Tier1ValidationConfig, type RoleLabels } from '../types';
 import { dbDeleteStudent, dbGetSetting, dbInit, dbListDrafts, dbListStudents, dbSetSetting, dbUpsertDraft, dbUpsertStudent, type DraftRow } from '../services/db';
 import { normalizeDraftMeta } from './roleApproval';
+import { loadBoardConfig } from '../configs/boardConfig';
 
 type HistoryEntry = {
   studentId: string;
@@ -303,6 +304,23 @@ export const useAppStore = create<AppState>((set) => ({
         ? savedExportPresetId
         : 'clipboard';
 
+    // Determine tier1Validation: use saved value, or load from board config
+    const boardId = savedBoardId ?? 'tcdsb';
+    let tier1Validation = coerceTier1Validation(savedTier1Validation ?? undefined);
+
+    // If no saved validation, apply board config defaults
+    if (!savedTier1Validation) {
+      const config = loadBoardConfig(boardId);
+      if (config) {
+        tier1Validation = coerceTier1Validation({
+          minChars: config.char_limits.per_section_min,
+          maxChars: config.char_limits.per_section_max,
+          minSentences: 2,
+          maxLineBreaks: 2,
+        });
+      }
+    }
+
     set({
       isHydrated: true,
       students,
@@ -310,8 +328,8 @@ export const useAppStore = create<AppState>((set) => ({
       currentPeriod: period,
       currentRole: savedRole ?? 'teacher',
       roleLabels: coerceRoleLabels(savedRoleLabels ?? undefined),
-      tier1Validation: coerceTier1Validation(savedTier1Validation ?? undefined),
-      boardId: savedBoardId ?? 'tcdsb',
+      tier1Validation,
+      boardId,
       theme: savedTheme ?? 'system',
       exportPresetId,
       showDebugLogs: savedShowDebugLogs ?? false,
@@ -333,8 +351,40 @@ export const useAppStore = create<AppState>((set) => ({
   },
 
   setCurrentPeriod: async (period) => {
+    const { students } = useAppStore.getState();
+
+    // Save the new period
     set({ currentPeriod: period });
     await dbSetSetting('currentPeriod', period);
+
+    // Reload drafts for the new period
+    const rows = await dbListDrafts(period);
+
+    const draftsByStudent: Record<string, ReportDraft> = {};
+    for (const student of students) {
+      draftsByStudent[student.id] = emptyDraft(student.id, period);
+    }
+
+    for (const row of rows) {
+      const studentDraft = draftsByStudent[row.studentId] ?? emptyDraft(row.studentId, period);
+      draftsByStudent[row.studentId] = studentDraft;
+
+      const frame = row.frame as FrameId;
+      const section = row.section as SectionId;
+      const slots = (row.slotValues ?? {}) as Record<string, string>;
+
+      studentDraft.comments[frame] = studentDraft.comments[frame] || ({} as any);
+      studentDraft.comments[frame][section] = {
+        templateId: row.templateId,
+        slots,
+        rendered: row.renderedText,
+        author: row.author ?? 'teacher',
+        status: row.status ?? 'approved',
+      };
+    }
+
+    // Clear undo/redo history when switching periods
+    set({ drafts: draftsByStudent, undoStack: [], redoStack: [] });
   },
 
   setCurrentRole: async (role) => {
@@ -367,6 +417,19 @@ export const useAppStore = create<AppState>((set) => ({
   setBoardId: async (boardId) => {
     set({ boardId });
     await dbSetSetting('boardId', boardId);
+
+    // Load board config and apply char limits
+    const config = loadBoardConfig(boardId);
+    if (config) {
+      const newValidation = coerceTier1Validation({
+        minChars: config.char_limits.per_section_min,
+        maxChars: config.char_limits.per_section_max,
+        minSentences: 2,
+        maxLineBreaks: 2,
+      });
+      set({ tier1Validation: newValidation });
+      await dbSetSetting('tier1Validation', newValidation);
+    }
   },
 
   setTheme: async (theme) => {

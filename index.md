@@ -47,6 +47,13 @@ Last updated: 2026-01-12
 - [Functional Requirements](docs/requirements.md)
 	- What the tooling/workflow must do (distinct from Python `requirements.txt`).
 
+## Gameplans
+
+- [VGReport Kindergarten Alignment Gameplan](docs/vgreport_kindergarten_alignment_gameplan.md)
+	- Phase-gated execution plan for the kindergarten-only alignment work.
+- [VGReport UI Utilization & Discoverability Gameplan](UIgameplan.md)
+	- Audit findings and phased plan to surface implemented-but-hidden features.
+
 ## Taxonomy & Sources of Truth
 
 - [Frames Taxonomy](taxonomy/frames.yaml)
