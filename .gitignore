@@ -63,6 +63,9 @@ logs/
 # Local debugging artifacts
 sidecar_stderr.txt
 
+# Local release bundles
+release_artifacts/
+
 # OS files
 .DS_Store
 Thumbs.db
