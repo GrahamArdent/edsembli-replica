@@ -597,7 +597,7 @@ These features directly reduce teacher time-per-student and should be bundled wi
 
 **Why (time-saving):** Teachers write reports in linear order. Mouse-clicking the sidebar for each of 25 students is slow. Linear navigation with keyboard = ~2 seconds saved per student × 25 = ~1 minute per frame × 4 frames = **~4 minutes saved per class**.
 
-**Current state:** Not implemented. Teacher must click sidebar to switch students.
+**Current state:** Implemented (Phase B).
 
 **Effort:** Low (UI buttons + hotkey handler + store method).
 
@@ -612,7 +612,7 @@ Acceptance criteria:
 
 **Why (time-saving):** Teachers close the app mid-session (prep period ends, laptop sleeps). Reopening should put them exactly where they were, not at the empty "Select a student" screen.
 
-**Current state:** Not implemented. App opens to no student selected.
+**Current state:** Implemented (Phase B).
 
 **Effort:** Low (persist `selectedStudentId` + `selectedFrameId` to SQLite or localStorage; restore on mount).
 
@@ -626,7 +626,7 @@ Acceptance criteria:
 
 **Why (time-saving):** With 25+ students, scanning a list is slower than typing "Aid" to jump to "Aiden." Teachers already expect this pattern from other apps.
 
-**Current state:** Not implemented. Teacher must scroll/scan the sidebar.
+**Current state:** Implemented (Phase C).
 
 **Effort:** Medium (command palette component + fuzzy search logic).
 
@@ -640,7 +640,7 @@ Acceptance criteria:
 
 **Why (time-saving):** Teachers need to know "how much is left?" at a glance without counting manually. Reduces anxiety and helps them estimate remaining work time.
 
-**Current state:** Partially implemented (frame dots per student), but no aggregate summary.
+**Current state:** Implemented (Phase B).
 
 **Effort:** Low (computed selector + display in sidebar header).
 
@@ -658,7 +658,7 @@ These features address deeper workflow pain points and should be designed in Pha
 
 **Why (time-saving):** Late in the reporting cycle, most students are done. Teachers want to see only who's left, not scroll past 20 green checkmarks. Also supports "IEP students first" or "ELL students first" workflows.
 
-**Current state:** Not implemented. All students always shown.
+**Current state:** Implemented (Phase D).
 
 **Effort:** Medium (filter state + UI toggles + computed roster).
 
@@ -668,7 +668,7 @@ These features address deeper workflow pain points and should be designed in Pha
 
 **Why (time-saving):** These phrases appear in nearly every kindergarten comment. Instead of typing "with support" 50+ times, teacher clicks once. Also ensures consistency.
 
-**Current state:** Not implemented. Teacher types modifiers manually in slot fields.
+**Current state:** Implemented (Phase D).
 
 **Effort:** Medium (modifier list + insertion into slot field or template output).
 
@@ -688,7 +688,7 @@ These features address deeper workflow pain points and should be designed in Pha
 
 **Why (time-saving):** Teachers worry about sounding repetitive. A warning lets them intentionally vary phrasing where it matters, without manually comparing 25 reports.
 
-**Current state:** Not implemented.
+**Current state:** Implemented (Phase C).
 
 **Effort:** Medium (cross-student text comparison + UI indicator).
 
@@ -722,7 +722,8 @@ These require more architectural work or design validation but should be wirefra
 
 **Why (time-saving):** Teachers export multiple times (draft review, final submission, backup). Reconfiguring export settings each time is friction. Presets = one click.
 
-**Current state:** Basic CSV + Print/PDF exists, but no presets or Export Center modal.
+**Current state:** Implemented (Phase E) with presets + Export Center modal.
+Missing vs original wishlist: Combined PDF preset + richer preset management (multiple saved presets / naming).
 
 **Effort:** High (modal + preset storage + multiple export paths).
 

@@ -35,6 +35,7 @@ Run automated gates:
 - Full repo gates: `./check.bat`
 - VGReport unit tests: `cd vgreport && npm test`
 - Tauri smoke E2E (boots desktop runtime): `cd vgreport && npm run e2e:tauri`
+- Tauri build (installer/artifact build): `cd vgreport && npm run build:tauri`
 
 Manual spot-checks (no PII):
 
@@ -42,6 +43,13 @@ Manual spot-checks (no PII):
 - Export Center → Copy all: includes headings and preserves CRLF newlines
 - Export Center → CSV presets: file includes UTF-8 BOM, CRLF row endings, stable header order, always-quoted fields
 - Export gating: unapproved ECE drafts and invalid renders export as empty
+
+Golden examples (synthetic; no PII):
+
+- Clipboard-per-box (single field) contains only the rendered text, e.g.
+	- `Student shows growth in self-regulation.\r\nNext steps: continue practising transitions.`
+- 12-box CSV header (first line):
+	- `"student_local_id","student_last_name","student_first_name","report_period_id","belonging_key_learning","belonging_growth","belonging_next_steps","self_regulation_key_learning","self_regulation_growth","self_regulation_next_steps","literacy_math_key_learning","literacy_math_growth","literacy_math_next_steps","problem_solving_key_learning","problem_solving_growth","problem_solving_next_steps"`
 
 ## CI
 

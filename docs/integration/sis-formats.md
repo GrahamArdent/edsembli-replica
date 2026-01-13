@@ -243,7 +243,7 @@ Student identifiers:
 - `student_local_id` (string) — required
 - `student_last_name` (string) — recommended
 - `student_first_name` (string) — recommended
-- `report_period_id` (string) — required (e.g., `fall`, `winter`, `spring`)
+- `report_period_id` (string) — required (board/app configured; commonly `initial`, `february`, `june`)
 
 Kindergarten boxes (12 fields; required for “export-ready”):
 - `belonging_key_learning`
