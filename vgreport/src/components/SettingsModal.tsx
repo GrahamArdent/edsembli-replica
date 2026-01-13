@@ -15,7 +15,15 @@ const PERIODS: { id: ReportPeriod; label: string }[] = [
   { id: "june", label: "June" },
 ];
 
-export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
+export function SettingsModal({
+  open,
+  onOpenChange,
+  debugLogs,
+}: {
+  open: boolean;
+  onOpenChange: (v: boolean) => void;
+  debugLogs: string[];
+}) {
   const boardId = useAppStore(s => s.boardId);
   const setBoardId = useAppStore(s => s.setBoardId);
   const theme = useAppStore(s => s.theme);
@@ -31,6 +39,9 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
 
   const tier1Validation = useAppStore(s => s.tier1Validation);
   const setTier1Validation = useAppStore(s => s.setTier1Validation);
+
+  const showDebugLogs = useAppStore(s => s.showDebugLogs);
+  const setShowDebugLogs = useAppStore(s => s.setShowDebugLogs);
 
   const boardLabel = useMemo(() => BOARDS.find(b => b.id === boardId)?.label ?? boardId, [boardId]);
 
@@ -180,6 +191,50 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
             <div className="text-[11px] text-muted-foreground">
               These checks never block export; they’re intended to approximate “box fit” until we have real layout measurement.
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-xs font-medium text-foreground">Diagnostics</div>
+            <label className="flex items-center gap-2 text-sm">
+              <input
+                type="checkbox"
+                checked={showDebugLogs}
+                onChange={(e) => void setShowDebugLogs(e.target.checked)}
+              />
+              Show debug logs
+            </label>
+            <div className="text-[11px] text-muted-foreground">
+              Off by default. When enabled, debug logs are shown in this Settings dialog.
+            </div>
+
+            {showDebugLogs ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="text-[11px] text-muted-foreground">Debug logs (scrollable)</div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const text = (debugLogs ?? []).join("\n");
+                      void navigator.clipboard?.writeText(text);
+                    }}
+                  >
+                    Copy
+                  </Button>
+                </div>
+                <div className="border border-border rounded-md bg-black/90 text-white font-mono text-xs p-2 max-h-64 overflow-auto">
+                    {(debugLogs ?? []).length === 0 ? (
+                    <div className="text-gray-300">(no logs yet)</div>
+                  ) : (
+                      (debugLogs ?? []).map((L, i) => (
+                      <div key={i} className="whitespace-pre-wrap mb-1 border-b border-gray-800 pb-1">
+                        {L}
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            ) : null}
           </div>
         </div>
 

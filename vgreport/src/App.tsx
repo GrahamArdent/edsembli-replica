@@ -26,7 +26,12 @@ function App() {
   const [searchOpen, setSearchOpen] = useState(false);
   const didInit = useRef(false);
 
-  const addLog = (msg: string) => setLogs(prev => [...prev, msg]);
+  const addLog = (msg: string) =>
+    setLogs((prev) => {
+      const next = [...prev, msg];
+      const MAX = 400;
+      return next.length > MAX ? next.slice(next.length - MAX) : next;
+    });
 
   useEffect(() => {
     // React StrictMode runs effects twice in dev; guard to avoid double init/log spam.
@@ -145,7 +150,7 @@ function App() {
 
   return (
     <div className="flex w-full h-screen bg-background text-foreground overflow-hidden font-sans relative">
-      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} debugLogs={logs} />
       <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
         <CommandInput placeholder="Search students…" autoFocus />
         <CommandList>
@@ -172,10 +177,6 @@ function App() {
         </CommandList>
       </CommandDialog>
       <OnboardingWizard />
-      <div className="absolute bottom-0 right-0 p-4 bg-black/90 text-white text-xs max-w-2xl max-h-96 overflow-auto z-50 border-t-2 border-l-2 border-red-500 font-mono shadow-2xl">
-        <div className="font-bold mb-2 border-b border-gray-600 pb-1">DEBUG LOGS (Scrollable) — {UI_BUILD_STAMP}</div>
-        {logs.map((L, i) => <div key={i} className="whitespace-pre-wrap mb-1 border-b border-gray-800 pb-1">{L}</div>)}
-      </div>
       <Sidebar />
       <Workspace />
       <Preview />

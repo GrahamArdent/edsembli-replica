@@ -92,6 +92,9 @@ interface AppState {
   exportPresetId: 'clipboard' | 'csv_student' | 'csv_class' | 'pdf_student';
   setExportPresetId: (presetId: 'clipboard' | 'csv_student' | 'csv_class' | 'pdf_student') => Promise<void>;
 
+  showDebugLogs: boolean;
+  setShowDebugLogs: (show: boolean) => Promise<void>;
+
   hasOnboarded: boolean;
   completeOnboarding: () => Promise<void>;
   templates: Template[];
@@ -215,6 +218,7 @@ export const useAppStore = create<AppState>((set) => ({
   boardId: 'tcdsb',
   theme: 'system',
   exportPresetId: 'clipboard',
+  showDebugLogs: false,
   hasOnboarded: false,
   templates: [],
   drafts: {},
@@ -256,6 +260,7 @@ export const useAppStore = create<AppState>((set) => ({
     const savedRoleLabels = await dbGetSetting<RoleLabels>('roleLabels');
     const savedTier1Validation = await dbGetSetting<Tier1ValidationConfig>('tier1Validation');
     const savedExportPresetId = await dbGetSetting<AppState['exportPresetId']>('exportPresetId');
+    const savedShowDebugLogs = await dbGetSetting<boolean>('showDebugLogs');
 
     let students = await dbListStudents();
     if (students.length === 0) {
@@ -309,11 +314,17 @@ export const useAppStore = create<AppState>((set) => ({
       boardId: savedBoardId ?? 'tcdsb',
       theme: savedTheme ?? 'system',
       exportPresetId,
+      showDebugLogs: savedShowDebugLogs ?? false,
       hasOnboarded: savedHasOnboarded ?? false,
       drafts: draftsByStudent,
       undoStack: [],
       redoStack: [],
     });
+  },
+
+  setShowDebugLogs: async (show) => {
+    set({ showDebugLogs: show });
+    await dbSetSetting('showDebugLogs', show);
   },
 
   setExportPresetId: async (presetId) => {
