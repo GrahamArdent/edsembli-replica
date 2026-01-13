@@ -66,6 +66,9 @@ Proposed layout (paths are conceptual; keep inside your repo):
   - `schemas/indicators.schema.json`
   - `schemas/col_sections.schema.json`
   - `schemas/comment_templates.schema.json`
+- `contracts/`
+  - JSON Schema contracts for the VGReport UI ↔ Python sidecar IPC boundary.
+  - Types are generated into `vgreport/src/contracts/generated.ts` and drift-gated by `scripts/validate.py`.
 - `scripts/`
   - `scripts/README.md` (how to run local checks)
   - `scripts/validate.py` (schema + front matter validation)

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edsembli.local/contracts/template.schema.json",
+  "title": "Template",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "id": { "type": "string" },
+    "frame": { "type": "string" },
+    "section": { "type": "string" },
+    "text": { "type": "string" },
+    "slots": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "tone": { "type": "string" },
+    "indicators": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["id", "frame", "section", "text", "slots"]
+}

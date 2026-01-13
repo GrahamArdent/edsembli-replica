@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edsembli.local/contracts/ipc-response.schema.json",
+  "title": "IpcResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "result": {},
+    "error": {
+      "anyOf": [
+        { "$ref": "./ipc-error.schema.json" },
+        { "type": "null" }
+      ]
+    }
+  },
+  "required": ["id", "result", "error"]
+}

@@ -2,11 +2,11 @@
 id: doc.changelog
 type: document
 title: Changelog
-version: 0.1.0
+version: 0.1.1
 status: draft
 tags: [changelog]
 refs: []
-updated: 2026-01-11
+updated: 2026-01-12
 ---
 
 # Changelog
@@ -16,6 +16,13 @@ All notable changes to this repository’s *canonical* artifacts are documented 
 The format is loosely based on Keep a Changelog, and this project aims to follow Semantic Versioning where it makes sense for schemas/artifacts.
 
 ## [Unreleased]
+
+### Added (2026-01-12)
+
+- VGReport Kindergarten “golden outputs” specification (clipboard-per-box and 12-box CSV)
+- VGReport Kindergarten completeness / export-ready semantics (per-box, approval-gated)
+- Clarified applicability of canonical assembly constraints to VGReport 12-box workflow
+- Master execution prompt for phase-gated implementation (`gameplan_prompt.md`)
 
 ### Added (Phase 4 Sprint 4.2 - 2026-01-11)
 

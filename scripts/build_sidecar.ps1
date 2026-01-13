@@ -32,7 +32,8 @@ if (Test-Path "$TauriBinDir") {
 # --console: MUST have console for stdin/stdout IPC (Tauri hides it anyway)
 # --name: Internal name
 # --add-data: Bundle templates and lib
-& "$WorkspaceRoot\.venv\Scripts\pyinstaller.exe" --console --onefile --clean --name $OutputName --distpath "$WorkspaceRoot\dist" --workpath "$WorkspaceRoot\build" --specpath "$WorkspaceRoot\sidecar" --paths "$WorkspaceRoot" --add-data "$WorkspaceRoot\templates;templates" --add-data "$WorkspaceRoot\lib;lib" "$SidecarSource"
+& "$WorkspaceRoot\.venv\Scripts\pyinstaller.exe" --console --onefile --clean --name $OutputName --distpath "$WorkspaceRoot\dist" --workpath "$WorkspaceRoot\build" --specpath "$WorkspaceRoot\sidecar" --paths "$WorkspaceRoot" --add-data "$WorkspaceRoot\templates;templates" --add-data "$WorkspaceRoot\lib;lib" --add-data "$WorkspaceRoot\contracts;contracts" "$SidecarSource"
+
 
 if ($LASTEXITCODE -ne 0) {
     Write-Error "PyInstaller build failed!"

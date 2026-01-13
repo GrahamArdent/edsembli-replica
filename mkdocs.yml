@@ -103,6 +103,9 @@ nav:
   - Development:
     - "Roadmap": docs/ROADMAP.md
     - "Changelog": docs/CHANGELOG.md
+    - "VGReport Frontend Design": docs/frontend.md
+    - "VGReport Frontend Gameplan": docs/frontend_gameplan.md
     - "Testing": docs/TESTING.md
     - "Schemas": schemas/README.md
+    - "Contracts": contracts/README.md
     - "Scripts": scripts/README.md

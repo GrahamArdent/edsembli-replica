@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edsembli.local/contracts/ipc-error.schema.json",
+  "title": "IpcError",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "code": { "type": "string" },
+    "message": { "type": "string" },
+    "details": {}
+  },
+  "required": ["code", "message"]
+}

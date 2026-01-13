@@ -30,6 +30,7 @@ CANONICAL_FOLDERS = [
     "docs",
     "taxonomy",
     "schemas",
+    "contracts",
     "evidence",
     "templates",
     "guidance",

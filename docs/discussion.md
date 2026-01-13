@@ -106,6 +106,12 @@ Completed a comprehensive gap analysis and implemented all recommendations:
   - Fixed broken links and knowledge/entities reference
 - Updated `docs/CONTRIBUTING.md`: require index.md update when adding canonical files
 
+9. **VGReport IPC Contracts & Drift Gate** (`contracts/`, `scripts/validate.py`, `vgreport/src/contracts/`)
+  - Added `/contracts` JSON Schemas for the UI ↔ sidecar IPC boundary
+  - Added TypeScript type generation (`vgreport/scripts/generate_contract_types.mjs`)
+  - Validation gate now fails if generated types drift from schemas (sha256 markers)
+  - Added a startup `health` handshake in the UI sidecar client to fail fast on engine startup issues
+
 **Fixed Broken Links:**
 
 - Updated `knowledge/processes/process.onboarding.contributor.md`: docs/index.md → index.md

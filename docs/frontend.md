@@ -1,16 +1,22 @@
 ---
-id: design.frontend
-type: design_doc
+id: doc.vgreport.frontend_design
+type: document
 title: VGReport – Frontend User Experience Design
-version: 0.4.0
+version: 0.6.0
 status: draft
-target_audience: [developers, designers]
-updated: 2026-01-11
+tags: [technical, governance]
+refs: []
+updated: 2026-01-12
 product_name: VGReport
 license: Open Source (MIT)
 ---
 
 # VGReport: Frontend Design Strategy
+
+This is the UX and architecture design spec for VGReport.
+
+Implementation tracking lives in:
+- `docs/frontend_gameplan.md`
 
 ## 1. Design Philosophy
 For a single-user kindergarten teacher, the application must function as a **"Pedagogical Cockpit."** It should not merely be a form-filler; it should be a **thinking partner** that guides the teacher from observation to formal reporting without administrative friction.
@@ -109,7 +115,7 @@ Practical options:
 ### Contract policy (how we prevent drift)
 
 1. **JSON Schema is the source of truth** (hand-maintained in `/contracts/`).
-2. A script generates **TypeScript types** from those schemas into `/frontend/src/types/`.
+2. A script generates **TypeScript types** from those schemas into `vgreport/src/contracts/`.
 3. CI fails if generated TS files are out of date with the schema.
 4. Python sidecar validates incoming requests against the schema at runtime.
 
@@ -153,6 +159,9 @@ All messages are newline-delimited JSON (NDJSON). Each message has a standard en
 ```
 
 ### Supported Methods
+
+**Current implementation status (repo reality):** the sidecar currently implements `health`, `list_templates`, `get_template`, `render_comment`, and `debug_info`.
+Methods like `validate_comment` and `get_evidence_matrix` remain planned work.
 
 | Method | Description | Params | Result |
 |--------|-------------|--------|--------|
@@ -277,6 +286,520 @@ This is acceptable for developers but **awkward for teachers**. A native desktop
 
 ---
 
+## 4A. Teacher Workflow Modes (Elementary vs. Secondary)
+
+Teachers do not all write reports the same way. VGReport must support multiple valid workflows without forcing a single mental model.
+
+### Teacher contexts
+
+**Elementary (homeroom-style)**
+- Primary organizing unit is typically a single class roster.
+- Writing tends to be **student-by-student** (maintaining narrative cohesion per student).
+- Success looks like: steady “next student” momentum + parent-facing, consistent exports.
+
+**Secondary (period-based)**
+- Primary organizing unit is **period/class** (multiple groups).
+- Writing often alternates between **student-by-student** and **section-by-section** (batching by topic).
+- Success looks like: strong scoping + progress visibility (“who’s left in Period 3?”) + batch exports.
+
+**Design principle:** one product, two contexts. Defaults and emphasis can adapt based on whether the teacher is working with one roster or multiple class groups.
+
+### Core concept: Class/Cycle as the “working context”
+
+The app should keep “where am I?” obvious and stable by showing (and keying drafts under):
+- **Class / Period** (elementary: often one; secondary: many)
+- **Cycle** (term/quarter/semester/reporting period)
+
+This context should drive draft scoping, progress calculations, and export defaults.
+
+### Two primary writing modes (both supported)
+
+Because teachers may prefer different approaches at different times, VGReport should support both modes and allow frictionless switching.
+
+**Mode A — Student Flow (finish one student at a time)**
+- Optimized for linear progression: **Next / Previous Student**, mark complete, quick flags.
+- Preview is a first-class tool for tone/length and export fidelity.
+
+**Mode B — Section Flow (batch by section across many students)**
+- Optimized for batching: choose a section (e.g., Math) and move student-to-student within that section.
+- Fast insertion and variation tools are emphasized (rubric phrases, starters, quick adjustments).
+
+**Switching principle:** switching modes must not reset or fork data; it changes layout, shortcuts, and default navigation only.
+
+### Export Center (support preference without chaos)
+
+Export is a high-stakes moment and must be predictable. Provide an explicit **Export Center** with saved presets:
+- **PDF per student** (export a folder)
+- **Combined PDF** (one file)
+- **CSV** (SIS import)
+- **Copy to clipboard** (for pasting into other systems)
+
+Each preset should store per-class/per-cycle settings (naming conventions, included sections, formatting style).
+
+### Writing style support (individualized AND standards-based)
+
+Support both "compose" (individual narrative) and "assemble" (standards/rubric phrases):
+- **Rubric phrase library** (tagged by section + proficiency + tone)
+- **Teacher scratchpad/observations** per student (not exported)
+- **Repetition guardrails**: detect reused sentences across many students and suggest variation
+
+### Progress + work queue
+
+Teachers need to know “what’s left” at the right level:
+- Per-student completion (not started / in progress / needs review / complete)
+- Per-class progress (“22/28 complete”) and optionally per-section coverage
+- A **Work Queue** view: Incomplete, Flagged, Needs Review, Recently edited
+
+### Keyboard-first productivity
+
+Prioritize a keyboardable core loop:
+- Quick student switch/search
+- Next/prev student (student flow)
+- Next/prev student within current section (section flow)
+- Fast open for Export Center and Settings
+
+### Recommendations (high-ROI v1 workflow upgrades)
+
+If we need to pick a small set of improvements with outsized impact:
+1. **Class/Cycle selector** as a stable working context.
+2. **Two writing modes** (Student Flow / Section Flow) with seamless switching.
+3. **Completion + Work Queue** (progress at student + class levels).
+4. **Export Center with presets** (PDF per student, combined PDF, CSV, clipboard) + saved settings.
+5. **Rubric phrase library** + light repetition warnings (to balance speed and authenticity).
+
+---
+
+## 4B. Kindergarten-Specific Considerations
+
+VGReport v1 is designed for **Ontario kindergarten teachers**. This section captures UX considerations specific to that context.
+
+### The kindergarten reality
+
+- 20–30 children, same teacher all day, play-based learning
+- Usually team-taught with an ECE (Early Childhood Educator)
+- Three formal reporting periods: Initial Observations (Fall), Communication of Learning (February), Final (June)
+- Reports are **narrative**, not grades—very personal, parent-facing
+- Evidence comes from play: "during block play," "at the water table," "during outdoor exploration"
+
+### How kindergarten teachers actually work
+
+- Observations happen *during* class, often scribbled on sticky notes or typed on a phone
+- Writing happens in 40-minute prep blocks, after school, or weekends (exhausted, on the couch)
+- Mental model: "What did I notice about this kid?" → "What does that mean for their development?"
+- Worries: sounding repetitive, getting pronouns wrong, parents comparing reports
+
+### Gaps in the current design (kindergarten lens)
+
+| Gap | Why it matters | Ideas |
+|-----|----------------|-------|
+| **No observation capture workflow** | Teachers arrive with sticky notes, not structured evidence. The current design assumes evidence is ready. | Quick-capture mode with timestamp + context (block play, snack, outdoor). Per-student "evidence drawer" that accumulates throughout the term. |
+| **No term-to-term continuity** | Teachers need to reference Fall when writing February/June. Growth language depends on prior state. | "Compare to Fall" panel. "Copy from prior term and adjust" workflow. Growth trajectory visualization (Fall → Feb → June). |
+| **ECE collaboration missing** | Kindergarten is team-taught. ECE observations are valuable but currently have no place. | "ECE observations" field per student (not exported). "Shared notes" for team discussions. Future: invite ECE to contribute directly. |
+| **Developmental language not surfaced** | Kindergarten phrasing is specific: "beginning to," "with support," "independently," "consistently." | Developmental modifier picker. Frame-specific language banks. Auto-suggest modifiers by term (Fall = more "beginning to"). |
+| **Parent audience not explicitly designed for** | The primary reader is a parent, not administrator. | Reading level indicator. Tone check (encouraging? specific?). "Parent view" preview. Jargon detector ("emergent literacy" → "learning to read"). |
+| **No support for students needing different handling** | IEP, ELL, mid-year arrivals need different treatment. | Per-student flags (IEP, ELL, New arrival). IEP-aware templates. "More space needed" indicator. |
+| **No emotional support for the teacher** | Writing 25 deeply personal reports is exhausting. The UI feels clinical. | Gentle encouragement ("12 done—halfway there!"). "Take a break" prompt after 45 min. Session summary. Option to hide progress pressure. |
+
+### Workflow ideas that match kindergarten mental models
+
+**Observation-first flow (alternative to template-first)**
+
+Instead of: Pick template → Fill slots
+
+Consider: Review observations → Select relevant ones → Generate comment
+
+This matches how teachers think: "What did I notice about Aiden?" → "He's really into the water table and started sharing better."
+
+**"Story arc" view per student**
+
+Kindergarten reports tell a developmental story. Teachers want to see the arc:
+- Fall: "Aiden is beginning to share materials during play."
+- February: "Aiden now shares materials with prompting."
+- June: "Aiden independently shares and takes turns with peers."
+
+A timeline/arc view helps teachers write with continuity.
+
+**Play context selector**
+
+Instead of a generic "observation" slot, offer context-aware prompts:
+- Block area / Dramatic play / Art / Sensory / Outdoor / Snack / Circle
+- Each context has typical observations: "Block area → building, collaborating, problem-solving"
+
+**"Write once, personalize many" for common observations**
+
+Some observations apply to multiple students with minor tweaks:
+- Write a base comment
+- Apply to students with auto-personalization (name, pronouns)
+- Edit individually as needed
+
+### What kindergarten teachers would say about the current design
+
+**Positive:**
+- Three-pane layout makes sense (roster, editor, preview)
+- Frame tabs match Ontario kindergarten structure
+- Autosave is essential—they will love this
+- Character count helps (boards have limits)
+
+**Concerns:**
+- "Where do I put my observations before I write?"
+- "How do I see what I wrote in Fall when I'm writing February?"
+- "What about my ECE's observations?"
+- "Can I see this one kid's whole story across the year?"
+- "I don't want to pick a template—I want to describe what I saw and have it help me write"
+- "What if I want to write the same thing for 5 kids who all did the same thing?"
+
+### Recommendations: Kindergarten-focused v1 additions (high ROI)
+
+If narrowing to kindergarten for v1, prioritize:
+
+1. **Observation capture mode** — quick add, timestamped, context-tagged, per-student drawer
+2. **Term continuity view** — side-by-side Fall/Feb/June for current student
+3. **Developmental language bank** — modifiers + frame-specific phrases + auto-suggestion by term
+4. **ECE notes field** — text area per student (not exported)
+5. **Gentle progress + session awareness** — encouragement, break prompts, session stats
+
+These align with how kindergarten teachers actually work, without changing the core architecture.
+
+---
+
+## 4C. Comprehensive Workflow Brainstorming (Raw Notes)
+
+This section captures the full thinking process for UX improvements. These are not all prioritized or validated—they're brainstorming notes to be refined later.
+
+### Teacher workflow lens (what they're actually trying to do)
+
+**Core mental model:**
+- "I have 30 kids, 6 periods (or one class all day), and a deadline. I need to get from roster → meaningful comments → export without thinking about the tool."
+- Their mental model: pick class/period → pick student → fill in recurring categories → review tone/length → export.
+
+### High-leverage workflow improvements (no big architecture change)
+
+**Class/period-first navigation**
+- Make "Period" or "Class" the primary selector (top-left), and treat roster as scoped to that period by default.
+- Teachers think in periods (secondary) or single class (elementary), not global rosters.
+- Current design doesn't make "where am I?" obvious enough.
+
+**Student progression mode**
+- Add "Next student / Previous student" controls + keyboard shortcuts.
+- Optional "Auto-advance after save" toggle.
+- The fastest workflow is linear: next → write → save → next.
+
+**Completion visibility**
+- Per-student completion indicator: "3/5 sections filled", char count status.
+- Period-level progress bar: "22/28 students complete".
+- Teachers want to know "who's left?" at a glance.
+
+**Quick filters**
+- "Incomplete only", "Needs review", "Flagged", "Recently edited".
+- Reduces cognitive load late in the cycle when most students are done.
+
+### Drafting + writing quality (teacher tone + consistency)
+
+**Comment intent helpers**
+- Lightweight tone toggles: "Encouraging / Neutral / Firm" that adjust template phrasing.
+- Even if it's just guidance + suggested starters, this helps teachers maintain appropriate tone.
+
+**Rubric-based starters**
+- Many teachers start from rubric language (Ontario curriculum expectations).
+- A "rubric phrases" drawer (per section) would speed writing without sounding robotic.
+- Tag phrases by proficiency level: Beginning / Developing / Proficient / Extending.
+
+**Variation guardrails**
+- Warn when the same phrase appears across many students.
+- Teachers worry about copy/paste optics ("Did the teacher just use the same comment for everyone?").
+- Even a "reused text" indicator ("Used in 12 students") is helpful.
+- Optional: "suggest variations" helper (deterministic swaps, not AI).
+
+**Read-aloud preview**
+- Preview should mimic final export (line breaks, headings, spacing).
+- Highlight missing sections or over-limit sections.
+- Some teachers read reports aloud to catch awkward phrasing—support this mentally.
+
+### Data-entry ergonomics (reduce friction)
+
+**Faster add/edit student**
+- Inline add at top of roster (no modal).
+- Keep focus in the keyboard flow.
+- Avoid modal-heavy CRUD when entering many names (e.g., importing from a list).
+
+**Smarter defaults**
+- Remember last-selected template per section/per period.
+- Remember last student; reopen where they left off.
+- "Resume session" on app launch.
+
+**Bulk actions**
+- Import roster CSV (even minimal: name, pronouns).
+- Bulk delete/merge duplicates.
+- Bulk assign default templates to a period.
+
+### Error prevention + confidence
+
+**Autosave transparency**
+- Make save state unmissable but calm: "Saved 2s ago".
+- Add "Last saved" timestamp per draft and per student.
+- Visual indicator that doesn't distract (subtle pulse, not flashing).
+
+**"Export readiness" checklist**
+- Before export, show blockers:
+  - Missing students
+  - Empty required sections
+  - Over/under length
+- Show warnings:
+  - Tone inconsistency
+  - Repeated phrases
+- "You're ready to export" confirmation when clean.
+
+**Undo safety**
+- Teachers will experiment with phrasing—make undo/redo obvious.
+- Scoped undo (per field, not just global).
+- "Restore previous version" per student (mini version history).
+
+### Export workflow (where teachers lose time)
+
+**Export presets**
+- "End-of-term PDF", "CSV for SIS", "Copy to clipboard".
+- Saved settings per school (columns, separators, naming).
+- Don't make them configure export every time.
+
+**File naming conventions**
+- Default to `Period - StudentLast, StudentFirst - Term.pdf`.
+- Or a batch naming scheme the teacher configures once.
+- Teachers care about sorting and findability.
+
+**Batch export**
+- Export all students in a period to a folder (PDF per student).
+- Plus a combined PDF (all students in one file).
+- This is often the real need for secondary teachers.
+
+### Accessibility + keyboard-first
+
+**True keyboard loop**
+- `Ctrl+K` quick switch student.
+- `Ctrl+Enter` commit section.
+- `Alt+N/P` next/prev student.
+- `Ctrl+,` settings.
+- Teachers often work fast on a keyboard; mousing slows them down.
+
+**Focus + tab order**
+- Ensure predictable tabbing: student list → section tabs → fields → preview actions.
+- No "focus traps" or weird jump behavior.
+
+**Better labels**
+- Replace placeholder-only inputs with proper labels.
+- Helps screen readers and reduces entry mistakes.
+- Current design uses placeholders—not accessible.
+
+### Information architecture ideas (if you want a slightly bolder UX)
+
+**"Roster" vs "Work Queue"**
+- Two modes:
+  - Roster is the database (all students, all time).
+  - Work Queue is the editing session (today's period, incomplete students).
+- This matches teacher thinking: "Who do I need to write about today?"
+
+**Split preview modes**
+- "Student view" (what prints).
+- "Teacher view" (editing aids: missing markers, suggested starters, rubric notes).
+- Toggle between them.
+
+**Session-based workflow**
+- "Start Term" wizard:
+  1. Import roster
+  2. Pick sections
+  3. Set templates
+  4. Define char targets
+  5. Then you're in production mode.
+- Onboarding that sets everything up correctly.
+
+### Questions to sharpen priorities (pick the best 3–5 changes)
+
+**Question 1: Do teachers typically write comments student-by-student or section-by-section?**
+- Answer: BOTH (hence dual mode support).
+- Student-by-student: maintains narrative cohesion (elementary).
+- Section-by-section: batching efficiency (secondary, large rosters).
+
+**Question 2: Is the primary output PDF per student, one combined PDF, or CSV into an SIS?**
+- Answer: ALL THREE (hence Export Center with presets).
+- PDF per student: for filing/printing.
+- Combined PDF: for review/backup.
+- CSV: for SIS import.
+
+**Question 3: Are comments expected to be highly individualized or more standards-based (rubric phrases)?**
+- Answer: BOTH (hence rubric library + personalization tools).
+- Individualized: narrative, observation-based (kindergarten).
+- Standards-based: curriculum alignment, rubric phrasing (upper grades).
+
+### Elementary vs secondary structure insight
+
+**Elementary (homeroom):**
+- Kids don't have different teachers throughout the day.
+- They stay in the same class with the same teacher.
+- Mental model: "my class" (singular).
+- Navigation priority: student list, not period switching.
+
+**Secondary (period-based):**
+- Students rotate through 4–8 teachers per day.
+- Teacher sees 100–150 students across periods.
+- Mental model: "Period 3 English" (multiple classes).
+- Navigation priority: period/class selector, then student.
+
+**Design implication:**
+- Onboarding/settings should ask "Elementary vs Secondary" (or detect by whether periods/classes are defined).
+- Default entry point changes: elementary lands on student list, secondary lands on period selector.
+- But features stay the same—just different emphasis.
+
+### Additional kindergarten-specific workflow ideas (beyond section 4B)
+
+**Pronouns complexity**
+- Kindergarten teachers are hyper-aware of pronouns (they/them is common, misgendering is a big mistake).
+- Pronoun picker should be visible and obvious: He/Him, She/Her, They/Them, custom.
+- Auto-populate across all templates once set.
+
+**Photo/artifact reference**
+- Teachers sometimes photograph student work or play interactions.
+- "Attach photo" to an observation (not exported, just for teacher memory).
+- Later: "What was that photo from block play?" → jogs memory.
+
+**"Compare to last year" (long-term context)**
+- Some teachers have the same students multiple years (JK → SK).
+- "View last year's report" button (if available).
+- Helps with long-term growth language.
+
+**Parent conference prep mode**
+- Export "conference notes" (not the full report).
+- Bullet points, specific examples, talking points.
+- Teachers need both the formal report and informal notes for parent meetings.
+
+**Mid-year arrival handling**
+- Students join mid-term.
+- Need a "started in February" flag.
+- Adjust templates to acknowledge limited observation period: "Since joining our class in February, Aiden has..."
+
+---
+
+## 4D. Senior UX Review: The "Kindergarten Logic"
+
+*Critique and refinement from a Senior Product Design lens, specifically targeting the "Kindergarten Teacher" persona.*
+
+### Critique: The "Synthesis Gap"
+The current design (Observation Capture → Template → Report) skips the messy middle step: **Synthesis**.
+- **The Problem**: Teachers don't just "plug observations into templates." They stare at a pile of sticky notes (mental or physical) and try to find a pattern. "He played with blocks... he shared the truck... he counted to 5." → *Synthesis*: "He is demonstrating structural awareness and pro-social behavior."
+- **The Fix**: We need a **"Staging Area" or "Drafting Board"** view.
+    - **Left Pane:** A pile of "Observation Cards" for that student (collected over the term).
+    - **Right Pane:** The Report Editor.
+    - **Interaction:** Drag an observation card into the editor, and it *suggests* the relevant frame/sentence.
+    - **Why:** This mirrors the cognitive process of "sorting the evidence."
+
+### Critique: Visuals are the Anchor
+Kindergarten is highly visual. Teachers remember *images*, not text dates.
+- **The Problem**: A list of text observations ("Jan 12: Block play") is high cognitive load.
+- **The Fix**: **Visual Evidence Anchors**. Even if we don't export photos, the input validation should allow pasting a photo as a "memory jogger."
+    - The teacher sees the photo of the tower -> remembers the complex negotiation that happened -> writes the comment.
+    - *Action:* Add "Upload/Paste Photo" to the Observation Capture schema (stored locally, not exported).
+
+### Critique: The "Translation Tax"
+Teachers constantly mentally translate "Kid Speak" (what happened) to "Parent Speak" (warm narrative) to "Curriculum Speak" (assessment).
+- **The Problem**: The app currently asks them to write the final output directly.
+- **The Fix**: **"Language Toggles" or "Tone Tuners"**.
+    - Allow entering raw notes: "played in sand, made a tunnel."
+    - "Magic Button" (Start with...) -> Suggests: "Demonstrated inquiry skills by exploring properties of materials..."
+    - *Why:* Reduces the "writer's block" of formalizing simple play.
+
+### Critique: Anxiety Management (The "Sunday Night" Factor)
+Report writing is often done under duress (deadlines, late nights).
+- **The Problem**: A UI full of red "Incomplete" dots and progress bars induces anxiety.
+- **The Fix**: **Zero-Distraction "Zen Mode"**.
+    - A button that hides the Roster, the Progress Bars, and the Menus.
+    - Just the Student Name, the ONE prompt being answered, and the text box.
+    - "Just one thought at a time."
+
+### Refined Workflow: The "Pedagogical Loop"
+1.  **Capture (Throughout Term):** Quick phone/tablet entry. "Photo + Tag + 3 words." (e.g., [Photo of art], #Belonging, "shared crayons")
+2.  **Review (Mid-Term):** "Gallery Walk" view of a student's term. Spot the gaps. "Oh, I have nothing for Math." -> Plan activities to fill gaps.
+3.  **Synthesize (Report Time):** Drag "Crayons" and "Blocks" cards into the "Belonging" bucket. App suggests: "X is learning to share materials..."
+4.  **Refine (Final Polish):** The "Read Aloud" test.
+
+### Final Verdict
+The "Three-Pane Studio" is solid *production* UI, but we need to ensure the *inputs* (observations) are rich enough to make the production easy. V1 can launch without the full "Staging Area," but the data model *must* support attaching media and raw notes to students now, or we paint ourselves into a corner.
+
+---
+
+## 4E. Senior UX Review: Elementary (Homeroom) Workflow
+
+*Critique and workflow improvements from a Senior Product Design lens for an Elementary homeroom teacher (Grades 1–8), where reporting is still narrative-heavy but less observation/play-driven than kindergarten.*
+
+### How an elementary teacher thinks (practical mental model)
+
+Elementary homeroom report writing is typically a loop of:
+- **“Who is this student as a learner?”** (identity + tone consistency across subjects)
+- **“What evidence do I have?”** (assignments, conversations, informal checks)
+- **“What is the next step?”** (instructional focus + student goal)
+- **“How do I say it parent-facing?”** (encouraging + specific + readable)
+
+Compared to kindergarten, the evidence is less “moments” and more “work samples and trends,” but the pain is the same: *volume + consistency + avoiding repetition.*
+
+### Critique: The “Thread Consistency” problem
+
+Elementary teachers often need comments across multiple subject areas (and sometimes learning skills), and parents read them as one story.
+- **The Problem:** If each subject is written in isolation, the report can feel like unrelated fragments.
+- **Workflow improvement:** Add a concept of a **Student Narrative Thread** (not exported verbatim, but used to guide writing).
+  - A 1–3 sentence “student snapshot” (strengths, growth areas, supports) that stays visible while writing other sections.
+  - A lightweight “tone target” (Encouraging / Neutral / Firm) plus readability indicator for parent-facing clarity.
+
+### Critique: Teachers batch work, but not always by “section”
+
+Even in elementary, teachers commonly batch by:
+- **Subject/strand** (write all Math in a sitting)
+- **Student group** (IEP/ELL first, or students needing careful wording)
+- **“Needs review” pass** (final polish later)
+
+**Workflow improvement:** Expand “Work Queue” into a teacher-native tool:
+- Saved filters: “IEP flagged”, “ELL flagged”, “Not started”, “Over character limit”, “Needs tone check”.
+- A “Review pass” mode that shows one student’s full report on one screen for coherence.
+
+### Critique: Repetition anxiety is bigger in elementary than it looks
+
+Teachers absolutely reuse phrasing (it’s unavoidable), but they fear it looking lazy.
+- **The Problem:** Copy/paste is fast but risky, and it produces sameness.
+- **Workflow improvement:** Provide a **Variation Assistant** that is *deterministic and teacher-controlled*.
+  - Example: teacher picks a “base sentence” and selects 2–3 acceptable variants.
+  - Highlight repeated sentences across the class and let the teacher intentionally diversify.
+  - Keep this non-AI for predictability (and to avoid “hallucinated” claims).
+
+### Critique: Accommodations and supports need first-class handling
+
+In elementary, many reports must reflect supports (IEP, accommodations, ELL scaffolds) without exposing sensitive details incorrectly.
+- **The Problem:** Teachers keep accommodations in separate documents and forget to align wording.
+- **Workflow improvement:** Add a **Supports Drawer** per student (not exported by default) that can insert safe, approved phrasing.
+  - “With support” / “With prompting” / “Using visuals” / “Using assistive technology” modifiers.
+  - A “sensitivity guardrail” that warns if prohibited terms appear (board policy varies).
+
+### Critique: “Evidence selection” should be easier than “evidence entry”
+
+In elementary, the evidence is often already present (notes, rubrics, quick checks), but is scattered.
+- **Workflow improvement:** Evidence should be **selectable and re-usable**.
+  - Minimal v1 concept: a per-student “Evidence snippets” drawer (already in the schema as `evidence_snippets`).
+  - Allow tagging by subject/strand and marking as “strong evidence” vs “anecdotal”.
+  - The main win: reduce retyping and improve specificity.
+
+### UI emphasis recommendations for elementary defaults
+
+If the app is in “Elementary context” (homeroom):
+- Default to **Student Flow** (narrative cohesion is king).
+- Keep **Student identity** anchored: name + pronouns + flags + “Student Narrative Thread”.
+- Make **Review/Polish** a first-class step (one-screen full report view).
+
+### “V1 but high impact” elementary workflow upgrades
+
+If we want a focused set of elementary improvements with strong ROI:
+1. **Student Narrative Thread** (always-visible snapshot while writing).
+2. **Work Queue filters** oriented around real teacher batching.
+3. **Deterministic Variation Assistant** (teacher-controlled phrase variation).
+4. **Supports Drawer** for safe accommodations language.
+5. **Review Pass** mode for coherence before export.
+
+---
+
 ## 5. UI Layout: "The Three-Pane Studio" (Detailed)
 
 ```
@@ -379,78 +902,7 @@ CREATE TABLE evidence_snippets (
 ---
 
 ## 7. Development Gameplan
-
-### Phase 0: Prerequisites (Week 0)
-
-| Task | Description | Deliverable | Status |
-|------|-------------|-------------|--------|
-| 0.1 | Install Rust toolchain (Rustup) | `rustc` + `cargo` available in terminal | ✅ Done (restart VS Code to activate PATH) |
-| 0.2 | WebView2 detection + install plan | Evergreen WebView2 policy documented | ✅ Done (see Section 3A) |
-| 0.3 | Choose engine shipping approach | PyInstaller sidecar; minimal deps in `sidecar/engine-requirements.txt` | ✅ Done |
-| 0.4 | Lock contract generation approach | **Manual JSON Schema → TypeScript** (no Pydantic migration) | ✅ Done (see Section 3C) |
-| 0.5 | Define IPC protocol specification | Protocol documented in Section 3D | ✅ Done |
-| 0.6 | Create LICENSE file | MIT License in repo root | ✅ Done |
-| 0.7 | Verify Rust after PATH refresh | Run `rustc --version` in new terminal | ⏳ Pending (user action) |
-
-### Phase 0 Exit Criteria
-
-Before starting Phase 1, ALL of the following must be true:
-
-- [x] `rustc --version` returns `1.92.0` or higher in a new terminal
-- [x] `cargo --version` returns `1.92.0` or higher
-- [x] `LICENSE` file exists in repo root (MIT)
-- [x] `sidecar/engine-requirements.txt` exists with minimal deps
-- [x] IPC protocol is documented (Section 3D)
-- [x] JSON Schema contract approach is documented (Section 3C)
-
-### Phase 1: Foundation (Week 1-2)
-
-| Task | Description | Deliverable | Status |
-|------|-------------|-------------|--------|
-| 1.1 | Initialize Tauri + Vite + React + TypeScript project | `/frontend/` scaffold | ✅ Done |
-| 1.2 | Configure Tailwind CSS + Shadcn/UI | Base styling system | ✅ Done |
-| 1.3 | Create Python sidecar wrapper for existing `lib/` logic | `sidecar/main.py` | ✅ Done |
-| 1.4 | Package the Python engine as a standalone sidecar binary | `vgreport-engine.exe` (dev build) | ⏳ Next |
-| 1.5 | Implement Tauri IPC bridge (React ↔ engine) | Stable JSON message protocol | |
-| 1.6 | Set up SQLite database with schema above | `data/vgreport.db` | |
-| 1.7 | Add contract generation step (Python → TS types) | Generated TS types + CI guard | |
-| 1.8 | Build basic layout shell (three-pane) | `<AppShell />` component | |
-
-### Phase 2: Core Editing Experience (Week 3-4)
-
-| Task | Description | Deliverable |
-|------|-------------|-------------|
-| 2.1 | Student Roster sidebar with CRUD | `<Sidebar />`, `<StudentCard />` |
-| 2.2 | Frame Tabs navigation | `<FrameTabs />` |
-| 2.3 | Section Editor with template dropdown | `<SectionEditor />` |
-| 2.4 | Dynamic slot input generation | `<SlotInput />` (text, textarea, select) |
-| 2.5 | Live Preview panel with real-time rendering | `<LivePreview />` |
-| 2.6 | Autosave with visual indicator | Zustand + debounce + SQLite write |
-| 2.7 | Character count + validation feedback | Length bar, color coding |
-
-### Phase 3: Polish & Export (Week 5-6)
-
-| Task | Description | Deliverable |
-|------|-------------|-------------|
-| 3.1 | Onboarding wizard (first-launch flow) | `<OnboardingWizard />` |
-| 3.2 | Settings modal (board selection, theme) | `<SettingsModal />` |
-| 3.3 | PDF export with proper formatting | Tauri print API or `jspdf` |
-| 3.4 | CSV export for SIS import | Standard export |
-| 3.5 | Keyboard shortcuts (Ctrl+S, Tab, etc.) | Hotkey system |
-| 3.6 | Dark mode | CSS variables + system detection |
-| 3.7 | Undo/Redo stack | Command pattern in Zustand |
-
-### Phase 4: Testing & Packaging (Week 7-8)
-
-| Task | Description | Deliverable |
-|------|-------------|-------------|
-| 4.1 | Unit tests for React components | Vitest + Testing Library |
-| 4.2 | Integration tests for Python sidecar | pytest |
-| 4.3 | End-to-end test: full report generation | Playwright or Tauri test |
-| 4.4 | Build Windows installer (`.msi`) | Tauri build |
-| 4.5 | Build macOS installer (`.dmg`) | Tauri build |
-| 4.6 | User documentation / Help system | In-app help + PDF guide |
-| 4.7 | Beta testing with real teacher | Feedback loop |
+This section has moved to `docs/frontend_gameplan.md` to keep the design spec focused.
 
 ---
 
@@ -491,10 +943,17 @@ Before starting Phase 1, ALL of the following must be true:
 | 2026-01-11 | Python sidecar over rewriting in Rust/JS | Reuse existing validated logic |
 | 2026-01-11 | Product name: **VGReport** | Clear, professional, domain-relevant |
 | 2026-01-11 | Open-source licensing | Community-driven development, transparency for educators |
-| 2026-01-11 | Design for future cloud sync | Add `user_id` to schema, use UUIDs, prepare for sync layer || 2026-01-11 | Manual JSON Schema (not Pydantic) | Existing codebase uses `@dataclass`; avoid large refactor |
+| 2026-01-11 | Design for future cloud sync | Add `user_id` to schema, use UUIDs, prepare for sync layer |
+| 2026-01-11 | Manual JSON Schema (not Pydantic) | Existing codebase uses `@dataclass`; avoid large refactor |
 | 2026-01-11 | Minimal sidecar deps | Exclude pandas/pyarrow/duckdb from sidecar to keep bundle <50MB |
 | 2026-01-11 | NDJSON IPC protocol | Simple stdin/stdout JSON; no HTTP overhead for desktop app |
 | 2026-01-11 | MIT License | Maximum permissiveness for educational community adoption |
+| 2026-01-12 | Support both writing workflows | Teachers can work student-by-student or section-by-section; UI should support both |
+| 2026-01-12 | Multiple export formats | Preferences vary; support PDF-per-student, combined PDF, CSV, and clipboard |
+| 2026-01-12 | Kindergarten-first v1 scope | Design for Ontario kindergarten teachers specifically; expand later |
+| 2026-01-12 | Observation capture before writing | Teachers collect evidence during play; need a place to store observations before report writing |
+| 2026-01-12 | Term-to-term continuity | Growth language requires seeing prior term; provide side-by-side Fall/Feb/June view |
+| 2026-01-12 | ECE collaboration field | Kindergarten is team-taught; include ECE notes even if not exported |
 ---
 
 ## 11. Resolved Questions
@@ -510,23 +969,7 @@ Before starting Phase 1, ALL of the following must be true:
 ---
 
 ## 12. Next Immediate Action
-
-**Phase 0 is complete.** After restarting VS Code to activate the Rust PATH:
-
-1. **Verify Rust**: `rustc --version` and `cargo --version`
-2. **Initialize Tauri project**:
-
-```bash
-# Prerequisites: Node.js 18+, Rust toolchain active
-npm create tauri-app@latest vgreport -- --template react-ts
-cd vgreport
-npm install -D tailwindcss postcss autoprefixer
-npx tailwindcss init -p
-npx shadcn-ui@latest init
-```
-
-3. **Create contracts directory**: `mkdir contracts`
-4. **Set up sidecar structure**: See `sidecar/engine-requirements.txt`
+Implementation and next actions are tracked in `docs/frontend_gameplan.md`.
 
 ---
 

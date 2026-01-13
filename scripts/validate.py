@@ -7,6 +7,7 @@ No network calls.
 from __future__ import annotations
 
 import csv
+import hashlib
 import json
 import re
 from dataclasses import dataclass, field
@@ -631,6 +632,78 @@ def check_pii_safety(ctx: ValidationContext) -> list[str]:
     return errors
 
 
+def check_contract_types_sync() -> list[str]:
+    """Ensure IPC contract JSON Schemas and generated TS types are in sync.
+
+    Source of truth:
+    - contracts/*.schema.json
+
+    Generated output:
+    - vgreport/src/contracts/generated.ts
+
+    The generator writes sha256 markers in the TS file; this check recomputes
+    hashes and fails if they differ.
+    """
+
+    contracts_dir = WORKSPACE_ROOT / "contracts"
+    required = [
+        "ipc-error.schema.json",
+        "template.schema.json",
+        "render-comment-params.schema.json",
+        "ipc-request.schema.json",
+        "ipc-response.schema.json",
+    ]
+
+    errors: list[str] = []
+    if not contracts_dir.exists():
+        errors.append("Missing contracts/ directory (required for VGReport IPC contract sync)")
+        return errors
+
+    for name in required:
+        if not (contracts_dir / name).exists():
+            errors.append(f"Missing contracts/{name}")
+
+    generated_ts = WORKSPACE_ROOT / "vgreport" / "src" / "contracts" / "generated.ts"
+    if not generated_ts.exists():
+        errors.append("Missing vgreport/src/contracts/generated.ts (run: cd vgreport && npm run contracts:gen)")
+        return errors
+
+    marker_re = re.compile(r"^//\s+schema:(?P<file>contracts/[^\s]+)\s+sha256:(?P<sha>[0-9a-f]{64})\s*$")
+    markers: dict[str, str] = {}
+    for line in generated_ts.read_text(encoding="utf-8").splitlines():
+        m = marker_re.match(line)
+        if m:
+            markers[m.group("file")] = m.group("sha")
+
+    for name in required:
+        rel = f"contracts/{name}"
+        schema_path = contracts_dir / name
+        try:
+            raw_bytes = schema_path.read_bytes()
+            raw = raw_bytes.decode("utf-8")
+        except Exception as e:
+            errors.append(f"Failed to read {rel}: {e}")
+            continue
+
+        try:
+            json.loads(raw)
+        except Exception as e:
+            errors.append(f"Invalid JSON in {rel}: {e}")
+            continue
+
+        sha = hashlib.sha256(raw_bytes).hexdigest()
+        found = markers.get(rel)
+        if not found:
+            errors.append(f"Missing schema marker for {rel} in vgreport/src/contracts/generated.ts")
+        elif found != sha:
+            errors.append(
+                f"Contract types out of date for {rel} (expected sha256:{sha}, found sha256:{found}). "
+                "Run: cd vgreport && npm run contracts:gen"
+            )
+
+    return errors
+
+
 def main() -> int:
     failures: list[str] = []
 
@@ -659,7 +732,10 @@ def main() -> int:
     markdown_docs = [
         WORKSPACE_ROOT / "index.md",
         WORKSPACE_ROOT / "README.md",
+        WORKSPACE_ROOT / "contracts" / "README.md",
         WORKSPACE_ROOT / "docs" / "framework.md",
+        WORKSPACE_ROOT / "docs" / "frontend.md",
+        WORKSPACE_ROOT / "docs" / "frontend_gameplan.md",
         WORKSPACE_ROOT / "docs" / "infrastructure.md",
         WORKSPACE_ROOT / "docs" / "glossary.md",
         WORKSPACE_ROOT / "docs" / "requirements.md",
@@ -720,6 +796,11 @@ def main() -> int:
     # Cross-file checks (only run if schema-level validation succeeded)
     if not failures:
         ctx = build_validation_context()
+
+        contract_errors = check_contract_types_sync()
+        if contract_errors:
+            failures.append("IPC contract types are out of sync:")
+            failures.extend([f"  - {m}" for m in contract_errors])
 
         dup_errors = check_duplicate_ids(markdown_front_matters)
         if dup_errors:

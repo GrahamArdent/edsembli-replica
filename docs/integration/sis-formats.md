@@ -2,12 +2,12 @@
 id: doc.integration.sis_formats
 type: document
 title: SIS Integration Formats
-version: 0.1.0
-status: draft
+version: 0.1.2
+status: stable
 tags: [integration, sis, export, edsembli]
 refs:
   - ref.ontario.kindergarten.program.2016
-updated: 2026-01-11
+updated: 2026-01-12
 ---
 
 # SIS Integration Formats
@@ -22,6 +22,11 @@ The framework supports two primary export workflows:
 2. **Assembled Comment Export**: Export filled, student-specific comments ready for SIS entry
 
 Both workflows produce SIS-compatible formats while preserving metadata for traceability.
+
+In addition, VGReport (the local desktop app) supports a **Kindergarten-specific 12-box workflow** (4 Frames × 3 Sections). For maximum SIS compatibility, VGReport defines two “golden” Kindergarten exports:
+
+1. **Clipboard-per-box**: copy/paste each box into SIS fields (highest compatibility)
+2. **12-box CSV**: a stable, Excel-friendly interchange format (backup + bulk workflows)
 
 ---
 
@@ -197,6 +202,74 @@ To continue developing problem-solving skills, we encourage Emma to try multiple
 
 ---
 
+## VGReport Kindergarten 12-Box Exports (Golden Outputs)
+
+These exports are designed for the VGReport Kindergarten workflow where comments are authored as **12 independent fields** rather than a single 3-section assembled narrative.
+
+### A) Clipboard-per-box (Primary)
+
+**Purpose:** Maximize compatibility by supporting the lowest-common-denominator workflow: paste text into SIS “live form” fields.
+
+**Characteristics:**
+- One clipboard payload per box (Frame × Section)
+- Text is copied as plain text
+- Newlines are normalized to CRLF (`\r\n`) for Windows-friendly pasting
+- No metadata is included in the pasted text
+
+**Recommended UI behaviors (VGReport):**
+- Provide a copy button on each box
+- Optionally provide “Copy all 12 boxes” which copies a clearly delimited block with headings so the user can paste sequentially
+
+**Example payload (single box):**
+```
+Emma demonstrates a strong sense of belonging in our classroom community. She participates in group activities and shows respect for peers.
+```
+
+### B) 12-box CSV (Secondary; Excel-friendly)
+
+**Purpose:** Provide a stable interchange format compatible with Excel and downstream tooling, even when SIS import behavior is unclear.
+
+**Encoding:** UTF-8 with BOM (Excel compatibility)
+
+**Line Endings:** CRLF (Windows)
+
+**Delimiter:** Comma (`,`)
+
+**Quoting:** Always quote every field (most robust when comments include commas, quotes, or newlines)
+
+**Column order (stable):**
+
+Student identifiers:
+- `student_local_id` (string) — required
+- `student_last_name` (string) — recommended
+- `student_first_name` (string) — recommended
+- `report_period_id` (string) — required (e.g., `fall`, `winter`, `spring`)
+
+Kindergarten boxes (12 fields; required for “export-ready”):
+- `belonging_key_learning`
+- `belonging_growth`
+- `belonging_next_steps`
+- `self_regulation_key_learning`
+- `self_regulation_growth`
+- `self_regulation_next_steps`
+- `literacy_math_key_learning`
+- `literacy_math_growth`
+- `literacy_math_next_steps`
+- `problem_solving_key_learning`
+- `problem_solving_growth`
+- `problem_solving_next_steps`
+
+**Notes:**
+- Frame slugs map to canonical taxonomy keys: `belonging` → `frame.belonging`, `self_regulation` → `frame.self_regulation`, `literacy_math` → `frame.literacy_math`, `problem_solving` → `frame.problem_solving`.
+- Section slugs map to canonical section keys: `key_learning`, `growth`, `next_steps`.
+
+**Sample header:**
+```csv
+"student_local_id","student_last_name","student_first_name","report_period_id","belonging_key_learning","belonging_growth","belonging_next_steps","self_regulation_key_learning","self_regulation_growth","self_regulation_next_steps","literacy_math_key_learning","literacy_math_growth","literacy_math_next_steps","problem_solving_key_learning","problem_solving_growth","problem_solving_next_steps"
+```
+
+---
+
 ## SIS-Specific Considerations
 
 ### Edsembli
@@ -224,8 +297,8 @@ To continue developing problem-solving skills, we encourage Emma to try multiple
 - Full report: 4000 chars (framework default: 1500)
 
 **Customization:**
-- Use board config (`config/boards/edsembli.yaml`) to adjust limits
-- Export command respects board-specific limits
+- Use board config (`config/boards/*.yaml`) to adjust limits
+- If an Edsembli-specific preset exists (e.g., `config/boards/edsembli.yaml`), it should define recommended limits and export defaults
 
 ### PowerSchool / Aspen / Other SIS
 

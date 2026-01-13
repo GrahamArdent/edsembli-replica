@@ -21,4 +21,5 @@ This folder contains periodic repository audits (snapshots of structure, validat
 
 ## Latest
 
+- [audit.2026-01-12.md](audit.2026-01-12.md)
 - [audit.2026-01-11.md](audit.2026-01-11.md)

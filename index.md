@@ -2,18 +2,18 @@
 id: doc.index
 type: document
 title: Canonical Index
-version: 0.2.0
+version: 0.2.1
 status: stable
 tags: [index, canonical, source-of-truth]
 refs: []
-updated: 2026-01-11
+updated: 2026-01-12
 ---
 
 # Canonical Index
 
 Start here for the current, authoritative documents and the saved research inputs.
 
-Last updated: 2026-01-11
+Last updated: 2026-01-12
 
 ## Project Status
 
@@ -131,6 +131,8 @@ Last updated: 2026-01-11
 
 - [Schemas](schemas/README.md)
 	- JSON Schema contracts for canonical artifacts (10 schemas).
+- [IPC contracts](contracts/README.md)
+	- JSON Schema contracts for the VGReport UI ↔ engine boundary (schema → TS types, drift-gated by validation).
 - [Validation scripts](scripts/README.md)
 	- Local validation and linting.
 - [Testing and validation](docs/TESTING.md)
@@ -169,6 +171,11 @@ Last updated: 2026-01-11
 - [Finding Assembly Report Card Software Information](sources/Finding%20Assembly%20Report%20Card%20Software%20Information.md)
 	- Saved background research used to inform the framework.
 
+- [Edsembli Report Card Software Details](sources/edsembli/Edsembli%20Report%20Card%20Software%20Details.md)
+	- Saved notes describing report card fields and constraints (Kindergarten, elementary, secondary).
+- [Edsembli API Access and Data Options](sources/edsembli/Edsembli%20API%20Access%20and%20Data%20Options.md)
+	- Saved notes describing OneRoster/OAuth/OData options and import/export formats.
+
 ## Planned artifacts (not yet created)
 
 - Traceability matrix extensions: additional derived views (e.g., per-frame exports)
@@ -185,8 +192,20 @@ Last updated: 2026-01-11
 - [Roadmap](docs/ROADMAP.md)
 - [Implementation Gameplan](docs/GAMEPLAN.md)
 	- Phased development plan with tasks, deliverables, and success metrics.
-- [Frontend Gameplan](docs/frontend.md)
+- [VGReport Frontend Design](docs/frontend.md)
+- [VGReport Frontend Gameplan](docs/frontend_gameplan.md)
 	- Tauri/React UI plan (phases, deliverables, and UX layout).
+- [VGReport – Tauri-Oriented E2E Testing](docs/tauri_e2e_testing.md)
+	- Minimal Tauri runtime smoke E2E strategy (launches tauri dev and validates boot).
+- [VGReport Kindergarten Alignment Gameplan](docs/vgreport_kindergarten_alignment_gameplan.md)
+	- Kindergarten-only alignment work to match Edsembli-oriented input expectations.
+
+- [Edsembli Requirements vs VGReport](docs/edsembli_report_card_requirements_vs_vgreport.md)
+	- Gap/options analysis between Edsembli-style report card requirements and VGReport scope.
+- [Edsembli Specifics and Numbers](docs/edsembli_specifics_and_numbers.md)
+	- Extract of all explicit numbers/scales/URLs mentioned in the saved Edsembli notes.
+- [Edsembli Other Grades Design Capture](docs/edsembli_other_grades_design.md)
+	- Design reference for Grades 1–8 and 9–12 structures.
 - [Changelog](docs/CHANGELOG.md)
 - [Contributing Guide](docs/CONTRIBUTING.md)
 - [Release and versioning](docs/RELEASE.md)

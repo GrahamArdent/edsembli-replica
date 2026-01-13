@@ -17,6 +17,7 @@ DOCS_SITE = WORKSPACE_ROOT / "docs_site"
 # Folders to sync from root → docs_site
 SYNC_FOLDERS = [
     "audits",
+    "contracts",
     "datasets",
     "decisions",
     "docs",

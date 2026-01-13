@@ -39,6 +39,17 @@ python scripts/validate.py
 ```
 Checks all YAML files against JSON Schemas and verifies Markdown front matter.
 
+### VGReport IPC contracts (schema → TypeScript)
+
+The UI ↔ engine contract is defined as JSON Schema in `contracts/` and compiled to TypeScript types.
+
+```bash
+cd vgreport
+npm run contracts:gen
+```
+
+The main validation gate (`python scripts/validate.py` and `./check`) fails if the generated types are out of date.
+
 ### Linting (references + placeholders)
 ```bash
 python scripts/lint.py

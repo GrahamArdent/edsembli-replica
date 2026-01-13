@@ -2,17 +2,32 @@
 id: doc.guidance.comment_assembly
 type: document
 title: Comment Assembly Rules
-version: 0.1.0
-status: draft
+version: 0.1.2
+status: stable
 tags: [guidance, assembly, comments, col]
 refs:
   - ref.ontario.kindergarten.program.2016
-updated: 2026-01-11
+updated: 2026-01-12
 ---
 
 # Comment Assembly Rules
 
 This document defines constraints for assembling complete CoL narrative comments from templates.
+
+## Applicability to VGReport Kindergarten (12-box workflow)
+
+VGReport’s Kindergarten UX is a **12-box workflow** (4 Frames × 3 Sections), where each box is entered and exported independently.
+
+Therefore:
+- The **3-section assembled comment** rules in this document apply directly to:
+  - CLI/template-bank workflows that generate a single combined narrative, and
+  - any export format that produces a single 3-section comment.
+- For **VGReport 12-box exports**, constraints SHOULD be evaluated **per box** (per Frame × Section), because SIS entry and copy/paste happen per box.
+
+Guidance for VGReport:
+- Hard blockers (export-stopping) SHOULD be per-box: empty box, unapproved box, hard render/placeholder errors.
+- Soft guardrails (warnings) MAY be derived from these assembly rules (sentence length, readability targets), but SHOULD remain non-blocking unless explicitly configured.
+- The UI MAY also provide student-level rollups (e.g., “3/12 boxes too long”), but those rollups MUST be traceable to specific boxes.
 
 ## Section requirements
 

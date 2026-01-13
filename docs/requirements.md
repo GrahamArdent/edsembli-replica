@@ -2,11 +2,11 @@
 id: doc.requirements
 type: document
 title: Functional Requirements
-version: 0.1.0
-status: draft
+version: 0.1.2
+status: stable
 tags: [requirements, governance]
 refs: []
-updated: 2026-01-11
+updated: 2026-01-12
 ---
 
 # Functional Requirements
@@ -38,3 +38,14 @@ updated: 2026-01-11
 ## 5. Workflow
 
 - **req.workflow.1**: Changes to `docs/framework.md` (Narrative) MUST be manually reviewed to ensure they align with `docs/infrastructure.md` (Spec).
+
+## 6. VGReport Kindergarten Completeness (12-box workflow)
+
+These requirements define what VGReport considers “complete” and “export-ready” for the Kindergarten 12-box workflow (4 Frames × 3 Sections).
+
+- **req.kg.complete.1**: The system MUST treat each Kindergarten box (Frame × Section) as an independent required field for export readiness.
+- **req.kg.complete.2**: For Edsembli-aligned exports, the system MUST block export if any of the 12 Kindergarten boxes are empty.
+- **req.kg.complete.3**: For Edsembli-aligned exports, the system MUST block export if any of the 12 Kindergarten boxes are not approved (Teacher/ECE approval workflow).
+- **req.kg.complete.4**: The system MUST block export on hard template/render errors (e.g., required placeholder missing) and MUST surface a clear, actionable error message.
+- **req.kg.complete.5**: The system SHOULD warn (but MUST NOT block export) on soft guardrails such as sentence-count heuristics, repetition indicators, and box-fit heuristic overflows unless explicitly configured otherwise.
+- **req.kg.complete.6**: Any UI label claiming “complete” (e.g., progress summary) MUST state whether it means “draft complete” (non-empty) or “export-ready” (approved + non-empty + no blocking errors).

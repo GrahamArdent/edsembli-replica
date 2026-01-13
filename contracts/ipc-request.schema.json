@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://edsembli.local/contracts/ipc-request.schema.json",
+  "title": "IpcRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": { "type": "string" },
+    "method": {
+      "type": "string",
+      "enum": ["health", "list_templates", "get_template", "render_comment", "debug_info"]
+    },
+    "params": {
+      "type": "object",
+      "default": {}
+    }
+  },
+  "required": ["id", "method", "params"]
+}

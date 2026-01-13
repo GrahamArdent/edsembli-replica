@@ -21,6 +21,13 @@ Run these before opening a PR:
 - `python scripts/lint.py` (reference integrity + placeholder conventions)
 - `python scripts/coverage.py` (indicator coverage)
 
+VGReport (UI ↔ engine) contract drift prevention:
+
+- IPC contracts live in `contracts/`.
+- Generated TS types live in `vgreport/src/contracts/generated.ts`.
+- `python scripts/validate.py` fails if schemas and generated TS are out of sync.
+- Regenerate via: `cd vgreport; npm run contracts:gen`
+
 ## CI
 
 GitHub Actions runs the same checks on pull requests.

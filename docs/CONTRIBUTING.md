@@ -142,6 +142,24 @@ When modifying JSON Schema files:
    ```
 4. **Document breaking changes** in `CHANGELOG.md`
 
+### 4.3A Updating VGReport IPC Contracts (`contracts/*.schema.json`)
+
+When modifying IPC contracts (UI ↔ Python engine):
+
+1. Edit the schema(s) in `contracts/`.
+2. Regenerate TypeScript types:
+   ```bash
+   cd vgreport
+   npm install
+   npm run contracts:gen
+   ```
+3. Validate the repo gate:
+   ```bash
+   python scripts/validate.py
+   ```
+
+`scripts/validate.py` fails if `vgreport/src/contracts/generated.ts` is out of sync with `contracts/`.
+
 ### 4.4 Modifying Validation/Lint Scripts
 
 When changing `scripts/validate.py` or `scripts/lint.py`:
