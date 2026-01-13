@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
-import { Student, FrameId, ReportPeriod, ReportDraft, CommentDraft, SectionId, Template, type UserRole, type DraftStatus, type Tier1ValidationConfig } from '../types';
+import { Student, FrameId, ReportPeriod, ReportDraft, CommentDraft, SectionId, Template, type UserRole, type DraftStatus, type Tier1ValidationConfig, type RoleLabels } from '../types';
 import { dbDeleteStudent, dbGetSetting, dbInit, dbListDrafts, dbListStudents, dbSetSetting, dbUpsertDraft, dbUpsertStudent, type DraftRow } from '../services/db';
 import { normalizeDraftMeta } from './roleApproval';
 
@@ -75,6 +75,9 @@ interface AppState {
 
   currentRole: UserRole;
   setCurrentRole: (role: UserRole) => Promise<void>;
+
+  roleLabels: RoleLabels;
+  setRoleLabels: (patch: Partial<RoleLabels>) => Promise<void>;
   setDraftStatus: (studentId: string, frameId: FrameId, sectionId: SectionId, status: DraftStatus) => void;
 
   tier1Validation: Tier1ValidationConfig;
@@ -120,6 +123,21 @@ const DEFAULT_TIER1_VALIDATION: Tier1ValidationConfig = {
   minSentences: 2,
   maxLineBreaks: 2,
 };
+
+const DEFAULT_ROLE_LABELS: RoleLabels = {
+  teacher: 'Teacher',
+  ece: 'ECE',
+};
+
+function coerceRoleLabels(value: unknown): RoleLabels {
+  const v = (value && typeof value === 'object') ? (value as any) : {};
+  const teacher = typeof v.teacher === 'string' ? v.teacher.trim() : '';
+  const ece = typeof v.ece === 'string' ? v.ece.trim() : '';
+  return {
+    teacher: teacher || DEFAULT_ROLE_LABELS.teacher,
+    ece: ece || DEFAULT_ROLE_LABELS.ece,
+  };
+}
 
 function coerceTier1Validation(value: unknown): Tier1ValidationConfig {
   const v = (value && typeof value === 'object') ? (value as any) : {};
@@ -189,6 +207,7 @@ export const useAppStore = create<AppState>((set) => ({
   selectedFrameId: 'belonging_and_contributing',
   currentPeriod: 'february',
   currentRole: 'teacher',
+  roleLabels: DEFAULT_ROLE_LABELS,
   tier1Validation: DEFAULT_TIER1_VALIDATION,
   boardId: 'tcdsb',
   theme: 'system',
@@ -230,6 +249,7 @@ export const useAppStore = create<AppState>((set) => ({
     const savedPeriod = await dbGetSetting<ReportPeriod>('currentPeriod');
     const savedHasOnboarded = await dbGetSetting<boolean>('hasOnboarded');
     const savedRole = await dbGetSetting<UserRole>('currentRole');
+    const savedRoleLabels = await dbGetSetting<RoleLabels>('roleLabels');
     const savedTier1Validation = await dbGetSetting<Tier1ValidationConfig>('tier1Validation');
 
     let students = await dbListStudents();
@@ -271,6 +291,7 @@ export const useAppStore = create<AppState>((set) => ({
       selectedStudentId: students[0]?.id ?? null,
       currentPeriod: period,
       currentRole: savedRole ?? 'teacher',
+      roleLabels: coerceRoleLabels(savedRoleLabels ?? undefined),
       tier1Validation: coerceTier1Validation(savedTier1Validation ?? undefined),
       boardId: savedBoardId ?? 'tcdsb',
       theme: savedTheme ?? 'system',
@@ -289,6 +310,13 @@ export const useAppStore = create<AppState>((set) => ({
   setCurrentRole: async (role) => {
     set({ currentRole: role });
     await dbSetSetting('currentRole', role);
+  },
+
+  setRoleLabels: async (patch) => {
+    set((state) => ({
+      roleLabels: coerceRoleLabels({ ...state.roleLabels, ...patch }),
+    }));
+    await dbSetSetting('roleLabels', useAppStore.getState().roleLabels);
   },
 
   setTier1Validation: async (patch) => {

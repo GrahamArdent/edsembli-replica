@@ -12,6 +12,7 @@ export function Workspace() {
     selectedFrameId,
     setSelectedFrameId,
     currentRole,
+    roleLabels,
     saveStatus,
     lastSavedAt,
     lastSaveError,
@@ -60,7 +61,7 @@ export function Workspace() {
             )}
             title="Current role affects draft author and approval"
           >
-            Role: {currentRole === 'teacher' ? 'Teacher' : 'ECE'}
+            Role: {currentRole === 'teacher' ? roleLabels.teacher : roleLabels.ece}
           </span>
           <Button
             variant="outline"

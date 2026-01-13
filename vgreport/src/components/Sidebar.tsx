@@ -1,10 +1,11 @@
 import { useAppStore } from '../store/useAppStore';
 import { Pencil, Trash2 } from 'lucide-react';
 import { cn } from '../lib/utils'; // Assuming this exists from shadcn init
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
 import { FRAMES, SECTIONS } from '../constants';
+import { type RosterFilter, isBoxExportReady, studentBoxCounts, studentNeedsReview } from '../store/rosterStatus';
 
 export function Sidebar() {
   const {
@@ -27,6 +28,8 @@ export function Sidebar() {
 
   const [deleteOpen, setDeleteOpen] = useState(false);
   const [deleteStudentId, setDeleteStudentId] = useState<string | null>(null);
+
+  const [rosterFilter, setRosterFilter] = useState<RosterFilter>('all');
 
   const canCreate = useMemo(() => firstName.trim().length > 0 && lastName.trim().length > 0, [firstName, lastName]);
 
@@ -77,11 +80,48 @@ export function Sidebar() {
   const computeFrameCompletion = (studentId: string, frameId: string) => {
     const studentDraft = drafts[studentId];
     const frameComments = (studentDraft?.comments as any)?.[frameId] || {};
-    return SECTIONS.every(s => {
-      const rendered = frameComments?.[s.id]?.rendered;
-      return typeof rendered === 'string' && rendered.trim().length > 0;
-    });
+    return SECTIONS.every(s => isBoxExportReady(frameComments?.[s.id]));
   };
+
+  const rosterRows = useMemo(() => {
+    return students.map((student) => {
+      const draft = drafts[student.id];
+      const counts = studentBoxCounts(draft);
+      const needsReview = studentNeedsReview(draft);
+      return {
+        student,
+        counts,
+        needsReview,
+        incomplete: counts.ready < counts.total,
+      };
+    });
+  }, [students, drafts]);
+
+  const filteredRows = useMemo(() => {
+    switch (rosterFilter) {
+      case 'incomplete':
+        return rosterRows.filter(r => r.incomplete);
+      case 'needs_review':
+        return rosterRows.filter(r => r.needsReview);
+      case 'all':
+      default:
+        return rosterRows;
+    }
+  }, [rosterRows, rosterFilter]);
+
+  const filterCounts = useMemo(() => {
+    const incomplete = rosterRows.reduce((n, r) => n + (r.incomplete ? 1 : 0), 0);
+    const needsReview = rosterRows.reduce((n, r) => n + (r.needsReview ? 1 : 0), 0);
+    return { incomplete, needsReview };
+  }, [rosterRows]);
+
+  useEffect(() => {
+    if (!selectedStudentId) return;
+    const visible = filteredRows.some(r => r.student.id === selectedStudentId);
+    if (!visible) {
+      setSelectedStudentId(filteredRows[0]?.student.id ?? null);
+    }
+  }, [filteredRows, selectedStudentId, setSelectedStudentId]);
 
   return (
     <div className="w-64 border-r border-border bg-muted h-screen flex flex-col">
@@ -97,9 +137,42 @@ export function Sidebar() {
           Classroom ({students.length})
         </div>
 
-        {students.map((student) => {
+        <div className="px-2 pb-2">
+          <div className="flex gap-1">
+            <Button
+              type="button"
+              variant={rosterFilter === 'all' ? 'default' : 'outline'}
+              size="sm"
+              className="h-8 text-xs flex-1"
+              onClick={() => setRosterFilter('all')}
+            >
+              All
+            </Button>
+            <Button
+              type="button"
+              variant={rosterFilter === 'incomplete' ? 'default' : 'outline'}
+              size="sm"
+              className="h-8 text-xs flex-1"
+              onClick={() => setRosterFilter('incomplete')}
+              title="Students with any non-ready boxes"
+            >
+              Incomplete ({filterCounts.incomplete})
+            </Button>
+            <Button
+              type="button"
+              variant={rosterFilter === 'needs_review' ? 'default' : 'outline'}
+              size="sm"
+              className="h-8 text-xs flex-1"
+              onClick={() => setRosterFilter('needs_review')}
+              title="Students with ECE-authored drafts needing approval"
+            >
+              Needs review ({filterCounts.needsReview})
+            </Button>
+          </div>
+        </div>
+
+        {filteredRows.map(({ student, counts, needsReview }) => {
           const isSelected = selectedStudentId === student.id;
-          const completedFrames = FRAMES.reduce((acc, f) => acc + (computeFrameCompletion(student.id, f.id) ? 1 : 0), 0);
           return (
             <div
               key={student.id}
@@ -147,7 +220,11 @@ export function Sidebar() {
                       );
                     })}
                   </div>
-                  <span className="text-muted-foreground">{completedFrames}/4 Frames</span>
+                  <span className={cn("text-muted-foreground", needsReview ? "text-amber-700" : "")}
+                    title={needsReview ? "Needs review" : undefined}
+                  >
+                    {counts.ready}/{counts.total} boxes{needsReview ? ' • Needs review' : ''}
+                  </span>
                 </div>
               </div>
 

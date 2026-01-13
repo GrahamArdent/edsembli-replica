@@ -26,6 +26,9 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
   const currentRole = useAppStore(s => s.currentRole);
   const setCurrentRole = useAppStore(s => s.setCurrentRole);
 
+  const roleLabels = useAppStore(s => s.roleLabels);
+  const setRoleLabels = useAppStore(s => s.setRoleLabels);
+
   const tier1Validation = useAppStore(s => s.tier1Validation);
   const setTier1Validation = useAppStore(s => s.setTier1Validation);
 
@@ -49,11 +52,36 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
               value={currentRole}
               onChange={(e) => void setCurrentRole(e.target.value as UserRole)}
             >
-              <option value="teacher">Teacher</option>
-              <option value="ece">ECE</option>
+              <option value="teacher">{roleLabels.teacher}</option>
+              <option value="ece">{roleLabels.ece}</option>
             </select>
             <div className="text-[11px] text-muted-foreground">
               Role affects draft authoring and approval status.
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-xs font-medium text-foreground">Role Labels</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-[11px] text-muted-foreground">Teacher label</label>
+                <input
+                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background"
+                  value={roleLabels.teacher}
+                  onChange={(e) => void setRoleLabels({ teacher: e.target.value })}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[11px] text-muted-foreground">ECE label</label>
+                <input
+                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background"
+                  value={roleLabels.ece}
+                  onChange={(e) => void setRoleLabels({ ece: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="text-[11px] text-muted-foreground">
+              Changes wording only; permissions stay the same.
             </div>
           </div>
 

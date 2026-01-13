@@ -2,6 +2,11 @@ export type ReportPeriod = 'initial' | 'february' | 'june';
 
 export type UserRole = 'teacher' | 'ece';
 
+export type RoleLabels = {
+  teacher: string;
+  ece: string;
+};
+
 export type DraftStatus = 'draft' | 'approved';
 
 export type Tier1ValidationConfig = {

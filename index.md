@@ -225,6 +225,7 @@ Last updated: 2026-01-12
 - [ADR 0003: Template Library Format](decisions/0003-template-library-format.md)
 - [ADR 0004: Placeholder Convention](decisions/0004-placeholder-convention.md)
 - [ADR 0005: ID Naming Convention](decisions/0005-id-naming-convention.md)
+- [ADR 0006: Placeholder Aliases](decisions/0006-placeholder-aliases.md)
 
 ### New ADRs (docs/adr/ folder)
 

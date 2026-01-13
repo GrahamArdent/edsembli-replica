@@ -2,7 +2,7 @@
 id: doc.changelog
 type: document
 title: Changelog
-version: 0.1.2
+version: 0.1.3
 status: draft
 tags: [changelog]
 refs: []
@@ -22,6 +22,10 @@ The format is loosely based on Keep a Changelog, and this project aims to follow
 - VGReport: Ctrl+K quick student search
 - VGReport: Tier-1 validation heuristics (warn-only) with user-tunable thresholds
 - VGReport: repetition warning for identical box outputs
+- VGReport: work-queue filters (All / Incomplete / Needs review)
+- VGReport: modifier phrase picker for slot inputs
+- VGReport: configurable role display labels
+- Sidecar: placeholder alias support at render-time (ADR-0006)
 
 ### Added (2026-01-12)
 

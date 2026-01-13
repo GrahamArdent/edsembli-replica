@@ -83,3 +83,31 @@ def test_fill_slots_length_warning():
     assert result.success
     assert len(result.warnings) > 0
     assert "too short" in result.warnings[0].lower()
+
+
+def test_fill_slots_placeholder_alias_name_maps_to_child():
+    template = {
+        "text": "{Name} shows persistence.",
+        "slots": ["child"],
+        "section": "key_learning",
+    }
+    child_data = {"child": "Alex", "pronoun_subject": "they"}
+
+    result = fill_slots(template, child_data)
+
+    assert result.success
+    assert result.filled_text == "Alex shows persistence."
+
+
+def test_fill_slots_placeholder_alias_pronoun_maps_to_pronoun_subject():
+    template = {
+        "text": "{Name} is working hard. {He/She} is proud.",
+        "slots": ["child", "pronoun_subject"],
+        "section": "key_learning",
+    }
+    child_data = {"child": "Alex", "pronoun_subject": "they"}
+
+    result = fill_slots(template, child_data)
+
+    assert result.success
+    assert result.filled_text == "Alex is working hard. they is proud."

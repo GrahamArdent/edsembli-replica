@@ -5,9 +5,21 @@ import { sidecar } from '../services/sidecar';
 import { useAppStore } from '../store/useAppStore';
 import { Button } from './ui/button';
 import { analyzeTier1 } from '../validation/tier1';
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 
 const EMPTY_SLOTS: Record<string, string> = {};
 const EMPTY_COMMENT: CommentDraft = { slots: EMPTY_SLOTS };
+
+const MODIFIER_PHRASES: string[] = [
+  'independently',
+  'with support',
+  'with guidance',
+  'with prompting',
+  'with reminders',
+  'with encouragement',
+  'with peer support',
+  'when provided with',
+];
 
 interface SectionEditorProps {
   section: { id: SectionId; label: string };
@@ -23,6 +35,7 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
   const currentRole = useAppStore(s => s.currentRole);
   const setDraftStatus = useAppStore(s => s.setDraftStatus);
   const tier1Validation = useAppStore(s => s.tier1Validation);
+  const roleLabels = useAppStore(s => s.roleLabels);
 
   const comment = useAppStore(s => {
     const draft = s.drafts[student.id];
@@ -56,6 +69,38 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
   const [isRendering, setIsRendering] = useState(false);
   const [renderErr, setRenderErr] = useState<string | null>(null);
   const renderTimer = useRef<number | null>(null);
+
+  const [openModifierFor, setOpenModifierFor] = useState<string | null>(null);
+  const slotRefs = useRef<Record<string, HTMLTextAreaElement | null>>({});
+
+  const insertModifier = (key: string, phrase: string) => {
+    const current = String((slots as any)[key] ?? '');
+    const el = slotRefs.current[key];
+    const start = typeof el?.selectionStart === 'number' ? el.selectionStart : current.length;
+    const end = typeof el?.selectionEnd === 'number' ? el.selectionEnd : current.length;
+
+    const before = current.slice(0, start);
+    const after = current.slice(end);
+
+    const needsSpace = before.length > 0 && !/[\s\n]$/.test(before);
+    const insertion = (needsSpace ? ' ' : '') + phrase;
+    const next = before + insertion + after;
+
+    setSlotValue(key, next);
+    setOpenModifierFor(null);
+
+    requestAnimationFrame(() => {
+      const nextEl = slotRefs.current[key];
+      if (!nextEl) return;
+      nextEl.focus();
+      const pos = start + insertion.length;
+      try {
+        nextEl.setSelectionRange(pos, pos);
+      } catch {
+        // ignore
+      }
+    });
+  };
 
   const handleTemplateSelect = (template: Template) => {
     const nextSlots: Record<string, string> = { ...(slots as any) };
@@ -136,7 +181,7 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
             }
             title="Draft author"
           >
-            {author === 'teacher' ? 'Teacher' : 'ECE'}
+            {author === 'teacher' ? roleLabels.teacher : roleLabels.ece}
           </span>
           <span
             className={
@@ -190,12 +235,51 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
 
           {slotKeys.map((key) => (
             <div key={key} className="space-y-1">
-              <label className="text-xs font-medium text-gray-700">
-                {key.replace(/_/g, ' ')}
-              </label>
+              <div className="flex items-center justify-between gap-2">
+                <label className="text-xs font-medium text-gray-700">
+                  {key.replace(/_/g, ' ')}
+                </label>
+
+                <Popover
+                  open={openModifierFor === key}
+                  onOpenChange={(v) => setOpenModifierFor(v ? key : null)}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-7 px-2 text-[11px]"
+                      disabled={!selectedTemplate}
+                      title="Insert a common modifier phrase"
+                    >
+                      Insert modifier
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-56 p-2" align="end">
+                    <div className="text-[11px] text-muted-foreground mb-1">Common phrases</div>
+                    <div className="flex flex-col">
+                      {MODIFIER_PHRASES.map((phrase) => (
+                        <Button
+                          key={phrase}
+                          type="button"
+                          variant="ghost"
+                          className="justify-start h-8 px-2 text-xs"
+                          onClick={() => insertModifier(key, phrase)}
+                        >
+                          {phrase}
+                        </Button>
+                      ))}
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
               <textarea
                 value={String((slots as any)[key] ?? '')}
                 onChange={(e) => setSlotValue(key, e.target.value)}
+                ref={(el) => {
+                  slotRefs.current[key] = el;
+                }}
                 className="w-full h-20 p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none font-sans text-gray-800 leading-relaxed"
                 placeholder={`Enter ${key.replace(/_/g, ' ')}...`}
               />
