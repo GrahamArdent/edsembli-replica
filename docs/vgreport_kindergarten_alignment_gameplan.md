@@ -2,7 +2,7 @@
 id: doc.vgreport.kindergarten_alignment_gameplan
 type: document
 title: VGReport Kindergarten Alignment Gameplan (Edsembli-Oriented Input)
-version: 0.2.4
+version: 0.2.5
 status: draft
 tags: [gameplan, vgreport, kindergarten, alignment, edsembli, user-roles]
 refs:
@@ -26,6 +26,7 @@ This is a **design + execution plan**. It does **not** implement anything.
 - Phase B completed (2026-01-12): role system + approval workflow persisted in local SQLite.
 - Phase C completed (2026-01-12): Ctrl+K quick student search + Tier-1 validation heuristics (warn-only) including repetition warning.
 - Phase D completed (2026-01-12): placeholder aliases + roster work-queue filters + modifier picker + configurable role labels.
+- Phase E completed (2026-01-12): Export Center + golden exports (per-box clipboard + 12-box CSV).
 
 ## Scope
 

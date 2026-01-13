@@ -2,7 +2,7 @@
 id: doc.changelog
 type: document
 title: Changelog
-version: 0.1.3
+version: 0.1.4
 status: draft
 tags: [changelog]
 refs: []
@@ -16,6 +16,10 @@ All notable changes to this repository’s *canonical* artifacts are documented 
 The format is loosely based on Keep a Changelog, and this project aims to follow Semantic Versioning where it makes sense for schemas/artifacts.
 
 ## [Unreleased]
+
+### Added (2026-01-12)
+
+- VGReport: Export Center presets + Kindergarten golden exports (per-box clipboard copy + 12-box CSV)
 
 ### Added (2026-01-12)
 

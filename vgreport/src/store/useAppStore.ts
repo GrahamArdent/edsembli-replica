@@ -89,6 +89,9 @@ interface AppState {
   theme: 'light' | 'dark' | 'system';
   setTheme: (theme: 'light' | 'dark' | 'system') => Promise<void>;
 
+  exportPresetId: 'clipboard' | 'csv_student' | 'csv_class' | 'pdf_student';
+  setExportPresetId: (presetId: 'clipboard' | 'csv_student' | 'csv_class' | 'pdf_student') => Promise<void>;
+
   hasOnboarded: boolean;
   completeOnboarding: () => Promise<void>;
   templates: Template[];
@@ -211,6 +214,7 @@ export const useAppStore = create<AppState>((set) => ({
   tier1Validation: DEFAULT_TIER1_VALIDATION,
   boardId: 'tcdsb',
   theme: 'system',
+  exportPresetId: 'clipboard',
   hasOnboarded: false,
   templates: [],
   drafts: {},
@@ -251,6 +255,7 @@ export const useAppStore = create<AppState>((set) => ({
     const savedRole = await dbGetSetting<UserRole>('currentRole');
     const savedRoleLabels = await dbGetSetting<RoleLabels>('roleLabels');
     const savedTier1Validation = await dbGetSetting<Tier1ValidationConfig>('tier1Validation');
+    const savedExportPresetId = await dbGetSetting<AppState['exportPresetId']>('exportPresetId');
 
     let students = await dbListStudents();
     if (students.length === 0) {
@@ -285,6 +290,14 @@ export const useAppStore = create<AppState>((set) => ({
       };
     }
 
+    const exportPresetId =
+      savedExportPresetId === 'clipboard' ||
+      savedExportPresetId === 'csv_student' ||
+      savedExportPresetId === 'csv_class' ||
+      savedExportPresetId === 'pdf_student'
+        ? savedExportPresetId
+        : 'clipboard';
+
     set({
       isHydrated: true,
       students,
@@ -295,11 +308,17 @@ export const useAppStore = create<AppState>((set) => ({
       tier1Validation: coerceTier1Validation(savedTier1Validation ?? undefined),
       boardId: savedBoardId ?? 'tcdsb',
       theme: savedTheme ?? 'system',
+      exportPresetId,
       hasOnboarded: savedHasOnboarded ?? false,
       drafts: draftsByStudent,
       undoStack: [],
       redoStack: [],
     });
+  },
+
+  setExportPresetId: async (presetId) => {
+    set({ exportPresetId: presetId });
+    await dbSetSetting('exportPresetId', presetId);
   },
 
   setCurrentPeriod: async (period) => {
