@@ -11,7 +11,8 @@
     "build:tauri": "tauri build",
     "contracts:gen": "node scripts/contracts_gen.mjs",
     "test": "vitest run",
-    "e2e:tauri": "node scripts/e2e_tauri_smoke.mjs"
+    "e2e:tauri": "node scripts/e2e_tauri_smoke.mjs",
+    "e2e:build-check": "node scripts/e2e_tauri_build_check.mjs"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

@@ -36,6 +36,7 @@ Run automated gates:
 - VGReport unit tests: `cd vgreport && npm test`
 - Tauri smoke E2E (boots desktop runtime): `cd vgreport && npm run e2e:tauri`
 - Tauri build (installer/artifact build): `cd vgreport && npm run build:tauri`
+- Verify build artifacts exist: `cd vgreport && npm run e2e:build-check`
 
 Manual spot-checks (no PII):
 
