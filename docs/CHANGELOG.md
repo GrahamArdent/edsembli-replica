@@ -2,7 +2,7 @@
 id: doc.changelog
 type: document
 title: Changelog
-version: 0.1.1
+version: 0.1.2
 status: draft
 tags: [changelog]
 refs: []
@@ -16,6 +16,12 @@ All notable changes to this repository’s *canonical* artifacts are documented 
 The format is loosely based on Keep a Changelog, and this project aims to follow Semantic Versioning where it makes sense for schemas/artifacts.
 
 ## [Unreleased]
+
+### Added (2026-01-12)
+
+- VGReport: Ctrl+K quick student search
+- VGReport: Tier-1 validation heuristics (warn-only) with user-tunable thresholds
+- VGReport: repetition warning for identical box outputs
 
 ### Added (2026-01-12)
 

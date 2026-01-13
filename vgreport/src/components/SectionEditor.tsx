@@ -4,6 +4,7 @@ import { TemplateSelector } from './TemplateSelector';
 import { sidecar } from '../services/sidecar';
 import { useAppStore } from '../store/useAppStore';
 import { Button } from './ui/button';
+import { analyzeTier1 } from '../validation/tier1';
 
 const EMPTY_SLOTS: Record<string, string> = {};
 const EMPTY_COMMENT: CommentDraft = { slots: EMPTY_SLOTS };
@@ -21,6 +22,7 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
   const templates = useAppStore(s => s.templates);
   const currentRole = useAppStore(s => s.currentRole);
   const setDraftStatus = useAppStore(s => s.setDraftStatus);
+  const tier1Validation = useAppStore(s => s.tier1Validation);
 
   const comment = useAppStore(s => {
     const draft = s.drafts[student.id];
@@ -37,6 +39,19 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
 
   const slots = comment?.slots ?? {};
   const slotKeys = selectedTemplate?.slots ?? [];
+
+  const tier1Issues = useMemo(() => analyzeTier1(comment?.rendered ?? '', tier1Validation), [comment?.rendered, tier1Validation]);
+
+  const repetitionCount = useAppStore(s => {
+    const current = (s.drafts[student.id]?.comments?.[frameId]?.[section.id]?.rendered ?? '').trim();
+    if (!current) return 0;
+    let count = 0;
+    for (const st of s.students) {
+      const other = (s.drafts[st.id]?.comments?.[frameId]?.[section.id]?.rendered ?? '').trim();
+      if (other && other === current) count++;
+    }
+    return count;
+  });
 
   const [isRendering, setIsRendering] = useState(false);
   const [renderErr, setRenderErr] = useState<string | null>(null);
@@ -203,6 +218,40 @@ export function SectionEditor({ section, frameId, frameCanonicalId, student }: S
               {comment?.rendered || <span className="text-gray-400 italic">(no output yet)</span>}
             </div>
           </div>
+
+          {(tier1Issues.length > 0 || repetitionCount >= 2) && (
+            <div className="border rounded-lg p-3 bg-white">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Box-fit (Tier 1)</div>
+                <div className="text-[11px] text-muted-foreground">Heuristic • warn-only</div>
+              </div>
+
+              {repetitionCount >= 2 && (
+                <div className="text-xs text-amber-700 mb-2">
+                  Same output appears in {repetitionCount} students for this box.
+                </div>
+              )}
+
+              {tier1Issues.length > 0 && (
+                <ul className="text-xs list-disc pl-5 space-y-1">
+                  {tier1Issues.map((iss) => (
+                    <li
+                      key={iss.code}
+                      className={
+                        iss.severity === 'error'
+                          ? 'text-red-700'
+                          : iss.severity === 'warning'
+                            ? 'text-amber-700'
+                            : 'text-gray-600'
+                      }
+                    >
+                      {iss.message}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
 
           {comment?.validation && (
             <div className="border rounded-lg p-3 bg-white">

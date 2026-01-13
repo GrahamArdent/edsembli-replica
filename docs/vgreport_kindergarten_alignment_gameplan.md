@@ -2,7 +2,7 @@
 id: doc.vgreport.kindergarten_alignment_gameplan
 type: document
 title: VGReport Kindergarten Alignment Gameplan (Edsembli-Oriented Input)
-version: 0.2.2
+version: 0.2.3
 status: draft
 tags: [gameplan, vgreport, kindergarten, alignment, edsembli, user-roles]
 refs:
@@ -19,6 +19,12 @@ updated: 2026-01-12
 Purpose: plan the work to implement the **recommended Kindergarten-only alignment changes** captured in [docs/edsembli_report_card_requirements_vs_vgreport.md](docs/edsembli_report_card_requirements_vs_vgreport.md), while staying within a “comment authoring + export” scope (not a full SIS/report-card generator).
 
 This is a **design + execution plan**. It does **not** implement anything.
+
+## Progress
+
+- Phase A completed (2026-01-12): requirements lock (golden exports + export-ready semantics + per-box constraints).
+- Phase B completed (2026-01-12): role system + approval workflow persisted in local SQLite.
+- Phase C completed (2026-01-12): Ctrl+K quick student search + Tier-1 validation heuristics (warn-only) including repetition warning.
 
 ## Scope
 

@@ -4,6 +4,13 @@ export type UserRole = 'teacher' | 'ece';
 
 export type DraftStatus = 'draft' | 'approved';
 
+export type Tier1ValidationConfig = {
+  minChars: number;
+  maxChars: number;
+  minSentences: number;
+  maxLineBreaks: number;
+};
+
 export interface Student {
   id: string;
   firstName: string;

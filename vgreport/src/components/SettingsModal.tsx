@@ -26,6 +26,9 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
   const currentRole = useAppStore(s => s.currentRole);
   const setCurrentRole = useAppStore(s => s.setCurrentRole);
 
+  const tier1Validation = useAppStore(s => s.tier1Validation);
+  const setTier1Validation = useAppStore(s => s.setTier1Validation);
+
   const boardLabel = useMemo(() => BOARDS.find(b => b.id === boardId)?.label ?? boardId, [boardId]);
 
   return (
@@ -96,6 +99,59 @@ export function SettingsModal({ open, onOpenChange }: { open: boolean; onOpenCha
               <option value="light">Light</option>
               <option value="dark">Dark</option>
             </select>
+          </div>
+
+          <div className="space-y-2">
+            <div className="text-xs font-medium text-foreground">Validation (Tier 1 Heuristics)</div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label className="text-[11px] text-muted-foreground">Min characters per box</label>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background"
+                  value={tier1Validation.minChars}
+                  min={0}
+                  onChange={(e) => void setTier1Validation({ minChars: Number(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[11px] text-muted-foreground">Max characters per box</label>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background"
+                  value={tier1Validation.maxChars}
+                  min={0}
+                  onChange={(e) => void setTier1Validation({ maxChars: Number(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[11px] text-muted-foreground">Min sentences (soft target)</label>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background"
+                  value={tier1Validation.minSentences}
+                  min={1}
+                  onChange={(e) => void setTier1Validation({ minSentences: Number(e.target.value) })}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-[11px] text-muted-foreground">Max line breaks</label>
+                <input
+                  type="number"
+                  inputMode="numeric"
+                  className="w-full border border-border rounded-md px-3 py-2 text-sm bg-background"
+                  value={tier1Validation.maxLineBreaks}
+                  min={0}
+                  onChange={(e) => void setTier1Validation({ maxLineBreaks: Number(e.target.value) })}
+                />
+              </div>
+            </div>
+            <div className="text-[11px] text-muted-foreground">
+              These checks never block export; they’re intended to approximate “box fit” until we have real layout measurement.
+            </div>
           </div>
         </div>
 

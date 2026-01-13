@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
-import { Student, FrameId, ReportPeriod, ReportDraft, CommentDraft, SectionId, Template, type UserRole, type DraftStatus } from '../types';
+import { Student, FrameId, ReportPeriod, ReportDraft, CommentDraft, SectionId, Template, type UserRole, type DraftStatus, type Tier1ValidationConfig } from '../types';
 import { dbDeleteStudent, dbGetSetting, dbInit, dbListDrafts, dbListStudents, dbSetSetting, dbUpsertDraft, dbUpsertStudent, type DraftRow } from '../services/db';
 import { normalizeDraftMeta } from './roleApproval';
 
@@ -77,6 +77,9 @@ interface AppState {
   setCurrentRole: (role: UserRole) => Promise<void>;
   setDraftStatus: (studentId: string, frameId: FrameId, sectionId: SectionId, status: DraftStatus) => void;
 
+  tier1Validation: Tier1ValidationConfig;
+  setTier1Validation: (patch: Partial<Tier1ValidationConfig>) => Promise<void>;
+
   boardId: string;
   setBoardId: (boardId: string) => Promise<void>;
 
@@ -110,6 +113,37 @@ const MOCK_STUDENTS: Student[] = [
 ];
 
 const saveTimers = new Map<string, { timer: number; row: DraftRow }>();
+
+const DEFAULT_TIER1_VALIDATION: Tier1ValidationConfig = {
+  minChars: 100,
+  maxChars: 600,
+  minSentences: 2,
+  maxLineBreaks: 2,
+};
+
+function coerceTier1Validation(value: unknown): Tier1ValidationConfig {
+  const v = (value && typeof value === 'object') ? (value as any) : {};
+  const toInt = (x: unknown, fallback: number) => {
+    const n = typeof x === 'number' ? x : Number(x);
+    return Number.isFinite(n) ? Math.max(0, Math.trunc(n)) : fallback;
+  };
+
+  const next: Tier1ValidationConfig = {
+    minChars: toInt(v.minChars, DEFAULT_TIER1_VALIDATION.minChars),
+    maxChars: toInt(v.maxChars, DEFAULT_TIER1_VALIDATION.maxChars),
+    minSentences: toInt(v.minSentences, DEFAULT_TIER1_VALIDATION.minSentences),
+    maxLineBreaks: toInt(v.maxLineBreaks, DEFAULT_TIER1_VALIDATION.maxLineBreaks),
+  };
+
+  // Keep sane ordering without being overly clever.
+  if (next.maxChars < next.minChars) {
+    next.maxChars = next.minChars;
+  }
+  if (next.minSentences < 1) {
+    next.minSentences = 1;
+  }
+  return next;
+}
 
 function emptyDraft(studentId: string, period: ReportPeriod): ReportDraft {
   return {
@@ -155,6 +189,7 @@ export const useAppStore = create<AppState>((set) => ({
   selectedFrameId: 'belonging_and_contributing',
   currentPeriod: 'february',
   currentRole: 'teacher',
+  tier1Validation: DEFAULT_TIER1_VALIDATION,
   boardId: 'tcdsb',
   theme: 'system',
   hasOnboarded: false,
@@ -195,6 +230,7 @@ export const useAppStore = create<AppState>((set) => ({
     const savedPeriod = await dbGetSetting<ReportPeriod>('currentPeriod');
     const savedHasOnboarded = await dbGetSetting<boolean>('hasOnboarded');
     const savedRole = await dbGetSetting<UserRole>('currentRole');
+    const savedTier1Validation = await dbGetSetting<Tier1ValidationConfig>('tier1Validation');
 
     let students = await dbListStudents();
     if (students.length === 0) {
@@ -235,6 +271,7 @@ export const useAppStore = create<AppState>((set) => ({
       selectedStudentId: students[0]?.id ?? null,
       currentPeriod: period,
       currentRole: savedRole ?? 'teacher',
+      tier1Validation: coerceTier1Validation(savedTier1Validation ?? undefined),
       boardId: savedBoardId ?? 'tcdsb',
       theme: savedTheme ?? 'system',
       hasOnboarded: savedHasOnboarded ?? false,
@@ -252,6 +289,13 @@ export const useAppStore = create<AppState>((set) => ({
   setCurrentRole: async (role) => {
     set({ currentRole: role });
     await dbSetSetting('currentRole', role);
+  },
+
+  setTier1Validation: async (patch) => {
+    set((state) => ({
+      tier1Validation: coerceTier1Validation({ ...state.tier1Validation, ...patch }),
+    }));
+    await dbSetSetting('tier1Validation', useAppStore.getState().tier1Validation);
   },
 
   setDraftStatus: (studentId, frameId, sectionId, status) => {

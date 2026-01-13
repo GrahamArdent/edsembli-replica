@@ -6,6 +6,7 @@ import { sidecar } from "./services/sidecar";
 import { useAppStore } from "./store/useAppStore";
 import { SettingsModal } from "./components/SettingsModal";
 import { OnboardingWizard } from "./components/OnboardingWizard";
+import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "./components/ui/command";
 
 const UI_BUILD_STAMP = "ui-build-2026-01-12T09:05:00Z";
 
@@ -18,8 +19,11 @@ function App() {
   const flushPendingSaves = useAppStore(state => state.flushPendingSaves);
   const undo = useAppStore(state => state.undo);
   const redo = useAppStore(state => state.redo);
+  const students = useAppStore(state => state.students);
+  const setSelectedStudentId = useAppStore(state => state.setSelectedStudentId);
   const [logs, setLogs] = useState<string[]>([]);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const didInit = useRef(false);
 
   const addLog = (msg: string) => setLogs(prev => [...prev, msg]);
@@ -88,8 +92,26 @@ function App() {
   }, [isHydrated, theme]);
 
   useEffect(() => {
+    const isEditableTarget = (target: EventTarget | null): boolean => {
+      const el = target as HTMLElement | null;
+      if (!el) return false;
+      const tag = (el.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return true;
+      if ((el as any).isContentEditable) return true;
+      return false;
+    };
+
     const onKeyDown = (e: KeyboardEvent) => {
       const key = e.key.toLowerCase();
+
+      if ((e.ctrlKey || e.metaKey) && key === 'k') {
+        // Quick search should not steal focus while typing.
+        if (isEditableTarget(e.target)) return;
+        e.preventDefault();
+        setSearchOpen(true);
+        return;
+      }
+
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") {
         e.preventDefault();
         void flushPendingSaves();
@@ -119,11 +141,36 @@ function App() {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("open-settings", onOpenSettings);
     };
-  }, [flushPendingSaves]);
+  }, [flushPendingSaves, undo, redo]);
 
   return (
     <div className="flex w-full h-screen bg-background text-foreground overflow-hidden font-sans relative">
       <SettingsModal open={settingsOpen} onOpenChange={setSettingsOpen} />
+      <CommandDialog open={searchOpen} onOpenChange={setSearchOpen}>
+        <CommandInput placeholder="Search students…" autoFocus />
+        <CommandList>
+          <CommandEmpty>No students found.</CommandEmpty>
+          <CommandGroup heading={`Students (${students.length})`}>
+            {students.map((s) => (
+              <CommandItem
+                key={s.id}
+                value={`${s.firstName} ${s.lastName} ${s.preferredName ?? ''}`.trim()}
+                onSelect={() => {
+                  setSelectedStudentId(s.id);
+                  setSearchOpen(false);
+                }}
+              >
+                <div className="flex flex-col">
+                  <div className="text-sm">{s.firstName} {s.lastName}</div>
+                  {s.preferredName ? (
+                    <div className="text-xs text-muted-foreground">Preferred: {s.preferredName}</div>
+                  ) : null}
+                </div>
+              </CommandItem>
+            ))}
+          </CommandGroup>
+        </CommandList>
+      </CommandDialog>
       <OnboardingWizard />
       <div className="absolute bottom-0 right-0 p-4 bg-black/90 text-white text-xs max-w-2xl max-h-96 overflow-auto z-50 border-t-2 border-l-2 border-red-500 font-mono shadow-2xl">
         <div className="font-bold mb-2 border-b border-gray-600 pb-1">DEBUG LOGS (Scrollable) — {UI_BUILD_STAMP}</div>
