@@ -66,7 +66,6 @@ nav:
     - "Roles": taxonomy/roles.yaml
   - Evidence Library:
     - "Overview": evidence/README.md
-    - "Evidence Patterns": evidence/
   - Templates:
     - "Overview": templates/README.md
     - "Library": templates/comment_templates.yaml
@@ -78,13 +77,13 @@ nav:
     - "Contribution": docs/CONTRIBUTING.md
     - "Release Process": docs/RELEASE.md
     - "Security": docs/SECURITY.md
-    - "Workflows": knowledge/processes/
+    - "Reporting Workflow": knowledge/processes/process.reporting.workflow.md
   - Audits:
     - "Overview": audits/README.md
-    - "Reports": audits/
+    - "Latest Audit": audits/audit.2026-01-11.md
   - Development:
     - "Roadmap": docs/ROADMAP.md
     - "Changelog": docs/CHANGELOG.md
     - "Testing": docs/TESTING.md
-    - "Schemas": schemas/
-    - "Scripts": scripts/
+    - "Schemas": schemas/README.md
+    - "Scripts": scripts/README.md

@@ -59,7 +59,7 @@ All three should pass with "OK" status.
 
 Before contributing, review these documents in order:
 
-1. [README.md](../../README.md) - Project overview
+1. [index.md](../../index.md) - Project overview
 2. [docs/framework.md](../../docs/framework.md) - Conceptual foundation
 3. [docs/infrastructure.md](../../docs/infrastructure.md) - Technical specification
 4. [docs/CONTRIBUTING.md](../../docs/CONTRIBUTING.md) - Contribution guidelines

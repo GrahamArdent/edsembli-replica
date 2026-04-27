@@ -20,7 +20,7 @@ updated: 2026-01-11
 ## Canonical entry points
 
 - Navigation: [index.md](../index.md)
-- Overview: [README.md](../README.md)
+- Overview: [index.md](../index.md)
 - Canonical docs: [docs/](../docs/)
 
 ## Structure audit

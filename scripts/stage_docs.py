@@ -5,18 +5,24 @@ ROOT = Path(__file__).parents[1]
 SITE_DOCS = ROOT / "site_docs"
 
 DIRS_TO_COPY = [
+    "audits",
+    "datasets",
+    "decisions",
     "docs",
     "taxonomy",
     "evidence",
+    "examples",
     "templates",
     "guidance",
     "knowledge",
-    "audits",
+    "references",
     "schemas",
     "scripts",
+    "sources",
 ]
 FILES_TO_COPY = [
     "index.md",
+    "requirements.txt",
 ]
 
 

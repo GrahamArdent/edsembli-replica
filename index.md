@@ -120,7 +120,6 @@ Last updated: 2026-01-11
 
 ## Project files
 
-- [README](README.md)
 - [Discussion notes](docs/discussion.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Changelog](docs/CHANGELOG.md)
