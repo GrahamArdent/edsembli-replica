@@ -55,7 +55,7 @@ updated: 2026-01-11
 - `python scripts/validate.py`: PASS
 - `python scripts/lint.py`: PASS
 - `python scripts/coverage.py`: PASS (13/13 indicators covered)
-- `python scripts/generate_matrix.py`: PASS (generates `datasets/traceability/matrix.csv` and `matrix.parquet`)
+- `python scripts/generate_matrix.py`: PASS (generates `datasets/traceability/matrix.csv`; parquet output is derived but not checked in)
 
 ## Traceability matrix audit
 
@@ -63,7 +63,7 @@ updated: 2026-01-11
 - Generator: [scripts/generate_matrix.py](../scripts/generate_matrix.py)
 - Outputs:
   - [datasets/traceability/matrix.csv](../datasets/traceability/matrix.csv)
-  - [datasets/traceability/matrix.parquet](../datasets/traceability/matrix.parquet)
+  - `matrix.parquet` (derived generator output, not checked in)
 
 Notes:
 - Rows represent template→indicator trace links, optionally joined to an evidence pattern and refs.
